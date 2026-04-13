@@ -159,7 +159,7 @@ export default function Portfolio() {
 
   if (loading) {
     return (
-      <section id="home" className="relative h-screen overflow-hidden bg-white flex items-center justify-center">
+      <section id="home" className="relative min-h-screen overflow-hidden bg-white flex items-center justify-center pt-20">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-slate-600">加载作品中...</p>
@@ -170,7 +170,7 @@ export default function Portfolio() {
 
   if (error || portfolios.length === 0) {
     return (
-      <section id="home" className="relative h-screen overflow-hidden bg-white flex items-center justify-center">
+      <section id="home" className="relative min-h-screen overflow-hidden bg-white flex items-center justify-center pt-20">
         <div className="text-center">
           <p className="text-slate-600 mb-4">{error || '暂无作品数据'}</p>
           <button 
@@ -190,7 +190,7 @@ export default function Portfolio() {
 
   return (
     <>
-      <section id="portfolio" className="relative h-screen overflow-hidden bg-white">
+      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-white pt-20">
         {/* 全屏横向滚动容器 */}
         <div 
           className="flex h-full transition-transform duration-500 ease-out"
@@ -208,7 +208,7 @@ export default function Portfolio() {
                 key={portfolio.id}
                 className="min-w-full h-full flex items-center justify-center relative bg-white"
               >
-                <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
                   {/* 左侧文本内容 - 3列 */}
                   <div className="col-span-12 lg:col-span-3 text-slate-800">
                     <motion.div 
@@ -216,9 +216,9 @@ export default function Portfolio() {
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6 }}
                       viewport={{ once: true }}
-                      className={`inline-flex items-center px-4 py-2 ${portfolioColors.lightBg} ${portfolioColors.text} rounded-full text-sm font-medium mb-6`}
+                      className={`inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 ${portfolioColors.lightBg} ${portfolioColors.text} rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6`}
                     >
-                      <PortfolioIcon className="w-4 h-4 mr-2" />
+                      <PortfolioIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                       {portfolio.category_name}
                     </motion.div>
                     <motion.h2 
@@ -226,7 +226,7 @@ export default function Portfolio() {
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.1 }}
                       viewport={{ once: true }}
-                      className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-slate-900"
+                      className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 sm:mb-6 text-slate-900"
                     >
                       {portfolio.title}
                     </motion.h2>
@@ -235,7 +235,7 @@ export default function Portfolio() {
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.2 }}
                       viewport={{ once: true }}
-                      className="text-lg sm:text-xl text-slate-600 mb-8 leading-relaxed"
+                      className="text-base sm:text-lg lg:text-xl text-slate-600 mb-4 sm:mb-8 leading-relaxed"
                     >
                       {portfolio.description}
                     </motion.p>
@@ -246,7 +246,7 @@ export default function Portfolio() {
                       viewport={{ once: true }}
                       className="flex items-center gap-4 mb-8"
                     >
-                      <div className={`w-14 h-14 ${portfolioColors.lightBg} rounded-full flex items-center justify-center text-xl font-bold ${portfolioColors.text}`}>
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 ${portfolioColors.lightBg} rounded-full flex items-center justify-center text-lg sm:text-xl font-bold ${portfolioColors.text}`}>
                         {portfolio.author_avatar}
                       </div>
                       <div>
@@ -272,7 +272,7 @@ export default function Portfolio() {
                           whileInView={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.4, delay: 0.1 * tagIndex }}
                           viewport={{ once: true }}
-                          className="px-4 py-2 bg-slate-100 rounded-full text-sm text-slate-600"
+                          className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 rounded-full text-xs sm:text-sm text-slate-600"
                         >
                           {tag.trim()}
                         </motion.span>
@@ -287,7 +287,7 @@ export default function Portfolio() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.8 }}
                       viewport={{ once: true }}
-                      className={`w-full max-w-3xl h-[500px] sm:h-[550px] lg:h-[600px] bg-gradient-to-br ${portfolioColors.gradient} rounded-3xl flex items-center justify-center border border-slate-100 relative overflow-hidden ${isVideo ? 'cursor-pointer group' : ''}`}
+                      className={`w-full max-w-3xl h-[300px] sm:h-[400px] lg:h-[500px] xl:h-[600px] bg-gradient-to-br ${portfolioColors.gradient} rounded-3xl flex items-center justify-center border border-slate-100 relative overflow-hidden ${isVideo ? 'cursor-pointer group' : ''}`}
                       onClick={() => isVideo && openVideoModal(portfolio)}
                     >
                       {/* 视频封面或图标 */}
@@ -298,14 +298,14 @@ export default function Portfolio() {
                           className="w-full h-full object-cover rounded-3xl"
                         />
                       ) : (
-                        <PortfolioIcon className={`w-64 h-64 ${portfolioColors.text} opacity-40`} />
+                        <PortfolioIcon className={`w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 ${portfolioColors.text} opacity-40`} />
                       )}
                       
                       {/* 视频播放按钮 */}
                       {isVideo && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors rounded-3xl">
-                          <div className={`w-32 h-32 ${portfolioColors.bg} rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform`}>
-                            <Play className="w-16 h-16 text-white ml-1" fill="white" />
+                          <div className={`w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 ${portfolioColors.bg} rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform`}>
+                            <Play className="w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white ml-1" fill="white" />
                           </div>
                         </div>
                       )}
@@ -318,7 +318,7 @@ export default function Portfolio() {
         </div>
 
         {/* 导航指示器 */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
           {portfolios.map((_, index) => (
             <motion.button 
               key={index}
@@ -330,22 +330,22 @@ export default function Portfolio() {
           ))}
         </div>
 
-        {/* 左右箭头 */}
+        {/* 左右箭头 - 移动端隐藏 */}
         <motion.button 
           onClick={prevSlide}
           whileHover={{ scale: 1.1, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
           whileTap={{ scale: 0.95 }}
-          className="absolute left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all z-20 shadow-lg"
+          className="hidden md:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 w-12 h-12 lg:w-14 lg:h-14 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all z-20 shadow-lg"
         >
-          <ChevronLeft className="w-8 h-8" />
+          <ChevronLeft className="w-6 h-6 lg:w-8 lg:h-8" />
         </motion.button>
         <motion.button 
           onClick={nextSlide}
           whileHover={{ scale: 1.1, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
           whileTap={{ scale: 0.95 }}
-          className="absolute right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all z-20 shadow-lg"
+          className="hidden md:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 w-12 h-12 lg:w-14 lg:h-14 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all z-20 shadow-lg"
         >
-          <ChevronRight className="w-8 h-8" />
+          <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8" />
         </motion.button>
 
       </section>
