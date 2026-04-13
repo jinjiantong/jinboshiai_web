@@ -1,0 +1,28 @@
+service: jinboshi-ai-web
+
+provider:
+  name: aliyun
+  runtime: nodejs18
+  region: cn-shanghai
+  timeout: 60
+  memorySize: 1024
+
+functions:
+  nextjs:
+    handler: index.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
+
+package:
+  exclude:
+    - .git/**
+    - node_modules/**
+  include:
+    - .next/standalone/**
+    - .next/static/**
+    - public/**

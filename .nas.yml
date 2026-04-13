@@ -1,0 +1,4 @@
+nasMappings:
+  jinboshiAI:
+    - localNasDir: node_modules
+      remoteNasDir: /mnt/auto/node_modules
