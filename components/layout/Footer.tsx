@@ -95,9 +95,10 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-slate-500 text-sm">
-            © 2026 金博士AI. All rights reserved.
-          </p>
+          <div className="text-slate-500 text-sm text-center md:text-left">
+            <p>© 2026 金博士AI. All rights reserved.</p>
+            <p className="mt-1">吉ICP备2024020391号</p>
+          </div>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="#" className="text-slate-500 hover:text-white text-sm transition-colors">
               隐私政策
