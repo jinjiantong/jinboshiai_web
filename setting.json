@@ -1,0 +1,27 @@
+{
+  "site": {
+    "name": "金博士AI实验室课程",
+    "description": "不教理论，只练实战（0基础可学）",
+    "version": "1.0.0"
+  },
+  "data": {
+    "source": "https://bcn9tapz6cxp.feishu.cn/wiki/KwzLwiAL6iOJFxkzMgScPKUdnCb?from=from_copylink",
+    "fallback": "course.md",
+    "refreshInterval": 300000,
+    "space_id": "7629331605785431218",
+    "app_id": "cli_a96bb944bef89bcb",
+    "app_secret": "IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp",
+    "useLocalCache": false,
+    "cacheExpiry": 86400000
+  },
+  "ui": {
+    "sidebarWidth": "w-80",
+    "sidebarCollapsedWidth": "ml-10",
+    "contentPadding": "px-5 py-6 pt-8"
+  },
+  "features": {
+    "sidebarToggle": true,
+    "prevNextButtons": true,
+    "errorHandling": true
+  }
+}

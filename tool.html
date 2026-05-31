@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具精选指南</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .category {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .category-header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 20px 25px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .category-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .category-header .icon {
+            font-size: 1.5rem;
+        }
+        
+        .category-desc {
+            padding: 10px 25px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1px;
+            background: #eee;
+        }
+        
+        .tool-card {
+            background: white;
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .tool-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .tool-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .tool-desc {
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .tool-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .tool-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .tool-link svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            padding: 15px 25px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+        
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1px;
+            background: #eee;
+        }
+        
+        .section-card {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-number {
+            width: 24px;
+            height: 24px;
+            background: #e0e0e0;
+            color: #666;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .section-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
+            flex: 1;
+        }
+        
+        .section-desc {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 2px;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tool-grid, .section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 AI工具精选指南</h1>
+            <p>2026年度最值得关注的AI工具推荐</p>
+        </header>
+        
+        <div class="category">
+            <div class="category-header">
+                <span class="icon">🎨</span>
+                <h2>一、AI图像生成工具（视觉创意无限）</h2>
+            </div>
+            <div class="category-desc">核心：从文字到图像，释放你的创意潜能</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <span class="tool-number">1</span>
+                    <div class="tool-name">Midjourney 7</div>
+                    <div class="tool-desc">核心优势：图像质量天花板，艺术风格多样，社区生态成熟</div>
+                    <a href="https://www.midjourney.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">2</span>
+                    <div class="tool-name">DALL·E 3</div>
+                    <div class="tool-desc">核心优势：OpenAI出品，文字理解精准，支持复杂场景生成</div>
+                    <a href="https://openai.com/dall-e-3" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">3</span>
+                    <div class="tool-name">Stable Diffusion 3.5</div>
+                    <div class="tool-desc">核心优势：开源王者，无限自定义，可控性强，支持ComfyUI</div>
+                    <a href="https://stablediffusionweb.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">4</span>
+                    <div class="tool-name">Gemini Advanced</div>
+                    <div class="tool-desc">核心优势：谷歌多模态旗舰，图像理解与生成能力强</div>
+                    <a href="https://gemini.google.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">5</span>
+                    <div class="tool-name">通义万相</div>
+                    <div class="tool-desc">核心优势：阿里出品，中文语境理解好，电商场景适配强</div>
+                    <a href="https://tongyi.aliyun.com/wanxiang/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">6</span>
+                    <div class="tool-name">Stable Cascade</div>
+                    <div class="tool-desc">核心优势：SD新架构，质量与速度兼顾，开源免费</div>
+                    <a href="https://stability.ai/stable-cascade" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">7</span>
+                    <div class="tool-name">腾讯混元绘图</div>
+                    <div class="tool-desc">核心优势：腾讯出品，中文理解出色，社交场景优化</div>
+                    <a href="https://ai.tencent.com/ailab/ml/diffusion" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">8</span>
+                    <div class="tool-name">DeepSeek-R1</div>
+                    <div class="tool-desc">核心优势：深度求索多模态，代码理解与生成优异</div>
+                    <a href="https://www.deepseek.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">9</span>
+                    <div class="tool-name">文心一格</div>
+                    <div class="tool-desc">核心优势：百度出品，国风风格出色，企业级服务完善</div>
+                    <a href="https://yige.baidu.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">10</span>
+                    <div class="tool-name">豆包画图</div>
+                    <div class="tool-desc">核心优势：字节出品，免费额度高，对移动端友好</div>
+                    <a href="https://www.doubao.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">11</span>
+                    <div class="tool-name">Krea AI</div>
+                    <div class="tool-desc">核心优势：社区驱动，风格库丰富，AI协作绘图</div>
+                    <a href="https://www.krea.ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">12</span>
+                    <div class="tool-name">LeiaPix</div>
+                    <div class="tool-desc">核心优势：一键图片转3D，视差效果惊艳，社交媒体适配</div>
+                    <a href="https://convert.leiapix.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <div class="category-header">
+                <span class="icon">✏️</span>
+                <h2>二、AI设计与创意工具（设计效率神器）</h2>
+            </div>
+            <div class="category-desc">核心：让设计小白也能做出专业级作品</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <span class="tool-number">13</span>
+                    <div class="tool-name">Canva AI</div>
+                    <div class="tool-desc">核心优势：模板丰富，操作简单，一键生成海报、PPT</div>
+                    <a href="https://www.canva.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">14</span>
+                    <div class="tool-name">Magic Eraser</div>
+                    <div class="tool-desc">核心优势：智能移除图片多余元素，无痕修图</div>
+                    <a href="https://magiceraser.io/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">15</span>
+                    <div class="tool-name">Remove.bg</div>
+                    <div class="tool-desc">核心优势：一键抠图神器，背景移除效果出色</div>
+                    <a href="https://www.remove.bg/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">16</span>
+                    <div class="tool-name">Spline AI</div>
+                    <div class="tool-desc">核心优势：AI辅助3D设计，网页3D交互轻松做</div>
+                    <a href="https://spline.design/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">17</span>
+                    <div class="tool-name">Figma AI</div>
+                    <div class="tool-desc">核心优势：设计协作平台，AI辅助生成界面组件</div>
+                    <a href="https://www.figma.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">18</span>
+                    <div class="tool-name">Recraft AI</div>
+                    <div class="tool-desc">核心优势：全能设计工具，支持矢量图、图标、3D图像，风格统一</div>
+                    <a href="https://www.recraft.ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">19</span>
+                    <div class="tool-name">Adobe Firefly</div>
+                    <div class="tool-desc">核心优势：创意素材合法商用来源，生成图片、矢量图、创意模板</div>
+                    <a href="https://firefly.adobe.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">20</span>
+                    <div class="tool-name">稿定设计</div>
+                    <div class="tool-desc">核心优势：国内电商/新媒体首选，模板多接地气，AI一键生成海报</div>
+                    <a href="https://www.gaoding.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <div class="category-header">
+                <span class="icon">🎬</span>
+                <h2>三、视频生成与编辑工具（内容创作者"开挂"神器）</h2>
+            </div>
+            <div class="category-desc">核心：一句话、一张图即可生成视频，大幅降低创作门槛</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <span class="tool-number">21</span>
+                    <div class="tool-name">Sora 2</div>
+                    <div class="tool-desc">核心优势：OpenAI出品，电影级大片生成，真实感强，支持"客串"功能</div>
+                    <a href="https://openai.com/sora" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">22</span>
+                    <div class="tool-name">Veo 3</div>
+                    <div class="tool-desc">核心优势：谷歌出品，视频生成效果佳，物理规律模拟真实</div>
+                    <a href="#" class="tool-link">官网链接：谷歌实验室/API了解</a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">23</span>
+                    <div class="tool-name">Runway</div>
+                    <div class="tool-desc">核心优势：运动控制精准，强大AI视频编辑，如背景移除</div>
+                    <a href="https://runwayml.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">24</span>
+                    <div class="tool-name">Kling AI（可灵）</div>
+                    <div class="tool-desc">核心优势：快手出品，长镜头无敌，视频动作流畅符合物理逻辑</div>
+                    <a href="https://kling.kuaishou.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">25</span>
+                    <div class="tool-name">剪映</div>
+                    <div class="tool-desc">核心优势：图文成片功能强，一句话生成带字幕、配乐视频</div>
+                    <a href="https://www.capcut.cn/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">26</span>
+                    <div class="tool-name">OpusClip</div>
+                    <div class="tool-desc">核心优势：长视频转短视频神器，自动识别高光生成集锦</div>
+                    <a href="https://www.opus.pro/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">27</span>
+                    <div class="tool-name">Pika</div>
+                    <div class="tool-desc">核心优势：社区玩法多，轻松修改视频风格和局部元素</div>
+                    <a href="https://pika.art/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">28</span>
+                    <div class="tool-name">HeyGen</div>
+                    <div class="tool-desc">核心优势：AI视频数字人专家，翻译视频并完美匹配口型</div>
+                    <a href="https://www.heygen.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">29</span>
+                    <div class="tool-name">即梦AI</div>
+                    <div class="tool-desc">核心优势：字节跳动出品，文本到视频/图像生成，与剪映深度绑定</div>
+                    <a href="https://jimeng.jianying.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">30</span>
+                    <div class="tool-name">腾讯智影</div>
+                    <div class="tool-desc">核心优势：腾讯出品，集数字人播报、文本配音、文章转视频于一体</div>
+                    <a href="https://zenvideo.qq.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <div class="category-header">
+                <span class="icon">🎵</span>
+                <h2>四、音频与办公工具（效率翻倍的隐藏高手）</h2>
+            </div>
+            <div class="category-desc">核心：写歌、配音、做PPT、读论文，AI代劳枯燥工作</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <span class="tool-number">31</span>
+                    <div class="tool-name">Suno</div>
+                    <div class="tool-desc">核心优势：秒变作曲家，输入歌词和风格，生成带人声完整歌曲</div>
+                    <a href="https://suno.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">32</span>
+                    <div class="tool-name">ElevenLabs</div>
+                    <div class="tool-desc">核心优势：语音克隆王者，10秒音频克隆声音，支持120+语言</div>
+                    <a href="https://elevenlabs.io/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">33</span>
+                    <div class="tool-name">Resemble AI</div>
+                    <div class="tool-desc">核心优势：专业级语音生成，支持情绪控制和AI配音，有开源模型</div>
+                    <a href="https://www.resemble.ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">34</span>
+                    <div class="tool-name">Gamma</div>
+                    <div class="tool-desc">核心优势：自动生成PPT神器，输入主题，几分钟得精美演示文稿</div>
+                    <a href="https://gamma.app/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">35</span>
+                    <div class="tool-name">Napkin AI</div>
+                    <div class="tool-desc">核心优势：办公做图表、梳理逻辑利器，文字转可视化图表</div>
+                    <a href="https://www.napkin.ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">36</span>
+                    <div class="tool-name">Notion Q&A</div>
+                    <div class="tool-desc">核心优势：企业知识库管理神器，直接提问从公司文档找答案</div>
+                    <a href="https://www.notion.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">37</span>
+                    <div class="tool-name">Fathom</div>
+                    <div class="tool-desc">核心优势：会议纪要神器，自动记录、总结视频会议要点和待办</div>
+                    <a href="https://fathom.video/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">38</span>
+                    <div class="tool-name">Elicit</div>
+                    <div class="tool-desc">核心优势：科研党福音，提问找相关论文并总结要点</div>
+                    <a href="https://elicit.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">39</span>
+                    <div class="tool-name">Consensus</div>
+                    <div class="tool-desc">核心优势：严谨学术搜索引擎，答案直接引用真实科学论文</div>
+                    <a href="https://consensus.app/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">40</span>
+                    <div class="tool-name">通义法睿</div>
+                    <div class="tool-desc">核心优势：阿里出品，法律垂直AI，提供法律咨询、文书写作辅助</div>
+                    <a href="https://tongyi.aliyun.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">41</span>
+                    <div class="tool-name">腾讯觅影</div>
+                    <div class="tool-desc">核心优势：腾讯出品，医疗垂直AI，辅助医生疾病筛查和诊断</div>
+                    <a href="https://moying.tencent.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <div class="category-header">
+                <span class="icon">💻</span>
+                <h2>五、AI编程与开发者工具（从"副驾驶"到"数字员工"）</h2>
+            </div>
+            <div class="category-desc">核心：2026年AI编程渗透率超85%，规范驱动开发成主流</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <span class="tool-number">42</span>
+                    <div class="tool-name">文心快码(Comate)</div>
+                    <div class="tool-desc">核心优势：企业级首选，规范驱动（SDD），C++生成质量第一，多智能体协同</div>
+                    <a href="https://comate.baidu.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">43</span>
+                    <div class="tool-name">GitHub Copilot X</div>
+                    <div class="tool-desc">核心优势：全球开发者生态标杆，与GitHub深度集成，自动生成PR和Review</div>
+                    <a href="https://github.com/features/copilot" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">44</span>
+                    <div class="tool-name">Cursor</div>
+                    <div class="tool-desc">核心优势：极客最爱，独立AI IDE，支持GPT-4o、Claude无缝切换</div>
+                    <a href="https://cursor.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">45</span>
+                    <div class="tool-name">Claude 3.7(API)</div>
+                    <div class="tool-desc">核心优势：逻辑推理怪兽，适合复杂算法竞赛级代码</div>
+                    <a href="https://claude.ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">46</span>
+                    <div class="tool-name">Cursor Composer</div>
+                    <div class="tool-desc">核心优势：Cursor王牌，单窗口同时编辑多个文件</div>
+                    <a href="https://cursor.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">47</span>
+                    <div class="tool-name">Windsurf</div>
+                    <div class="tool-desc">核心优势：Codeium出品，结合Copilot和Cursor优势的"流编辑器"</div>
+                    <a href="https://codeium.com/windsurf" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">48</span>
+                    <div class="tool-name">Tabnine</div>
+                    <div class="tool-desc">核心优势：隐私保护优先，断网环境提供代码建议，适合军工、金融</div>
+                    <a href="https://www.tabnine.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">49</span>
+                    <div class="tool-name">Amazon Q</div>
+                    <div class="tool-desc">核心优势：AWS云原生开发最佳伴侣，生成符合IAM最佳实践的IaC代码</div>
+                    <a href="https://aws.amazon.com/q/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">50</span>
+                    <div class="tool-name">JetBrains AI</div>
+                    <div class="tool-desc">核心优势：IntelliJ全家桶原生集成，重构建议安全，理解项目AST</div>
+                    <a href="https://www.jetbrains.com/ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">51</span>
+                    <div class="tool-name">CodeGeeX</div>
+                    <div class="tool-desc">核心优势：国产开源先锋，中文注释理解优异，对运维工程师友好</div>
+                    <a href="https://codegeex.cn/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">52</span>
+                    <div class="tool-name">v0.dev</div>
+                    <div class="tool-desc">核心优势：Vercel出品，前端开发神器，文字描述生成React代码和预览</div>
+                    <a href="https://v0.dev/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">53</span>
+                    <div class="tool-name">Sourcegraph Cody</div>
+                    <div class="tool-desc">核心优势：基于知识图谱，读懂超大型代码库，精准定位函数引用</div>
+                    <a href="https://sourcegraph.com/cody" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <div class="category-header">
+                <span class="icon">🤖</span>
+                <h2>六、AI智能体、开发平台与工作流自动化</h2>
+            </div>
+            <div class="category-desc">核心：构建专属AI应用，让AI替你操作电脑</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <span class="tool-number">54</span>
+                    <div class="tool-name">Comet浏览器</div>
+                    <div class="tool-desc">核心优势：Perplexity推出，替你操控网页，完成多步骤任务</div>
+                    <a href="https://comet.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">55</span>
+                    <div class="tool-name">n8n</div>
+                    <div class="tool-desc">核心优势：开源自动化工具，技术团队首选，可私有化部署，构建AI智能体工作流</div>
+                    <a href="https://n8n.io/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">56</span>
+                    <div class="tool-name">Hugging Face</div>
+                    <div class="tool-desc">核心优势：开源模型库大本营，上万模型可用和微调</div>
+                    <a href="https://huggingface.co/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">57</span>
+                    <div class="tool-name">LangChain</div>
+                    <div class="tool-desc">核心优势：构建LLM应用顶尖开源框架，模型、数据库、API像乐高组合</div>
+                    <a href="https://www.langchain.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">58</span>
+                    <div class="tool-name">LangGraph</div>
+                    <div class="tool-desc">核心优势：LangChain团队出品，构建有状态、多步推理复杂AI智能体</div>
+                    <a href="https://langchain-ai.github.io/langgraph/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">59</span>
+                    <div class="tool-name">Dify</div>
+                    <div class="tool-desc">核心优势：开源LLM应用开发平台，快速从原型到生产，支持RAG和智能体</div>
+                    <a href="https://dify.ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">60</span>
+                    <div class="tool-name">扣子(Coze)</div>
+                    <div class="tool-desc">核心优势：字节跳动出品，插件丰富，快速构建聊天机器人</div>
+                    <a href="https://www.coze.cn/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">61</span>
+                    <div class="tool-name">Botpress</div>
+                    <div class="tool-desc">核心优势：企业级智能体平台，可视化拖拽，支持100种语言</div>
+                    <a href="https://botpress.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">62</span>
+                    <div class="tool-name">SiliconFlow</div>
+                    <div class="tool-desc">核心优势：精准定制AI模型一体化平台，推理速度快，三步完成微调</div>
+                    <a href="https://siliconflow.cn/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">63</span>
+                    <div class="tool-name">Pinecone</div>
+                    <div class="tool-desc">核心优势：顶尖托管向量数据库，RAG架构核心组件</div>
+                    <a href="https://www.pinecone.io/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">64</span>
+                    <div class="tool-name">Databricks</div>
+                    <div class="tool-desc">核心优势：统一数据和AI平台，处理数据准备到模型部署全流程</div>
+                    <a href="https://databricks.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <div class="category-header">
+                <span class="icon">🔒</span>
+                <h2>七、本地化部署与开源工具（数据安全与极致性能）</h2>
+            </div>
+            <div class="category-desc">核心：对数据主权有要求、想节省API成本的团队必看</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <span class="tool-number">65</span>
+                    <div class="tool-name">Ollama</div>
+                    <div class="tool-desc">核心优势：本地运行大模型最简单工具，一条命令搞定</div>
+                    <a href="https://ollama.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">66</span>
+                    <div class="tool-name">LM Studio</div>
+                    <div class="tool-desc">核心优势：带GUI界面本地模型运行器，支持搜索下载Hugging Face模型</div>
+                    <a href="https://lmstudio.ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">67</span>
+                    <div class="tool-name">vLLM</div>
+                    <div class="tool-desc">核心优势：高吞吐量、低延迟推理服务框架，适合生产环境部署</div>
+                    <a href="https://vllm.readthedocs.io/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">68</span>
+                    <div class="tool-name">Jan</div>
+                    <div class="tool-desc">核心优势：开源完全离线桌面应用，支持多种模型</div>
+                    <a href="https://jan.ai/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">69</span>
+                    <div class="tool-name">Llama 4</div>
+                    <div class="tool-desc">核心优势：Meta开源SOTA模型，MoE架构，高效强大</div>
+                    <a href="https://llama.meta.com/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-number">70</span>
+                    <div class="tool-name">Qwen 3</div>
+                    <div class="tool-desc">核心优势：阿里开源强大模型，多语言和编码能力出色</div>
+                    <a href="https://qwenlm.github.io/" class="tool-link" target="_blank">官网链接 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <div class="category-header">
+                <span class="icon">📋</span>
+                <h2>补充工具速览（篇幅限制，核心领域一览）</h2>
+            </div>
+            
+            <div class="section-title">🎬 AI视频/3D更多工具</div>
+            <div class="section-grid">
+                <div class="section-card"><span class="section-number">71</span><div><div class="section-name">Luma Dream Machine</div><div class="section-desc">高质量视频生成，节奏感强</div></div></div>
+                <div class="section-card"><span class="section-number">72</span><div><div class="section-name">Haiper AI</div><div class="section-desc">文本/图片生成视频，免费额度高</div></div></div>
+                <div class="section-card"><span class="section-number">73</span><div><div class="section-name">Pixverse</div><div class="section-desc">生成速度快，支持重绘</div></div></div>
+                <div class="section-card"><span class="section-number">74</span><div><div class="section-name">CapCut Commerce Pro</div><div class="section-desc">剪映商业版，电商视频专用</div></div></div>
+                <div class="section-card"><span class="section-number">75</span><div><div class="section-name">Move AI</div><div class="section-desc">视频动作捕捉，生成3D动画数据</div></div></div>
+                <div class="section-card"><span class="section-number">76</span><div><div class="section-name">Blender AI插件</div><div class="section-desc">辅助3D建模、材质生成</div></div></div>
+            </div>
+            
+            <div class="section-title">🎵 AI音频/音乐更多工具</div>
+            <div class="section-grid">
+                <div class="section-card"><span class="section-number">77</span><div><div class="section-name">Udio</div><div class="section-desc">音乐生成，音质出色，风格多样</div></div></div>
+                <div class="section-card"><span class="section-number">78</span><div><div class="section-name">海绵音乐</div><div class="section-desc">字节出品，词曲创作、演唱一站式</div></div></div>
+                <div class="section-card"><span class="section-number">79</span><div><div class="section-name">ACE Studio</div><div class="section-desc">专业AI歌声合成，声音克隆，情感细腻</div></div></div>
+                <div class="section-card"><span class="section-number">80</span><div><div class="section-name">天谱乐</div><div class="section-desc">多模态配乐，文本/哼唱生成音乐</div></div></div>
+                <div class="section-card"><span class="section-number">81</span><div><div class="section-name">网易天音</div><div class="section-desc">网易出品，一键写歌、编曲</div></div></div>
+            </div>
+            
+            <div class="section-title">📊 AI办公/阅读更多工具</div>
+            <div class="section-grid">
+                <div class="section-card"><span class="section-number">82</span><div><div class="section-name">ChatPDF</div><div class="section-desc">与PDF对话，提炼要点</div></div></div>
+                <div class="section-card"><span class="section-number">83</span><div><div class="section-name">SCI Space</div><div class="section-desc">科研论文阅读助手</div></div></div>
+                <div class="section-card"><span class="section-number">84</span><div><div class="section-name">Beautiful.ai</div><div class="section-desc">自动排版PPT，设计感强</div></div></div>
+                <div class="section-card"><span class="section-number">85</span><div><div class="section-name">Pitch</div><div class="section-desc">团队协作AI演示文稿工具</div></div></div>
+                <div class="section-card"><span class="section-number">86</span><div><div class="section-name">Fireflies.ai</div><div class="section-desc">会议记录、转录、搜索</div></div></div>
+                <div class="section-card"><span class="section-number">87</span><div><div class="section-name">Otter.ai</div><div class="section-desc">实时转录，生成会议纪要</div></div></div>
+            </div>
+            
+            <div class="section-title">🎨 AI图像/设计更多工具</div>
+            <div class="section-grid">
+                <div class="section-card"><span class="section-number">88</span><div><div class="section-name">Stable Diffusion 3.5</div><div class="section-desc">开源图像生成王者，ComfyUI精细控制</div></div></div>
+                <div class="section-card"><span class="section-number">89</span><div><div class="section-name">ComfyUI</div><div class="section-desc">节点式工作流，SD高级用户必备</div></div></div>
+                <div class="section-card"><span class="section-number">90</span><div><div class="section-name">Magnific AI</div><div class="section-desc">图像高清放大、重绘、增细节</div></div></div>
+                <div class="section-card"><span class="section-number">91</span><div><div class="section-name">Klip</div><div class="section-desc">提示词修改图片人物服装、背景</div></div></div>
+                <div class="section-card"><span class="section-number">92</span><div><div class="section-name">Remini</div><div class="section-desc">图像增强，模糊变高清，老照片修复</div></div></div>
+                <div class="section-card"><span class="section-number">93</span><div><div class="section-name">Clipdrop</div><div class="section-desc">一键移除背景、去阴影、打光</div></div></div>
+            </div>
+            
+            <div class="section-title">💻 AI编程/自动化更多工具</div>
+            <div class="section-grid">
+                <div class="section-card"><span class="section-number">94</span><div><div class="section-name">Replit Ghostwriter</div><div class="section-desc">云端IDE AI助手，协作开发好</div></div></div>
+                <div class="section-card"><span class="section-number">95</span><div><div class="section-name">Bolt.new</div><div class="section-desc">浏览器全栈Web开发IDE，可运行部署</div></div></div>
+                <div class="section-card"><span class="section-number">96</span><div><div class="section-name">Make(原Integromat)</div><div class="section-desc">可视化自动化平台，比Zapier灵活</div></div></div>
+                <div class="section-card"><span class="section-number">97</span><div><div class="section-name">Zapier</div><div class="section-desc">连接5000+应用，简单易用</div></div></div>
+                <div class="section-card"><span class="section-number">98</span><div><div class="section-name">Activepieces</div><div class="section-desc">开源自动化工具，Make/n8n替代</div></div></div>
+                <div class="section-card"><span class="section-number">99</span><div><div class="section-name">AirOps</div><div class="section-desc">电商和营销团队AI工作流平台</div></div></div>
+            </div>
+            
+            <div class="section-title">🔍 AI搜索/研究更多工具</div>
+            <div class="section-grid">
+                <div class="section-card"><span class="section-number">100</span><div><div class="section-name">You.com</div><div class="section-desc">AI驱动搜索引擎，多搜索模式</div></div></div>
+                <div class="section-card"><span class="section-number">101</span><div><div class="section-name">SciSpace</div><div class="section-desc">搜索解释科学论文</div></div></div>
+                <div class="section-card"><span class="section-number">102</span><div><div class="section-name">Scite</div><div class="section-desc">搜论文并显示被支持/反驳情况</div></div></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>注：文档部分内容可能由 AI 生成</p>
+            <p style="margin-top: 10px; opacity: 0.7;">© 2026 AI工具精选指南</p>
+        </footer>
+    </div>
+</body>
+</html>
