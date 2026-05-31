@@ -104,7 +104,7 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          <Link href="/course" className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
+          <Link href="/course" target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
             <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-50 transition-colors">
               <BookOpen className="w-7 h-7 text-green-600 group-hover:scale-110 transition-transform" />
             </div>
