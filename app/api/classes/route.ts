@@ -41,11 +41,46 @@ async function getTenantAccessToken(): Promise<string> {
   }
 }
 
-async function getRecords(tableId: string): Promise<any[]> {
+let cachedAppToken: string = ''
+
+async function getBitableAppToken(): Promise<string> {
+  if (cachedAppToken) {
+    return cachedAppToken
+  }
+  
   const accessToken = await getTenantAccessToken()
   
   try {
-    const response = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/bascnKtF2Kq88mBkHf7jv67q7Fg/tables/${tableId}/records`, {
+    const response = await fetch('https://open.feishu.cn/open-apis/bitable/v1/apps', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    const data = await response.json()
+    
+    if (data.code === 0 && data.data?.items && data.data.items.length > 0) {
+      cachedAppToken = data.data.items[0].app_token
+      console.log('Found bitable app_token:', cachedAppToken)
+      return cachedAppToken
+    }
+    
+    console.error('Failed to get bitable app_token:', data)
+    throw new Error('Failed to get bitable app_token')
+  } catch (error) {
+    console.error('Error getting bitable app_token:', error)
+    throw error
+  }
+}
+
+async function getRecords(tableId: string): Promise<any[]> {
+  const accessToken = await getTenantAccessToken()
+  const appToken = await getBitableAppToken()
+  
+  try {
+    const response = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${appToken}/tables/${tableId}/records`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
