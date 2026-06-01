@@ -1,22 +1,67 @@
 import { NextResponse } from 'next/server'
-import { exec } from 'child_process'
-import { promisify } from 'util'
+import settings from '../../../setting.json'
 
 const TEACHER_TABLE_ID = 'tblxN3e1fyhOMTSt'
 const STUDENT_TABLE_ID = 'tblhnKUAyBJbpoDo'
 const CLASS_TABLE_ID = 'tblDDKeft6iLlGAx'
 
-const execAsync = promisify(exec)
+let cachedToken: string = ''
+let tokenExpiryTime: number = 0
+
+async function getTenantAccessToken(): Promise<string> {
+  const now = Date.now()
+  
+  if (cachedToken && now < tokenExpiryTime) {
+    return cachedToken
+  }
+  
+  try {
+    const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        app_id: settings.data.app_id,
+        app_secret: settings.data.app_secret,
+      }),
+    })
+    
+    const data = await response.json()
+    
+    if (data.code === 0 && data.tenant_access_token) {
+      cachedToken = data.tenant_access_token
+      tokenExpiryTime = now + (data.expire - 60) * 1000
+      return cachedToken
+    } else {
+      console.error('Failed to get tenant_access_token:', data)
+      throw new Error(data.msg || 'Failed to get access token')
+    }
+  } catch (error) {
+    console.error('Error getting tenant_access_token:', error)
+    throw error
+  }
+}
 
 async function getRecords(tableId: string): Promise<any[]> {
+  const accessToken = await getTenantAccessToken()
+  
   try {
-    const { stdout } = await execAsync(
-      `lark-cli base +record-list --base-token LrzibrgRsaviAQsiywBcpZQ4nwc --table-id ${tableId} --format json`
-    )
-    const data = JSON.parse(stdout)
-    if (data.ok && data.data?.data) {
-      return data.data.data
+    const response = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/bascnKtF2Kq88mBkHf7jv67q7Fg/tables/${tableId}/records`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    
+    const data = await response.json()
+    
+    if (data.code === 0 && data.data?.items) {
+      return data.data.items
     }
+    
+    console.log('API response:', data)
     return []
   } catch (error) {
     console.error('Failed to fetch records:', error)
@@ -43,21 +88,9 @@ export async function POST(request: Request) {
       
       for (const record of records) {
         let name = ''
-        if (Array.isArray(record)) {
-          for (let i = 0; i < record.length; i++) {
-            if (typeof record[i] === 'string' && record[i].includes('老师')) {
-              name = record[i]
-              break
-            }
-          }
-          if (!name) {
-            name = record[2] || record[7] || ''
-          }
-        } else if (typeof record === 'object') {
-          name = record.name || record.teacherName || record['老师姓名'] || record[2] || record[7] || ''
+        if (typeof record === 'object') {
+          name = record.fields?.name || record.name || record[2] || record[7] || ''
         }
-        
-        console.log('Checking teacher:', name, 'vs input:', username)
         
         if (name === username || name === `${username}老师`) {
           foundTeacher = record
@@ -72,7 +105,7 @@ export async function POST(request: Request) {
           data: {
             type: 'teacher',
             name: username,
-            id: foundTeacher[0],
+            id: foundTeacher.record_id || foundTeacher[0],
           },
         })
       } else {
@@ -89,30 +122,16 @@ export async function POST(request: Request) {
         })
       }
 
-      const classData = await execAsync(
-        `lark-cli base +record-list --base-token LrzibrgRsaviAQsiywBcpZQ4nwc --table-id ${CLASS_TABLE_ID} --format json`
-      )
-      const classJson = JSON.parse(classData.stdout)
+      const classRecords = await getRecords(CLASS_TABLE_ID)
       
       let classExists = false
       let targetClassRecordId = ''
-      let targetClassName = ''
-      if (classJson.ok && classJson.data?.data && classJson.data.record_id_list) {
-        const records = classJson.data.data
-        const recordIds = classJson.data.record_id_list
-        for (let i = 0; i < records.length; i++) {
-          const classRecord = records[i]
-          const cId = String(Array.isArray(classRecord) ? classRecord[0] || '' : '')
-          if (cId === classId) {
-            classExists = true
-            targetClassRecordId = recordIds[i] || ''
-            if (Array.isArray(classRecord)) {
-              targetClassName = classRecord[5] || classRecord[2] || '未命名班级'
-            } else {
-              targetClassName = classRecord.name || '未命名班级'
-            }
-            break
-          }
+      for (const classRecord of classRecords) {
+        const cId = String(classRecord.record_id || classRecord[0] || '')
+        if (cId === classId) {
+          classExists = true
+          targetClassRecordId = cId
+          break
         }
       }
       
@@ -131,17 +150,17 @@ export async function POST(request: Request) {
         let name = ''
         let studentClassRecordId = ''
         
-        if (Array.isArray(record)) {
-          name = record[2] || ''
-          const classLink = record[19]
-          if (Array.isArray(classLink) && classLink.length > 0 && typeof classLink[0] === 'object' && classLink[0].id) {
-            studentClassRecordId = classLink[0].id
-          }
-        } else if (typeof record === 'object') {
-          name = record.name || record[2] || ''
-          const classLink = record.classRecord || record[19]
-          if (Array.isArray(classLink) && classLink.length > 0 && typeof classLink[0] === 'object' && classLink[0].id) {
-            studentClassRecordId = classLink[0].id
+        if (typeof record === 'object') {
+          name = record.fields?.name || record.name || record[2] || ''
+          const classField = record.fields?.classRecord || record.fields?.class || record[19]
+          if (classField) {
+            if (typeof classField === 'string') {
+              studentClassRecordId = classField
+            } else if (Array.isArray(classField) && classField.length > 0) {
+              studentClassRecordId = classField[0].record_id || classField[0].id || String(classField[0])
+            } else if (typeof classField === 'object' && classField.record_id) {
+              studentClassRecordId = classField.record_id
+            }
           }
         }
         
@@ -158,7 +177,7 @@ export async function POST(request: Request) {
           data: {
             type: 'student',
             name: username,
-            id: Array.isArray(foundStudent) ? foundStudent[0] : (foundStudent.id || foundStudent[0]),
+            id: foundStudent.record_id || foundStudent[0],
             classId,
           },
         })
