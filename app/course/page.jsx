@@ -21,6 +21,8 @@ export default function CoursePage() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState('');
   const [contentError, setContentError] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [notLoggedIn, setNotLoggedIn] = useState(false);
 
   const processTextElements = (elements) => {
     const processedElements = [];
@@ -415,6 +417,24 @@ export default function CoursePage() {
   }, [parseSidebarData]);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const userName = params.get('name');
+    const userType = params.get('type');
+    
+    if (!userName) {
+      const storedUser = sessionStorage.getItem('currentUser');
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUserInfo(parsedUser);
+      } else {
+        setNotLoggedIn(true);
+        return;
+      }
+    } else {
+      setUserInfo({ name: userName, type: userType });
+      sessionStorage.setItem('currentUser', JSON.stringify({ name: userName, type: userType }));
+    }
+    
     fetchCourseData();
   }, [fetchCourseData]);
 
@@ -642,6 +662,30 @@ export default function CoursePage() {
     setIsVideoModalOpen(false);
     setCurrentVideoUrl('');
   };
+
+  if (notLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-xl max-w-md mx-4">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">请先登录</h2>
+          <p className="text-gray-600 mb-6">您需要先登录才能访问课件系统</p>
+          <button 
+            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-xl font-medium hover:from-purple-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            onClick={() => {
+              window.location.href = '/';
+            }}
+          >
+            返回登录
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
