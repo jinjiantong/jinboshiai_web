@@ -564,8 +564,47 @@ export default function CoursePage() {
         }
         return newSet;
       });
+    } else {
+      await loadCourseContent(item);
     }
+  };
+
+  const handleSubItemClick = async (item) => {
+    setSelectedItem(item);
+    setTimeout(() => {
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) {
+        mainContent.scrollTop = 0;
+      }
+    }, 100);
     
+    // 先展开侧边栏对应的项目
+    setExpandedItems(prev => {
+      const newSet = new Set(prev);
+      // 确保父级和当前项目都展开
+      if (courseData.length > 0) {
+        // 找到并展开父级项目
+        const findAndExpandParent = (items, targetId) => {
+          for (const parent of items) {
+            if (parent.children && parent.children.some(child => child.id === targetId)) {
+              newSet.add(parent.id);
+              return true;
+            }
+            if (parent.children && findAndExpandParent(parent.children, targetId)) {
+              return true;
+            }
+          }
+          return false;
+        };
+        findAndExpandParent(courseData, item.id);
+      }
+      return newSet;
+    });
+    
+    // 滚动到侧边栏选中的项目
+    scrollToSelectedItem(item.id);
+    
+    // 无论是否有子项目，都尝试加载内容
     await loadCourseContent(item);
   };
 
@@ -743,6 +782,7 @@ export default function CoursePage() {
               theme={theme}
               onImageClick={handleImageClick}
               onVideoClick={handleVideoClick}
+              onSubItemClick={handleSubItemClick}
             />
           </div>
         </div>

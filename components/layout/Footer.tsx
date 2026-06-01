@@ -44,6 +44,14 @@ export default function Footer() {
     e.preventDefault()
     setLoading(true)
     setMessage('')
+    
+    // 在用户点击的同步上下文中立即打开空白窗口，避免被浏览器拦截
+    let newWindow: Window | null = null
+    try {
+      newWindow = window.open('', '_blank')
+    } catch (err) {
+      console.warn('无法打开新窗口:', err)
+    }
 
     try {
       const response = await fetch('/api/login', {
@@ -69,13 +77,28 @@ export default function Footer() {
           setClassId('')
           setMessage('')
           const userType = loginType === 'teacher' ? 'teacher' : 'student'
-          window.open(`/dashboard?name=${encodeURIComponent(username)}&type=${userType}`, '_blank')
+          const dashboardUrl = `/dashboard?name=${encodeURIComponent(username)}&type=${userType}`
+          
+          // 使用之前打开的窗口，如果打开失败则在当前窗口跳转
+          if (newWindow) {
+            newWindow.location.href = dashboardUrl
+          } else {
+            window.location.href = dashboardUrl
+          }
         }, 1500)
       } else {
+        // 登录失败，关闭之前打开的空白窗口
+        if (newWindow) {
+          newWindow.close()
+        }
         setMessageType('error')
         setMessage(data.message)
       }
     } catch (error) {
+      // 出现错误，关闭之前打开的空白窗口
+      if (newWindow) {
+        newWindow.close()
+      }
       setMessageType('error')
       setMessage('登录失败，请稍后重试')
     } finally {

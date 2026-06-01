@@ -374,12 +374,12 @@ const getIconForTitle = (title) => {
   return defaultIcons[hash % defaultIcons.length];
 };
 
-export default function Content({ selectedItem, cachedContent, contentLoading, contentError, theme, onImageClick, onVideoClick }) {
+export default function Content({ selectedItem, cachedContent, contentLoading, contentError, theme, onImageClick, onVideoClick, onSubItemClick }) {
     const renderTextWithLinks = (textElements, title) => {
       if (textElements && textElements.length > 0) {
         return textElements.map((element, index) => 
           element.type === 'link' ? (
-            <span key={index} className="cursor-pointer hover:text-blue-600 transition-colors underline decoration-dashed underline-offset-4">
+            <span key={index} className="cursor-pointer hover:text-blue-600 transition-colors">
               {element.text}
             </span>
           ) : (
@@ -401,6 +401,58 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
             </div>
             <p className="text-gray-500 text-lg">请选择课程内容</p>
             <p className="text-gray-400 text-sm mt-2">从左侧目录中选择一个章节开始学习</p>
+          </div>
+        </div>
+      );
+    }
+
+    // 检查是否有内容链接
+    const hasLinkElement = selectedItem.textElements && 
+      selectedItem.textElements.some(el => el.type === 'link');
+    
+    // 只有当有子项目并且没有内容链接时，才显示目录列表
+    if (selectedItem.children && selectedItem.children.length > 0 && !hasLinkElement) {
+      return (
+        <div className="p-8">
+          <div className="mb-8">
+            <h2 className={`text-3xl font-bold mb-2 ${theme === 'purple' ? 'text-purple-800' : 'text-blue-800'}`}>
+              {renderTextWithLinks(selectedItem.textElements, selectedItem.title)}
+            </h2>
+            <p className="text-gray-500">请选择以下章节开始学习</p>
+          </div>
+          <div className="space-y-4">
+            {selectedItem.children.map((child, index) => (
+              <div 
+                key={child.id || index}
+                onClick={() => onSubItemClick && onSubItemClick(child)}
+                className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg ${
+                  theme === 'purple' 
+                    ? 'border-purple-200 hover:border-purple-400 bg-purple-50' 
+                    : 'border-blue-200 hover:border-blue-400 bg-blue-50'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                    theme === 'purple' ? 'bg-purple-200 text-purple-700' : 'bg-blue-200 text-blue-700'
+                  } font-bold text-lg`}>
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`text-xl font-semibold ${theme === 'purple' ? 'text-purple-800' : 'text-blue-800'}`}>
+                      {renderTextWithLinks(child.textElements, child.title)}
+                    </h3>
+                    {child.textElements && child.textElements.length > 0 && (
+                      <p className="text-gray-600 mt-2">
+                        点击查看详细内容
+                      </p>
+                    )}
+                  </div>
+                  <svg className={`w-6 h-6 ${theme === 'purple' ? 'text-purple-500' : 'text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       );
@@ -493,13 +545,21 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
   
     return (
       <div className="space-y-6">
+        {/* 显示当前选中项目的标题 */}
+        <div className="transition-all duration-500 ease-in-out p-10 rounded-xl shadow-lg bg-gradient-to-br from-white to-gray-50 border border-gray-200">
+          <h1 className="text-4xl font-bold text-gray-800 transition-all duration-300 mb-6">
+            {renderTextWithLinks(selectedItem.textElements, selectedItem.title)}
+          </h1>
+          <div className={`h-4 w-64 ${theme === 'purple' ? 'bg-purple-500' : 'bg-blue-500'} rounded-full`}></div>
+        </div>
+        
         {hasLinkContent && linkContent && linkContent.length > 0 && (
           <div className="space-y-12">
             {(() => {
               const renderedElements = [];
               let textBuffer = [];
               let textKey = 0;
-  
+
               for (let i = 0; i < linkContent.length; i++) {
                 const item = linkContent[i];
                 const isText = (item.type === 'text' || (item.level === 6 && !item.type)) && item.title && item.title.trim();
@@ -726,19 +786,10 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
         )}
   
         {!hasLinkContent && (
-          <div className="space-y-8">
-            <div className="transition-all duration-500 ease-in-out p-10 rounded-xl shadow-lg bg-gradient-to-br from-white to-gray-50 border border-gray-200">
-              <h1 className="text-5xl font-bold text-gray-800 transition-all duration-300 mb-8">
-                {renderTextWithLinks(selectedItem.textElements, selectedItem.title)}
-              </h1>
-              <div className={`h-4 w-64 ${theme === 'purple' ? 'bg-purple-500' : 'bg-blue-500'} rounded-full`}></div>
-            </div>
-  
-            <div className="transition-all duration-500 ease-in-out p-8 rounded-xl shadow-md bg-white border border-gray-200">
-              <p className="text-gray-600 text-lg">
-                点击左侧目录中的章节，即可查看详细内容。
-              </p>
-            </div>
+          <div className="transition-all duration-500 ease-in-out p-8 rounded-xl shadow-md bg-white border border-gray-200">
+            <p className="text-gray-600 text-lg">
+              点击左侧目录中的章节，即可查看详细内容。
+            </p>
           </div>
         )}
       </div>
