@@ -6,12 +6,6 @@ const CLASS_TABLE_ID = 'tblDDKeft6iLlGAx'
 
 const execAsync = promisify(exec)
 
-const mockClasses = [
-  ['1', '周二班', 'AI课程'],
-  ['2', '周三班', 'AI课程'],
-  ['3', '周四班', 'AI课程'],
-]
-
 async function getRecords(tableId: string): Promise<any[]> {
   try {
     const { stdout } = await execAsync(
@@ -21,11 +15,10 @@ async function getRecords(tableId: string): Promise<any[]> {
     if (data.ok && data.data?.data) {
       return data.data.data
     }
-    console.log('No data from Feishu, using mock data')
-    return mockClasses
+    return []
   } catch (error) {
-    console.error('Failed to fetch records from Feishu, using mock data:', error)
-    return mockClasses
+    console.error('Failed to fetch records:', error)
+    return []
   }
 }
 
