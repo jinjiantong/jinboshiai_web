@@ -43,13 +43,23 @@ export async function POST(request: Request) {
       
       for (const record of records) {
         let name = ''
-        if (Array.isArray(record) && record[7]) {
-          name = record[7]
-        } else if (typeof record === 'object' && (record.name || record[7])) {
-          name = record.name || record[7]
+        if (Array.isArray(record)) {
+          for (let i = 0; i < record.length; i++) {
+            if (typeof record[i] === 'string' && record[i].includes('老师')) {
+              name = record[i]
+              break
+            }
+          }
+          if (!name) {
+            name = record[2] || record[7] || ''
+          }
+        } else if (typeof record === 'object') {
+          name = record.name || record.teacherName || record['老师姓名'] || record[2] || record[7] || ''
         }
         
-        if (name === username) {
+        console.log('Checking teacher:', name, 'vs input:', username)
+        
+        if (name === username || name === `${username}老师`) {
           foundTeacher = record
           break
         }
