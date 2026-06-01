@@ -4,9 +4,10 @@ import settings from '../../../setting.json'
 const TEACHER_TABLE_ID = 'tblxN3e1fyhOMTSt'
 const STUDENT_TABLE_ID = 'tblhnKUAyBJbpoDo'
 const CLASS_TABLE_ID = 'tblDDKeft6iLlGAx'
+const APP_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc'
 
-let cachedToken: string = ''
-let tokenExpiryTime: number = 0
+let cachedToken = ''
+let tokenExpiryTime = 0
 
 async function getTenantAccessToken(): Promise<string> {
   const now = Date.now()
@@ -18,9 +19,7 @@ async function getTenantAccessToken(): Promise<string> {
   try {
     const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         app_id: settings.data.app_id,
         app_secret: settings.data.app_secret,
@@ -32,63 +31,29 @@ async function getTenantAccessToken(): Promise<string> {
     if (data.code === 0 && data.tenant_access_token) {
       cachedToken = data.tenant_access_token
       tokenExpiryTime = now + (data.expire - 60) * 1000
+      console.log('Got new tenant_access_token')
       return cachedToken
-    } else {
-      console.error('Failed to get tenant_access_token:', data)
-      throw new Error(data.msg || 'Failed to get access token')
     }
+    
+    console.error('Failed to get tenant_access_token:', data)
+    throw new Error(data.msg || 'Failed to get access token')
   } catch (error) {
     console.error('Error getting tenant_access_token:', error)
     throw error
   }
 }
 
-let cachedAppToken: string = ''
-
-async function getBitableAppToken(): Promise<string> {
-  if (cachedAppToken) {
-    return cachedAppToken
-  }
-  
-  const accessToken = await getTenantAccessToken()
-  
-  try {
-    const response = await fetch('https://open.feishu.cn/open-apis/bitable/v1/apps', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
-    
-    const data = await response.json()
-    
-    if (data.code === 0 && data.data?.items && data.data.items.length > 0) {
-      cachedAppToken = data.data.items[0].app_token
-      console.log('Found bitable app_token:', cachedAppToken)
-      return cachedAppToken
-    }
-    
-    console.error('Failed to get bitable app_token:', data)
-    throw new Error('Failed to get bitable app_token')
-  } catch (error) {
-    console.error('Error getting bitable app_token:', error)
-    throw error
-  }
-}
-
 async function getRecords(tableId: string): Promise<any[]> {
   const accessToken = await getTenantAccessToken()
-  const appToken = await getBitableAppToken()
   
   try {
-    const response = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${appToken}/tables/${tableId}/records`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
+    const response = await fetch(
+      `https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${tableId}/records?page_size=500`,
+      {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      }
+    )
     
     const data = await response.json()
     
@@ -96,7 +61,7 @@ async function getRecords(tableId: string): Promise<any[]> {
       return data.data.items
     }
     
-    console.log('API response:', data)
+    console.error('API error:', data)
     return []
   } catch (error) {
     console.error('Failed to fetch records:', error)
@@ -110,10 +75,7 @@ export async function POST(request: Request) {
     const { type, username, classId } = body
 
     if (!username) {
-      return NextResponse.json({
-        success: false,
-        message: '请输入用户名',
-      })
+      return NextResponse.json({ success: false, message: '请输入用户名' })
     }
 
     if (type === 'teacher') {
@@ -122,10 +84,7 @@ export async function POST(request: Request) {
       let foundTeacher = null
       
       for (const record of records) {
-        let name = ''
-        if (typeof record === 'object') {
-          name = record.fields?.name || record.name || record[2] || record[7] || ''
-        }
+        const name = record.fields?.['老师姓名'] || record.fields?.name || ''
         
         if (name === username || name === `${username}老师`) {
           foundTeacher = record
@@ -140,7 +99,7 @@ export async function POST(request: Request) {
           data: {
             type: 'teacher',
             name: username,
-            id: foundTeacher.record_id || foundTeacher[0],
+            id: foundTeacher.record_id,
           },
         })
       } else {
@@ -151,30 +110,7 @@ export async function POST(request: Request) {
       }
     } else if (type === 'student') {
       if (!classId) {
-        return NextResponse.json({
-          success: false,
-          message: '请选择所属班级',
-        })
-      }
-
-      const classRecords = await getRecords(CLASS_TABLE_ID)
-      
-      let classExists = false
-      let targetClassRecordId = ''
-      for (const classRecord of classRecords) {
-        const cId = String(classRecord.record_id || classRecord[0] || '')
-        if (cId === classId) {
-          classExists = true
-          targetClassRecordId = cId
-          break
-        }
-      }
-      
-      if (!classExists) {
-        return NextResponse.json({
-          success: false,
-          message: '班级不存在',
-        })
+        return NextResponse.json({ success: false, message: '请选择所属班级' })
       }
 
       const studentRecords = await getRecords(STUDENT_TABLE_ID)
@@ -182,24 +118,19 @@ export async function POST(request: Request) {
       let foundStudent = null
       
       for (const record of studentRecords) {
-        let name = ''
-        let studentClassRecordId = ''
+        const name = record.fields?.['学员姓名'] || record.fields?.name || ''
+        const classRef = record.fields?.['所属班级']
         
-        if (typeof record === 'object') {
-          name = record.fields?.name || record.name || record[2] || ''
-          const classField = record.fields?.classRecord || record.fields?.class || record[19]
-          if (classField) {
-            if (typeof classField === 'string') {
-              studentClassRecordId = classField
-            } else if (Array.isArray(classField) && classField.length > 0) {
-              studentClassRecordId = classField[0].record_id || classField[0].id || String(classField[0])
-            } else if (typeof classField === 'object' && classField.record_id) {
-              studentClassRecordId = classField.record_id
-            }
+        let studentClassId = ''
+        if (classRef) {
+          if (Array.isArray(classRef) && classRef[0]) {
+            studentClassId = classRef[0]
+          } else if (typeof classRef === 'string') {
+            studentClassId = classRef
           }
         }
         
-        if (name === username && studentClassRecordId === targetClassRecordId) {
+        if (name === username && studentClassId === classId) {
           foundStudent = record
           break
         }
@@ -212,7 +143,7 @@ export async function POST(request: Request) {
           data: {
             type: 'student',
             name: username,
-            id: foundStudent.record_id || foundStudent[0],
+            id: foundStudent.record_id,
             classId,
           },
         })
@@ -223,16 +154,10 @@ export async function POST(request: Request) {
         })
       }
     } else {
-      return NextResponse.json({
-        success: false,
-        message: '请选择登录类型',
-      })
+      return NextResponse.json({ success: false, message: '请选择登录类型' })
     }
   } catch (error) {
     console.error('Login error:', error)
-    return NextResponse.json({
-      success: false,
-      message: '登录失败，请稍后重试',
-    })
+    return NextResponse.json({ success: false, message: '登录失败，请稍后重试' })
   }
 }

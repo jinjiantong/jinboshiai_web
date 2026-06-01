@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server'
 import settings from '../../../setting.json'
 
 const CLASS_TABLE_ID = 'tblDDKeft6iLlGAx'
+const APP_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc'
 
-let cachedToken: string = ''
-let tokenExpiryTime: number = 0
+let cachedToken = ''
+let tokenExpiryTime = 0
 
 async function getTenantAccessToken(): Promise<string> {
   const now = Date.now()
@@ -16,9 +17,7 @@ async function getTenantAccessToken(): Promise<string> {
   try {
     const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         app_id: settings.data.app_id,
         app_secret: settings.data.app_secret,
@@ -30,63 +29,29 @@ async function getTenantAccessToken(): Promise<string> {
     if (data.code === 0 && data.tenant_access_token) {
       cachedToken = data.tenant_access_token
       tokenExpiryTime = now + (data.expire - 60) * 1000
+      console.log('Got new tenant_access_token')
       return cachedToken
-    } else {
-      console.error('Failed to get tenant_access_token:', data)
-      throw new Error(data.msg || 'Failed to get access token')
     }
+    
+    console.error('Failed to get tenant_access_token:', data)
+    throw new Error(data.msg || 'Failed to get access token')
   } catch (error) {
     console.error('Error getting tenant_access_token:', error)
     throw error
   }
 }
 
-let cachedAppToken: string = ''
-
-async function getBitableAppToken(): Promise<string> {
-  if (cachedAppToken) {
-    return cachedAppToken
-  }
-  
-  const accessToken = await getTenantAccessToken()
-  
-  try {
-    const response = await fetch('https://open.feishu.cn/open-apis/bitable/v1/apps', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
-    
-    const data = await response.json()
-    
-    if (data.code === 0 && data.data?.items && data.data.items.length > 0) {
-      cachedAppToken = data.data.items[0].app_token
-      console.log('Found bitable app_token:', cachedAppToken)
-      return cachedAppToken
-    }
-    
-    console.error('Failed to get bitable app_token:', data)
-    throw new Error('Failed to get bitable app_token')
-  } catch (error) {
-    console.error('Error getting bitable app_token:', error)
-    throw error
-  }
-}
-
 async function getRecords(tableId: string): Promise<any[]> {
   const accessToken = await getTenantAccessToken()
-  const appToken = await getBitableAppToken()
   
   try {
-    const response = await fetch(`https://open.feishu.cn/open-apis/bitable/v1/apps/${appToken}/tables/${tableId}/records`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
+    const response = await fetch(
+      `https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${tableId}/records?page_size=500`,
+      {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      }
+    )
     
     const data = await response.json()
     
@@ -94,7 +59,7 @@ async function getRecords(tableId: string): Promise<any[]> {
       return data.data.items
     }
     
-    console.log('API response:', data)
+    console.error('API error:', data)
     return []
   } catch (error) {
     console.error('Failed to fetch records:', error)
@@ -106,27 +71,14 @@ export async function GET() {
   try {
     const records = await getRecords(CLASS_TABLE_ID)
     
-    const classes = records.map((record: any) => {
-      let name = '未命名班级'
-      let id = ''
-      
-      if (typeof record === 'object') {
-        id = String(record.record_id || record[0] || '')
-        name = record.fields?.name || record.name || record[2] || record[5] || '未命名班级'
-      }
-      
-      return {
-        id: String(id),
-        name: String(name),
-      }
-    }).filter(cls => cls.id && cls.name)
+    const classes = records.map((record: any) => ({
+      id: String(record.record_id || ''),
+      name: String(record.fields?.name || record.fields?.['班级名称'] || '未命名班级'),
+    })).filter(cls => cls.id && cls.name)
 
     return NextResponse.json({ success: true, data: classes })
   } catch (error) {
     console.error('Error fetching classes:', error)
-    return NextResponse.json({
-      success: false,
-      message: '获取班级列表失败',
-    })
+    return NextResponse.json({ success: false, message: '获取班级列表失败' })
   }
 }
