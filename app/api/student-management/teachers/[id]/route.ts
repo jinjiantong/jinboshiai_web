@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
+import { validateAndConvertFields } from '../../utils/dataProcessor';
 
 const APP_ID = 'cli_a96bb944bef89bcb';
 const APP_SECRET = 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp';
@@ -39,11 +40,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const token = await getAccessToken();
     const body = await request.json();
     const recordId = params.id;
+    const fields = body.fields || body;
+    const convertedFields = validateAndConvertFields(fields, 'teachers');
     
     const response = await axios.put(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TEACHERS_TABLE_ID}/records/${recordId}`,
       {
-        fields: body
+        fields: convertedFields
       },
       {
         headers: { 

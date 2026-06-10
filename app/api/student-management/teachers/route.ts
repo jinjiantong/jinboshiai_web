@@ -81,7 +81,7 @@ export async function POST(request: Request) {
     const token = await getAccessToken();
     const body = await request.json();
     
-    const fields = validateAndConvertFields(body, 'teachers');
+    const fields = validateAndConvertFields(body.fields || body, 'teachers');
     
     const response = await axios.post(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TEACHERS_TABLE_ID}/records`,
@@ -107,11 +107,11 @@ export async function PUT(request: Request) {
   try {
     const token = await getAccessToken();
     const body = await request.json();
-    const recordId = body.record_id;
+    const recordId = body.recordId || body.record_id;
     let fields = body.fields || {};
     
     if (!recordId) {
-      return errorResponse('Missing record_id', 400);
+      return errorResponse('缺少记录ID', 400);
     }
     
     delete fields['管理班级分类'];

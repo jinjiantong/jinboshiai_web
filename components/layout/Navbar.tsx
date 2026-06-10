@@ -35,8 +35,8 @@ export default function Navbar() {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="text-2xl font-bold text-slate-800">
-              <span className="text-primary">金博士</span>AI
+            <Link href="/" className="flex items-center">
+              <img src="/logo_touming.png" alt="金博士AI Logo" className="h-20 w-auto" style={{ imageRendering: 'auto' }} />
             </Link>
           </div>
 

@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     const token = await getAccessToken();
     const body = await request.json();
     
-    const convertedFields = validateAndConvertFields(body, 'attendance');
+    const convertedFields = validateAndConvertFields(body.fields || body, 'attendance');
     
     const response = await axios.post(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/LrzibrgRsaviAQsiywBcpZQ4nwc/tables/${ATTENDANCE_TABLE_ID}/records`,

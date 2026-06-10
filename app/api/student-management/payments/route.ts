@@ -51,7 +51,7 @@ async function fetchFromLarkApi<T>(url: string, method: 'GET' | 'POST' | 'PUT' |
     },
     data,
   });
-
+  
   if (response.data.code === 0) {
     return response.data.data;
   } else {
@@ -86,8 +86,9 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const convertedFields = validateAndConvertFields(body, 'payments');
-
+    const inputFields = body.fields || body;
+    const convertedFields = validateAndConvertFields(inputFields, 'payments');
+    
     const data = await fetchFromLarkApi<any>(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${PAYMENTS_TABLE_ID}/records`,
       'POST',
@@ -105,22 +106,24 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { record_id, ...fields } = await request.json();
+    const body = await request.json();
+    const recordId = body.recordId || body.record_id;
 
-    if (!record_id) {
-      return errorResponse('record_id is required', 400);
+    if (!recordId) {
+      return errorResponse('缺少记录ID', 400);
     }
 
+    const fields = body.fields || {};
     const convertedFields = validateAndConvertFields(fields, 'payments');
 
     const data = await fetchFromLarkApi<any>(
-      `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${PAYMENTS_TABLE_ID}/records/${record_id}`,
+      `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${PAYMENTS_TABLE_ID}/records/${recordId}`,
       'PUT',
       { fields: convertedFields }
     );
 
     listCache.invalidate(`payments_list`);
-    recordCache.invalidate(`payments_${record_id}`);
+    recordCache.invalidate(`payments_${recordId}`);
 
     return successResponse(data, '缴费记录更新成功');
   } catch (error: any) {

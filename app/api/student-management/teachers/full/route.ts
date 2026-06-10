@@ -92,7 +92,7 @@ export async function GET() {
         if (classIds.length > 0) {
           teacher.fields['管理班级分类'] = classIds.map((id: string) => {
             const info = classIdToInfo.get(id);
-            return info?.['班级分类'] || '班级';
+            return info?.['班级名称'] || '未命名班级';
           });
         }
       });

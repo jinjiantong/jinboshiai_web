@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:automated": "npx ts-node --esm tests/automated-test.ts",
+    "test:comprehensive": "npx ts-node --esm tests/comprehensive-test.ts"
   },
   "dependencies": {
     "axios": "^1.16.1",

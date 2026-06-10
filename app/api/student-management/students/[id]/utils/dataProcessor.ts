@@ -46,13 +46,19 @@ export const TABLE_CONFIGS: Record<string, TableConfig> = {
     fields: [
       { name: '学员ID', type: 'text' },
       { name: '姓名', type: 'text' },
-      { name: '性别', type: 'select' },
+      { name: '学员联系人', type: 'link' },
+      { name: '性别', type: 'text' },
       { name: '年龄', type: 'number' },
       { name: '联系电话', type: 'text' },
       { name: '微信', type: 'text' },
-      { name: '来源渠道', type: 'select' },
+      { name: '来源渠道', type: 'text' },
       { name: '报名日期', type: 'date' },
-      { name: '学习状态', type: 'select' },
+      { name: '学习状态', type: 'text' },
+      { name: '备注', type: 'text' },
+      { name: '所学课程', type: 'checkbox' },
+      { name: '报名班级', type: 'link' },
+      { name: '授课老师', type: 'link' },
+      { name: '旷课次数', type: 'text' },
     ],
   },
   courses: {
@@ -153,7 +159,35 @@ export function processFieldValue(value: any, fieldType: FieldConfig['type']): a
       return simplifyRichText(value);
       
     case 'checkbox':
-      return Boolean(value);
+      if (Array.isArray(value)) {
+        return value.flatMap(v => {
+          if (typeof v === 'string') {
+            return [v];
+          }
+          if (v && typeof v === 'object') {
+            if (v.record_ids && Array.isArray(v.record_ids)) {
+              return v.record_ids;
+            }
+            if (v.record_id) {
+              return [v.record_id];
+            }
+            return [];
+          }
+          return [];
+        });
+      }
+      if (typeof value === 'string') {
+        return [value];
+      }
+      if (value && typeof value === 'object') {
+        if (value.record_ids && Array.isArray(value.record_ids)) {
+          return value.record_ids;
+        }
+        if (value.record_id) {
+          return [value.record_id];
+        }
+      }
+      return [];
       
     case 'date':
       if (typeof value === 'number') return value;
@@ -205,7 +239,10 @@ export function validateAndConvertFields(
   
   config.fields.forEach((field) => {
     if (fields[field.name] !== undefined) {
-      result[field.name] = processFieldValue(fields[field.name], field.type);
+      const processed = processFieldValue(fields[field.name], field.type);
+      if (processed !== undefined) {
+        result[field.name] = processed;
+      }
     }
   });
   

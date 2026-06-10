@@ -75,7 +75,8 @@ export async function POST(request: Request) {
     const token = await getAccessToken();
     const body = await request.json();
     
-    const convertedFields = validateAndConvertFields(body, 'students');
+    const inputFields = body.fields || body;
+    const convertedFields = validateAndConvertFields(inputFields, 'students');
     
     const response = await axios.post(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/LrzibrgRsaviAQsiywBcpZQ4nwc/tables/${STUDENTS_TABLE_ID}/records`,
@@ -106,11 +107,16 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { recordId, fields } = body;
     
+    console.log('=== PUT /api/student-management/students ===');
+    console.log('recordId:', recordId);
+    console.log('原始fields:', JSON.stringify(fields, null, 2));
+    
     if (!recordId) {
       return errorResponse('缺少记录ID', 400);
     }
     
     const convertedFields = validateAndConvertFields(fields, 'students');
+    console.log('转换后fields:', JSON.stringify(convertedFields, null, 2));
     
     const response = await axios.put(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/LrzibrgRsaviAQsiywBcpZQ4nwc/tables/${STUDENTS_TABLE_ID}/records/${recordId}`,
@@ -122,7 +128,9 @@ export async function PUT(request: Request) {
         }
       }
     );
-
+    
+    console.log('飞书API响应:', response.data);
+    
     if (response.data.code === 0) {
       listCache.invalidate('students:list');
       recordCache.invalidate(`students:${recordId}`);
@@ -132,6 +140,7 @@ export async function PUT(request: Request) {
     }
   } catch (error: any) {
     console.error('更新学员错误:', error);
+    console.error('错误堆栈:', error.stack);
     return errorResponse(error.message || '更新学员失败');
   }
 }

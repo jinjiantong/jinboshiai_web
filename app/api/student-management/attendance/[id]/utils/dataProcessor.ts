@@ -78,9 +78,15 @@ export const TABLE_CONFIGS: Record<string, TableConfig> = {
   attendance: {
     tableId: 'tbl28gcD5cNjhYg8',
     fields: [
+      { name: '考勤ID', type: 'text' },
+      { name: '上课日期', type: 'date' },
       { name: '签到状态', type: 'select' },
-      { name: '签到方式', type: 'select' },
+      { name: '签到方式', type: 'text' },
       { name: '请假原因', type: 'text' },
+      { name: '补签记录', type: 'text' },
+      { name: '关联班级', type: 'checkbox' },
+      { name: '关联学员', type: 'checkbox' },
+      { name: '出勤率', type: 'text' },
     ],
   },
 };

@@ -41,6 +41,31 @@ async function getAccessToken(): Promise<string> {
   }
 }
 
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  try {
+    const token = await getAccessToken();
+    const recordId = params.id;
+    
+    const response = await axios.get(
+      `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLE_ID}/records/${recordId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+
+    if (response.data.code === 0) {
+      const record = response.data.data;
+      record.fields = validateAndConvertFields(record.fields || {}, 'courses');
+      return successResponse(record, '课程信息获取成功');
+    } else {
+      throw new Error(`Failed to get course: ${response.data.msg}`);
+    }
+  } catch (error: any) {
+    console.error('Error getting course:', error);
+    return errorResponse(error.message || 'Failed to get course');
+  }
+}
+
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const token = await getAccessToken();

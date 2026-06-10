@@ -121,9 +121,7 @@ export default function Footer() {
             {/* 品牌信息 */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl font-bold">
-                  <span className="text-primary">金博士</span>AI
-                </span>
+                <img src="/logo.png" alt="金博士AI Logo" className="h-20 w-auto" style={{ imageRendering: 'auto' }} />
               </div>
               <p className="text-slate-400 mb-6 leading-relaxed">
                 专注零基础AI技能实战教学，让AI不再是小众技术，而是人人可用的效率与成长工具。
