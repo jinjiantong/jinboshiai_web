@@ -1,47 +1,101 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { retrieve } from '@/lib/rag'
 import { chatCompletion } from '@/lib/embedding'
+import mysql from 'mysql2/promise'
+import { createClient } from 'redis'
 
-const SYSTEM_PROMPT = `你是一个专业的金博士AI课程咨询助手。
+const SYSTEM_PROMPT = `你是金博士AI课程咨询助手。
 
-【角色定义】
-你是金博士AI的智能课程顾问，专门帮助用户解答关于AI课程的各种问题。
+【重要原则】
+1. 只回答与课程相关的问题
+2. 如果知识库没有相关信息，诚实地告诉用户："这个问题我暂时无法回答，建议您联系课程顾问获得更详细的解答"
+3. 不要编造任何价格、优惠、课程时长等信息
+4. 回答简洁专业，不超过200字
 
-【课程体系】
-金博士AI课程体系包含8大核心章节：
-1. 课程简介 - AI学习路径整体介绍
-2. 一图吃透AI - 理解AI基本原理和应用场景
-3. 为啥我的AI不好用 - 精准提问技巧和方法论
-4. 一切皆技能 - 技能拆解与AI工作流设计
-5. AI办公 - AI辅助办公的高效应用
-6. 0基础玩转AI绘图 - Midjourney、Stable Diffusion实战
-7. 创作爆款短视频 - AI视频生成与剪辑技巧
-8. AI+行业实战应用 - 企业级AI解决方案
-
-【课程特色】
-- 零基础友好：无需编程基础，从入门到精通
-- 实战导向：所有课程围绕真实项目展开，学完就能用
-- 持续服务：学习社群+答疑服务，陪伴式成长
-- 权威认证：结业后可获得行业认可的能力证书
-
-【回答原则】
-1. 专业友好：用专业但易懂的语言回答
-2. 针对性强：根据用户问题推荐相关课程
-3. 行动引导：鼓励用户咨询报名
-4. 基于知识库：优先使用提供的参考资料回答
+【课程信息】
+- 金博士AI课程体系包含8大核心章节
+- 零基础友好，无需编程基础
+- 实战导向，学完就能用
+- 持续服务，学习社群+答疑
 
 【联系方式】
-- 电话：15811055744
-- 邮箱：26256649@qq.com
-- 微信：jinboshi-ai
+如有疑问，请联系：电话15811055744，邮箱26256649@qq.com`
 
-请用中文回答，保持友好专业的语气。回答简洁有力，不超过200字。`
+let redisClient: ReturnType<typeof createClient> | null = null
+
+async function getRedisClient() {
+  if (!redisClient) {
+    try {
+      redisClient = createClient({
+        url: `redis://${process.env.REDIS_HOST || '82.156.230.158'}:${process.env.REDIS_PORT || '6379'}`
+      })
+      redisClient.on('error', (err) => console.error('Redis Error:', err))
+      await redisClient.connect()
+      console.log('Redis connected')
+    } catch (error) {
+      console.error('Redis connect error:', error)
+      redisClient = null
+    }
+  }
+  return redisClient
+}
+
+async function getCachedResponse(question: string) {
+  try {
+    const client = await getRedisClient()
+    if (!client) return null
+    const cacheKey = `chat:${Buffer.from(question.trim()).toString('base64')}`
+    const cached = await client.get(cacheKey)
+    if (cached) {
+      console.log('Redis cache hit:', cacheKey)
+      return JSON.parse(cached)
+    }
+  } catch (error) {
+    console.error('Redis get error:', error)
+  }
+  return null
+}
+
+async function setCachedResponse(question: string, response: any) {
+  try {
+    const client = await getRedisClient()
+    if (!client) return
+    const cacheKey = `chat:${Buffer.from(question.trim()).toString('base64')}`
+    await client.setEx(cacheKey, 3600, JSON.stringify(response))
+    console.log('Redis cache set:', cacheKey)
+  } catch (error) {
+    console.error('Redis set error:', error)
+  }
+}
+
+async function saveToDatabase(sessionId: string, userMessage: string, aiMessage: string, sources: any[]) {
+  try {
+    const pool = mysql.createPool({
+      host: process.env.MYSQL_HOST || '82.156.230.158',
+      port: parseInt(process.env.MYSQL_PORT || '3306'),
+      user: process.env.MYSQL_USER || 'chatbot_user',
+      password: process.env.MYSQL_PASSWORD || 'chatbot_pass_2024',
+      database: process.env.MYSQL_DATABASE || 'chatbot',
+      waitForConnections: true,
+      connectionLimit: 5,
+      charset: 'utf8mb4'
+    })
+
+    await pool.query(`INSERT IGNORE INTO chat_sessions (session_id) VALUES (?)`, [sessionId])
+    await pool.query(`INSERT INTO chat_messages (session_id, role, content, source_used) VALUES (?, 'user', ?, NULL)`, [sessionId, userMessage])
+    await pool.query(`INSERT INTO chat_messages (session_id, role, content, source_used) VALUES (?, 'assistant', ?, ?)`, [sessionId, aiMessage, JSON.stringify(sources)])
+
+    await pool.end()
+  } catch (error) {
+    console.error('Failed to save to database:', error)
+  }
+}
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
 
   try {
-    const { message, sessionId, history } = await request.json()
+    const { message, sessionId } = await request.json()
 
     if (!message) {
       return NextResponse.json(
@@ -50,33 +104,59 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const ragResult = await retrieve(message)
+    const currentSessionId = sessionId || `session-${Date.now()}`
 
-    let contextPrompt = ''
-    if (ragResult.found && ragResult.context) {
-      contextPrompt = `\n\n【参考资料】\n${ragResult.context}\n\n请基于以上参考资料回答用户问题。如果参考资料中有相关信息，请优先使用参考资料中的内容。`
+    const cachedResult = await getCachedResponse(message)
+    if (cachedResult) {
+      return NextResponse.json({
+        success: true,
+        message: cachedResult.message,
+        sources: cachedResult.sources,
+        tokens: cachedResult.tokens || 0,
+        responseTime: Date.now() - startTime,
+        sessionId: currentSessionId,
+        cached: true
+      })
     }
 
-    const fullPrompt = SYSTEM_PROMPT + contextPrompt
+    const ragResult = await retrieve(message)
 
-    const messages = [
-      { role: 'system', content: fullPrompt },
-      ...(history || []).slice(-6).map((m: any) => ({
-        role: m.role,
-        content: m.content
-      })),
-      { role: 'user', content: message }
-    ]
+    let aiMessage = ''
+    let sources: any[] = []
 
-    const response = await chatCompletion(messages)
+    if (!ragResult.found || !ragResult.context) {
+      aiMessage = '抱歉，关于这个问题我暂时无法回答。建议您联系课程顾问获得更详细的解答。\n\n📞 电话：15811055744\n📧 邮箱：26256649@qq.com\n💬 微信：jinboshi-ai'
+    } else {
+      const contextPrompt = `${SYSTEM_PROMPT}
+
+【用户问题】
+${message}
+
+【相关知识】
+${ragResult.context}
+
+请根据以上知识回答用户问题。如果知识库没有相关信息，请诚实地告诉用户联系顾问。`
+
+      const response = await chatCompletion([
+        { role: 'system', content: contextPrompt },
+        { role: 'user', content: message }
+      ])
+
+      aiMessage = response.content
+      sources = ragResult.sources
+    }
+
+    await setCachedResponse(message, { message: aiMessage, sources })
+    await saveToDatabase(currentSessionId, message, aiMessage, sources)
 
     return NextResponse.json({
       success: true,
-      message: response.content,
-      sources: ragResult.sources,
-      tokens: response.tokens,
+      message: aiMessage,
+      sources: sources,
+      tokens: 0,
       responseTime: Date.now() - startTime,
-      sessionId: sessionId || `session-${Date.now()}`
+      sessionId: currentSessionId,
+      cached: false
     })
 
   } catch (error) {
@@ -84,7 +164,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message: '抱歉，服务暂时不可用，请稍后再试或联系客服：15811055744'
+        message: '服务暂时不可用，请稍后再试或联系：15811055744'
       },
       { status: 500 }
     )

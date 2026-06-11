@@ -3,6 +3,7 @@ import { getEmbedding } from './embedding'
 
 const COLLECTION_NAME = 'chatbot_knowledge'
 const TOP_K = 3
+const VECTOR_DIMENSION = 1536
 
 interface RAGResult {
   context: string
@@ -51,16 +52,13 @@ export async function initKnowledgeBase(knowledgeItems: any[]): Promise<number> 
   try {
     const exists = await vectorDB.collectionExists(COLLECTION_NAME)
     
-    if (!exists) {
-      console.log('Creating collection...')
-      await vectorDB.createCollection(COLLECTION_NAME, 1024)
-    } else {
-      const count = await vectorDB.getCollectionPointsCount(COLLECTION_NAME)
-      if (count > 0) {
-        console.log(`Collection already has ${count} vectors`)
-        return count
-      }
+    if (exists) {
+      console.log('Deleting existing collection...')
+      await vectorDB.deleteCollection(COLLECTION_NAME)
     }
+
+    console.log('Creating collection with dimension:', VECTOR_DIMENSION)
+    await vectorDB.createCollection(COLLECTION_NAME, VECTOR_DIMENSION)
 
     const vectors = []
     
@@ -84,6 +82,8 @@ export async function initKnowledgeBase(knowledgeItems: any[]): Promise<number> 
             keywords: item.keywords || []
           }
         })
+      } else {
+        console.log(`Skipping ${item.title}: no vector generated`)
       }
       
       await new Promise(r => setTimeout(r, 300))

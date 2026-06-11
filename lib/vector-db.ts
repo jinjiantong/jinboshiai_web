@@ -24,7 +24,7 @@ export class QdrantClient {
     this.baseUrl = `http://${host}:${port}`
   }
 
-  async createCollection(name: string, dimension: number = 1024): Promise<void> {
+  async createCollection(name: string, dimension: number = 1536): Promise<void> {
     const response = await fetch(`${this.baseUrl}/collections/${name}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -72,7 +72,7 @@ export class QdrantClient {
         vector,
         limit: topK,
         with_payload: true,
-        score_threshold: 0.5
+        score_threshold: 0.05
       })
     })
 

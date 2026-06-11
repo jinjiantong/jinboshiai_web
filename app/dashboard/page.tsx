@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { LogOut, User, GraduationCap, BookOpen, ClipboardList, Users, Clock, FileText } from 'lucide-react'
+import { LogOut, User, GraduationCap, BookOpen, ClipboardList, Users, Clock, FileText, Bot, Sparkles } from 'lucide-react'
 
 export default function Dashboard() {
   const [userInfo, setUserInfo] = useState({ name: '', type: '' })
@@ -135,6 +135,22 @@ export default function Dashboard() {
             <h3 className="text-lg font-semibold text-gray-800 mb-1">上课管理系统</h3>
             <p className="text-sm text-gray-500">管理上课安排</p>
           </button>
+
+          <Link href="/admin/chatbot" target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
+            <div className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-cyan-50 transition-colors">
+              <Bot className="w-7 h-7 text-cyan-600 group-hover:scale-110 transition-transform" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-1">智能客服管理</h3>
+            <p className="text-sm text-gray-500">管理知识库和同步</p>
+          </Link>
+
+          <Link href="/admin/cases" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-br from-primary/5 to-purple-50 rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
+            <div className="w-14 h-14 bg-gradient-to-br from-primary to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Sparkles className="w-7 h-7 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-1">实验室企业案例</h3>
+            <p className="text-sm text-gray-500">金博士AI技术案例展示</p>
+          </Link>
         </div>
       </main>
     </div>
