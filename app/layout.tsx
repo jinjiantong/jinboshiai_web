@@ -1,4 +1,5 @@
 import './globals.css'
+import Chatbot from '@/components/Chatbot'
 
 export const metadata = {
   title: '金博士AI - 零基础AI实战教育培训',
@@ -12,7 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Chatbot />
+      </body>
     </html>
   )
 }
