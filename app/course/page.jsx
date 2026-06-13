@@ -15,7 +15,7 @@ export default function CoursePage() {
   const [error, setError] = useState(null);
   const [expandedItems, setExpandedItems] = useState(new Set());
   const [cachedContent, setCachedContent] = useState({});
-  const [theme, setTheme] = useState('purple');
+  const [theme, setTheme] = useState('indigo');
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState('');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -704,7 +704,7 @@ export default function CoursePage() {
 
   if (notLoggedIn) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center p-8 bg-white rounded-2xl shadow-xl max-w-md mx-4">
           <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -714,7 +714,7 @@ export default function CoursePage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">请先登录</h2>
           <p className="text-gray-600 mb-6">您需要先登录才能访问课件系统</p>
           <button 
-            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-xl font-medium hover:from-purple-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            className="bg-gradient-to-r from-indigo-600 to-cyan-600 text-white px-8 py-3 rounded-xl font-medium hover:from-indigo-700 hover:to-cyan-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
             onClick={() => {
               window.location.href = '/';
             }}
@@ -730,7 +730,7 @@ export default function CoursePage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className={`animate-spin rounded-full h-16 w-16 border-4 ${theme === 'purple' ? 'border-purple-500' : 'border-blue-500'} border-t-transparent`}></div>
+          <div className={`animate-spin rounded-full h-16 w-16 border-4 ${theme === 'indigo' ? 'border-indigo-500' : 'border-teal-500'} border-t-transparent`}></div>
           <p className="mt-4 text-gray-600">正在加载课程数据...</p>
         </div>
       </div>
@@ -745,7 +745,7 @@ export default function CoursePage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">加载失败</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <button 
-            className={`${theme === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-6 py-3 rounded-md transition-all duration-300 transform hover:scale-105`}
+            className={`${theme === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-teal-600 hover:bg-teal-700'} text-white px-6 py-3 rounded-md transition-all duration-300 transform hover:scale-105`}
             onClick={fetchCourseData}
           >
             重新加载
@@ -756,7 +756,7 @@ export default function CoursePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-slate-100 flex">
       <Sidebar
         courseData={courseData}
         selectedItem={selectedItem}
@@ -771,7 +771,7 @@ export default function CoursePage() {
 
       <main 
         id="main-content"
-        className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col"
+        className="flex-1 overflow-y-auto bg-slate-100 flex flex-col"
       >
         <div className="flex-1 p-8">
           <div className="max-w-6xl mx-auto">
@@ -787,34 +787,34 @@ export default function CoursePage() {
           </div>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-md border-t border-gray-200 shadow-lg">
-          <div className="max-w-6xl mx-auto px-8 py-6">
-            <div className="flex justify-between items-center">
+        <div className="bg-white border-t border-slate-200">
+          <div className="max-w-3xl mx-auto px-6 py-4">
+            <div className="flex justify-between items-center gap-4">
               <button
                 onClick={handlePrevLesson}
                 disabled={!selectedItem || courseData.length === 0}
-                className={`px-6 py-3 rounded-xl shadow-md transition-all duration-300 flex items-center gap-3 font-medium ${
+                className={`group flex-1 max-w-[200px] px-5 py-2.5 rounded-lg border transition-all duration-200 flex items-center gap-2 font-medium ${
                   !selectedItem || courseData.length === 0
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : `${theme === 'purple' ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800' : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'} text-white hover:shadow-xl transform hover:scale-105`
+                    ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                上一课
+                <span className="text-sm">上一课</span>
               </button>
               <button
                 onClick={handleNextLesson}
                 disabled={!selectedItem || courseData.length === 0}
-                className={`px-6 py-3 rounded-xl shadow-md transition-all duration-300 flex items-center gap-3 font-medium ${
+                className={`group flex-1 max-w-[200px] px-5 py-2.5 rounded-lg border transition-all duration-200 flex items-center justify-end gap-2 font-medium ${
                   !selectedItem || courseData.length === 0
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : `${theme === 'purple' ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800' : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'} text-white hover:shadow-xl transform hover:scale-105`
+                    ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
-                下一课
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span className="text-sm">下一课</span>
+                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>

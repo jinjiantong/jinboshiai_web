@@ -99,7 +99,7 @@ const LazyImage = ({ src, alt, className, onClick, theme, itemId }) => {
           </div>
           <p className="text-gray-600 mb-4">图片加载失败</p>
           <button 
-            className={`${theme === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-4 py-2 rounded-md transition-all duration-300`}
+            className={`${theme === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-teal-600 hover:bg-teal-700'} text-white px-4 py-2 rounded-md transition-all duration-300`}
             onClick={handleRetry}
           >
             重试
@@ -189,7 +189,7 @@ const LazyVideo = ({ src, onClick, theme, itemId }) => {
           </div>
           <p className="text-gray-600 mb-4">视频加载失败</p>
           <button 
-            className={`${theme === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-4 py-2 rounded-md transition-all duration-300`}
+            className={`${theme === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-teal-600 hover:bg-teal-700'} text-white px-4 py-2 rounded-md transition-all duration-300`}
             onClick={(e) => {
               e.stopPropagation();
               handleRetry();
@@ -218,7 +218,7 @@ const LazyVideo = ({ src, onClick, theme, itemId }) => {
         </div>
       )}
       <button 
-        className={`${theme === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'} text-white rounded-full w-28 h-28 flex justify-center items-center transition-all duration-300 transform hover:scale-110 hover:shadow-2xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10`}
+        className={`${theme === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-teal-600 hover:bg-teal-700'} text-white rounded-full w-28 h-28 flex justify-center items-center transition-all duration-300 transform hover:scale-110 hover:shadow-2xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10`}
         onClick={(event) => {
           event.stopPropagation();
           onClick();
@@ -379,7 +379,7 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
       if (textElements && textElements.length > 0) {
         return textElements.map((element, index) => 
           element.type === 'link' ? (
-            <span key={index} className="cursor-pointer hover:text-blue-600 transition-colors">
+            <span key={index} className="cursor-pointer hover:text-teal-600 transition-colors">
               {element.text}
             </span>
           ) : (
@@ -394,8 +394,8 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
       return (
         <div className="flex items-center justify-center min-h-96 bg-white rounded-2xl shadow-lg">
           <div className="text-center">
-            <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center ${theme === 'purple' ? 'bg-purple-100' : 'bg-blue-100'}`}>
-              <svg className={`w-10 h-10 ${theme === 'purple' ? 'text-purple-500' : 'text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center ${theme === 'indigo' ? 'bg-indigo-100' : 'bg-teal-100'}`}>
+              <svg className={`w-10 h-10 ${theme === 'indigo' ? 'text-indigo-500' : 'text-teal-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -415,7 +415,7 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
       return (
         <div className="p-8">
           <div className="mb-8">
-            <h2 className={`text-3xl font-bold mb-2 ${theme === 'purple' ? 'text-purple-800' : 'text-blue-800'}`}>
+            <h2 className={`text-3xl font-bold mb-2 ${theme === 'indigo' ? 'text-indigo-800' : 'text-teal-800'}`}>
               {renderTextWithLinks(selectedItem.textElements, selectedItem.title)}
             </h2>
             <p className="text-gray-500">请选择以下章节开始学习</p>
@@ -426,19 +426,19 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
                 key={child.id || index}
                 onClick={() => onSubItemClick && onSubItemClick(child)}
                 className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg ${
-                  theme === 'purple' 
-                    ? 'border-purple-200 hover:border-purple-400 bg-purple-50' 
-                    : 'border-blue-200 hover:border-blue-400 bg-blue-50'
+                  theme === 'indigo' 
+                    ? 'border-indigo-200 hover:border-indigo-400 bg-indigo-50' 
+                    : 'border-teal-200 hover:border-teal-400 bg-teal-50'
                 }`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    theme === 'purple' ? 'bg-purple-200 text-purple-700' : 'bg-blue-200 text-blue-700'
+                    theme === 'indigo' ? 'bg-indigo-200 text-indigo-700' : 'bg-teal-200 text-teal-700'
                   } font-bold text-lg`}>
                     {index + 1}
                   </div>
                   <div className="flex-1">
-                    <h3 className={`text-xl font-semibold ${theme === 'purple' ? 'text-purple-800' : 'text-blue-800'}`}>
+                    <h3 className={`text-xl font-semibold ${theme === 'indigo' ? 'text-indigo-800' : 'text-teal-800'}`}>
                       {renderTextWithLinks(child.textElements, child.title)}
                     </h3>
                     {child.textElements && child.textElements.length > 0 && (
@@ -447,7 +447,7 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
                       </p>
                     )}
                   </div>
-                  <svg className={`w-6 h-6 ${theme === 'purple' ? 'text-purple-500' : 'text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-6 h-6 ${theme === 'indigo' ? 'text-indigo-500' : 'text-teal-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -475,7 +475,7 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
         <div className="space-y-8">
           <div className="transition-all duration-500 ease-in-out p-10 rounded-xl shadow-lg bg-gradient-to-br from-white to-gray-50 border border-gray-200">
             <h1 className="text-5xl font-bold text-gray-800 transition-all duration-300 mb-8 text-center">关于讲师</h1>
-            <div className={`h-4 w-64 ${theme === 'purple' ? 'bg-purple-500' : 'bg-blue-500'} rounded-full mx-auto`}></div>
+            <div className={`h-4 w-64 ${theme === 'indigo' ? 'bg-indigo-500' : 'bg-teal-500'} rounded-full mx-auto`}></div>
           </div>
   
           <div className="transition-all duration-500 ease-in-out p-10 rounded-xl shadow-md bg-gradient-to-br from-white to-gray-50 border border-gray-200">
@@ -493,20 +493,20 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
               <div className="text-xl text-gray-700 transition-all duration-300 leading-relaxed text-center max-w-4xl">
                 <p className="mb-6">13 年资深软件开发工程师，曾任职滴滴出行等一线互联网大厂</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg">
-                  <div className={`p-4 rounded-lg ${theme === 'purple' ? 'bg-purple-50 border border-purple-200' : 'bg-blue-50 border border-blue-200'}`}>
-                    <span className={`mr-2 ${theme === 'purple' ? 'text-purple-600' : 'text-blue-600'}`}>📝</span>
+                  <div className={`p-4 rounded-lg ${theme === 'indigo' ? 'bg-indigo-50 border border-indigo-200' : 'bg-teal-50 border border-teal-200'}`}>
+                    <span className={`mr-2 ${theme === 'indigo' ? 'text-indigo-600' : 'text-teal-600'}`}>📝</span>
                     精通 iOS、Android、小程序、网站全平台开发
                   </div>
-                  <div className={`p-4 rounded-lg ${theme === 'purple' ? 'bg-purple-50 border border-purple-200' : 'bg-blue-50 border border-blue-200'}`}>
-                    <span className={`mr-2 ${theme === 'purple' ? 'text-purple-600' : 'text-blue-600'}`}>🚀</span>
+                  <div className={`p-4 rounded-lg ${theme === 'indigo' ? 'bg-indigo-50 border border-indigo-200' : 'bg-teal-50 border border-teal-200'}`}>
+                    <span className={`mr-2 ${theme === 'indigo' ? 'text-indigo-600' : 'text-teal-600'}`}>🚀</span>
                     熟练掌握跨平台技术与主流 AI 技术
                   </div>
-                  <div className={`p-4 rounded-lg ${theme === 'purple' ? 'bg-purple-50 border border-purple-200' : 'bg-blue-50 border border-blue-200'}`}>
-                    <span className={`mr-2 ${theme === 'purple' ? 'text-purple-600' : 'text-blue-600'}`}>📊</span>
+                  <div className={`p-4 rounded-lg ${theme === 'indigo' ? 'bg-indigo-50 border border-indigo-200' : 'bg-teal-50 border border-teal-200'}`}>
+                    <span className={`mr-2 ${theme === 'indigo' ? 'text-indigo-600' : 'text-teal-600'}`}>📊</span>
                     具备大型项目架构与落地能力
                   </div>
-                  <div className={`p-4 rounded-lg ${theme === 'purple' ? 'bg-purple-50 border border-purple-200' : 'bg-blue-50 border border-blue-200'}`}>
-                    <span className={`mr-2 ${theme === 'purple' ? 'text-purple-600' : 'text-blue-600'}`}>✅</span>
+                  <div className={`p-4 rounded-lg ${theme === 'indigo' ? 'bg-indigo-50 border border-indigo-200' : 'bg-teal-50 border border-teal-200'}`}>
+                    <span className={`mr-2 ${theme === 'indigo' ? 'text-indigo-600' : 'text-teal-600'}`}>✅</span>
                     可一站式完成产品从设计到上线的全流程交付
                   </div>
                 </div>
@@ -534,7 +534,7 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
           <p className="text-gray-600 mb-4 text-center">内容加载失败</p>
           <p className="text-sm text-gray-500 mb-6 text-center max-w-md">{contentError}</p>
           <button 
-            className={`${theme === 'purple' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'} text-white px-6 py-3 rounded-md transition-all duration-300 transform hover:scale-105`}
+            className={`${theme === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-teal-600 hover:bg-teal-700'} text-white px-6 py-3 rounded-md transition-all duration-300 transform hover:scale-105`}
             onClick={() => window.location.reload()}
           >
             重试
@@ -550,7 +550,7 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
           <h1 className="text-4xl font-bold text-gray-800 transition-all duration-300 mb-6">
             {renderTextWithLinks(selectedItem.textElements, selectedItem.title)}
           </h1>
-          <div className={`h-4 w-64 ${theme === 'purple' ? 'bg-purple-500' : 'bg-blue-500'} rounded-full`}></div>
+          <div className={`h-4 w-64 ${theme === 'indigo' ? 'bg-indigo-500' : 'bg-teal-500'} rounded-full`}></div>
         </div>
         
         {hasLinkContent && linkContent && linkContent.length > 0 && (
@@ -593,9 +593,9 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
                         </div>
                       )}
                       {item.level === 2 && item.title && item.title.trim() && (
-                        <div className={`mb-10 p-8 bg-white rounded-2xl shadow-lg border-l-8 ${theme === 'purple' ? 'border-purple-500' : 'border-blue-500'} hover:shadow-xl transition-all duration-300`}>
+                        <div className={`mb-10 p-8 bg-white rounded-2xl shadow-lg border-l-8 ${theme === 'indigo' ? 'border-indigo-500' : 'border-teal-500'} hover:shadow-xl transition-all duration-300`}>
                           <div className="flex items-start gap-4">
-                            <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${theme === 'purple' ? 'bg-purple-100' : 'bg-blue-100'}`}>
+                            <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${theme === 'indigo' ? 'bg-indigo-100' : 'bg-teal-100'}`}>
                               <span className="text-xl">{getIconForTitle(item.title)}</span>
                             </div>
                             <div>
@@ -674,7 +674,7 @@ export default function Content({ selectedItem, cachedContent, contentLoading, c
                                 </div>
                               )}
                               {child.level === 2 && (
-                                <div className={`mb-6 p-6 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md border-l-6 ${theme === 'purple' ? 'border-purple-500' : 'border-blue-500'}`}>
+                                <div className={`mb-6 p-6 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md border-l-6 ${theme === 'indigo' ? 'border-indigo-500' : 'border-teal-500'}`}>
                                   <h2 className="text-3xl font-bold text-gray-800 transition-all duration-300 mb-3">
                                     {child.title}
                                   </h2>
