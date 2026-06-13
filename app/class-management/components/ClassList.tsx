@@ -6,49 +6,44 @@ interface ClassItem {
   record_id: string;
   class_name: string;
   time_slot: string;
+  teacher_name: string;
   student_count: number;
-  status: 'upcoming' | 'ongoing' | 'finished';
-}
-
-interface SearchFilters {
-  date: string;
-  category: string;
-  status: string;
-  keyword: string;
+  status: 'ongoing' | 'finished';
 }
 
 interface ClassListProps {
   onClassSelect: (classId: string) => void;
   selectedClassId?: string | null;
-  filters: SearchFilters;
 }
 
 const STATUS_LABELS = {
-  upcoming: { text: '即将上课', color: 'bg-orange-100 text-orange-700' },
   ongoing: { text: '进行中', color: 'bg-green-100 text-green-700' },
   finished: { text: '已结束', color: 'bg-gray-100 text-gray-600' }
 };
 
-export default function ClassList({ onClassSelect, selectedClassId, filters }: ClassListProps) {
+export default function ClassList({ onClassSelect, selectedClassId }: ClassListProps) {
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchClasses();
-  }, [filters]);
+  }, []);
 
   const fetchClasses = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (filters.date) params.append('date', filters.date);
-      if (filters.category) params.append('category', filters.category);
-      if (filters.status) params.append('status', filters.status);
-      if (filters.keyword) params.append('keyword', filters.keyword);
-
-      const res = await fetch(`/api/class-management/classes?${params.toString()}`);
+      const res = await fetch('/api/classes');
       const data = await res.json();
-      setClasses(data.classes || []);
+      // API 返回格式是 { success: true, data: [...] }，转换为 ClassList 需要的格式
+      const classesData = data.data || [];
+      setClasses(classesData.map((item: any) => ({
+        record_id: item.id,
+        class_name: item.name,
+        time_slot: item.time_slot || '',
+        teacher_name: item.teacher_name || '',
+        student_count: item.student_count || 0,
+        status: item.status || 'upcoming'
+      })));
     } catch (error) {
       console.error('获取班级列表失败:', error);
     } finally {
@@ -58,52 +53,59 @@ export default function ClassList({ onClassSelect, selectedClassId, filters }: C
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-4">
+      <div className="bg-white rounded-lg shadow h-full p-4">
         <div className="animate-pulse space-y-3">
-          <div className="h-12 bg-gray-100 rounded"></div>
-          <div className="h-12 bg-gray-100 rounded"></div>
-          <div className="h-12 bg-gray-100 rounded"></div>
+          <div className="h-10 bg-gray-100 rounded"></div>
+          <div className="h-10 bg-gray-100 rounded"></div>
+          <div className="h-10 bg-gray-100 rounded"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="p-4 border-b">
-        <h2 className="font-semibold text-lg">班级列表</h2>
-        <p className="text-sm text-gray-500">{classes.length} 个班级</p>
+    <div className="bg-white rounded-lg shadow h-full flex flex-col">
+      <div className="p-3 border-b">
+        <h2 className="font-semibold">班级列表</h2>
+        <p className="text-xs text-gray-500">{classes.length} 个班级</p>
       </div>
-      <div className="divide-y max-h-[600px] overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         {classes.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-4 text-center text-gray-500 text-sm">
             暂无班级数据
           </div>
         ) : (
           classes.map((cls) => (
             <div
               key={cls.record_id}
-              className={`p-4 cursor-pointer transition ${
+              className={`p-3 cursor-pointer transition border-b border-gray-100 ${
                 selectedClassId === cls.record_id
-                  ? 'bg-blue-50 border-l-4 border-blue-500'
+                  ? 'bg-blue-50 border-l-4 border-l-blue-500'
                   : 'hover:bg-gray-50'
               }`}
               onClick={() => onClassSelect(cls.record_id)}
             >
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="font-medium">{cls.class_name}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{cls.time_slot}</p>
+                  <h3 className="font-medium text-sm">{cls.class_name}</h3>
+                  {cls.teacher_name && (
+                    <p className="text-xs text-gray-500">老师: {cls.teacher_name}</p>
+                  )}
+                  {cls.time_slot && (
+                    <p className="text-xs text-gray-400">时间: {cls.time_slot}</p>
+                  )}
                 </div>
-                <span className={`text-xs px-2 py-1 rounded ${
-                  STATUS_LABELS[cls.status].color
-                }`}>
-                  {STATUS_LABELS[cls.status].text}
-                </span>
+                <div className="text-right">
+                  <p className="text-xs text-gray-400">{cls.student_count} 名学员</p>
+                  {cls.status !== 'upcoming' && (
+                    <span className={`text-xs px-1.5 py-0.5 rounded mt-1 inline-block ${
+                      STATUS_LABELS[cls.status as keyof typeof STATUS_LABELS]?.color || ''
+                    }`}>
+                      {STATUS_LABELS[cls.status as keyof typeof STATUS_LABELS]?.text || ''}
+                    </span>
+                  )}
+                </div>
               </div>
-              <p className="text-sm text-gray-400 mt-2">
-                {cls.student_count} 名学员
-              </p>
             </div>
           ))
         )}

@@ -1,13 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { RefreshCw } from 'lucide-react';
 
 interface Student {
   record_id: string;
+  feishu_id: string;
   name: string;
   phone: string;
   status: string;
+  total_hours: number;
   remaining_hours: number;
+  attendance_count: number;
+  attendance_dates: string[];
+  today_attended: boolean;
+  payment_amount: number;
 }
 
 interface StudentGridProps {
@@ -28,6 +35,7 @@ export default function StudentGrid({
   const [students, setStudents] = useState<Student[]>([]);
   const [classInfo, setClassInfo] = useState<{ name: string; time_slot: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [attendanceModal, setAttendanceModal] = useState<{ open: boolean; student: Student | null }>({ open: false, student: null });
 
   useEffect(() => {
     if (classId) {
@@ -53,16 +61,33 @@ export default function StudentGrid({
   };
 
   const handleSelectAll = () => {
-    if (selectedStudents.length === students.length) {
+    // 只选择可选择的学员（总课时>0 且 剩余课时>0 且 缴费金额>0）
+    const selectableStudents = students.filter(s => isStudentSelectable(s));
+    if (selectedStudents.length === selectableStudents.length) {
       onSelectAll([]);
     } else {
-      onSelectAll(students.map((s) => s.record_id));
+      onSelectAll(selectableStudents.map((s) => s.feishu_id));
     }
+  };
+
+  const handleAttendanceClick = (e: React.MouseEvent, student: Student) => {
+    e.stopPropagation();
+    setAttendanceModal({ open: true, student });
+  };
+
+  // 判断学员是否可选择（总课时>0 且 剩余课时>0 且 缴费金额>0）
+  const isStudentSelectable = (student: Student) => {
+    return student.total_hours > 0 && student.remaining_hours > 0 && student.payment_amount > 0;
+  };
+
+  // 判断学员是否禁用（灰色显示）
+  const isStudentDisabled = (student: Student) => {
+    return student.total_hours <= 0 || student.remaining_hours <= 0 || student.payment_amount <= 0 || student.today_attended;
   };
 
   if (!classId) {
     return (
-      <div className="bg-white rounded-lg shadow p-12 text-center text-gray-500">
+      <div className="bg-white rounded-lg shadow h-full p-12 text-center text-gray-500 flex items-center justify-center">
         请从左侧选择一个班级
       </div>
     );
@@ -70,78 +95,122 @@ export default function StudentGrid({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="animate-pulse grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="h-32 bg-gray-100 rounded"></div>
-          ))}
+      <div className="bg-white rounded-lg shadow h-full p-4">
+        <div className="animate-pulse space-y-4">
+          <div className="h-10 bg-gray-100 rounded"></div>
+          <div className="h-10 bg-gray-100 rounded"></div>
+          <div className="h-10 bg-gray-100 rounded"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="p-4 border-b flex justify-between items-center">
-        <div>
+    <div className="bg-white rounded-lg shadow h-full flex flex-col">
+      <div className="p-4 border-b flex justify-between items-center flex-shrink-0">
+        <div className="flex items-center gap-3">
           <h2 className="font-semibold text-lg">{classInfo?.name || '班级学生'}</h2>
-          <p className="text-sm text-gray-500">{classInfo?.time_slot}</p>
+          <button
+            onClick={() => classId && fetchStudents(classId)}
+            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+            title="刷新"
+          >
+            <RefreshCw className="w-4 h-4 text-gray-500" />
+          </button>
         </div>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={selectedStudents.length === students.length && students.length > 0}
-            onChange={handleSelectAll}
-            className="w-5 h-5 rounded"
-          />
-          <span>全选</span>
-        </label>
+        <p className="text-sm text-gray-500">{classInfo?.time_slot}</p>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={(() => {
+                const selectableStudents = students.filter(s => isStudentSelectable(s));
+                return selectableStudents.length > 0 && selectedStudents.length === selectableStudents.length;
+              })()}
+              onChange={handleSelectAll}
+              className="w-5 h-5 rounded"
+            />
+            <span>全选</span>
+          </label>
+          <span className="text-gray-600">
+            共 <strong>{students.length}</strong> 人
+          </span>
+        </div>
       </div>
 
-      <div className="p-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {students.map((student) => (
-            <div
-              key={student.record_id}
-              className={`border rounded-lg p-4 cursor-pointer transition ${
-                selectedStudents.includes(student.record_id)
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'hover:border-gray-300'
-              }`}
-              onClick={() => onStudentToggle(student.record_id)}
-            >
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  checked={selectedStudents.includes(student.record_id)}
-                  onChange={() => onStudentToggle(student.record_id)}
-                  className="mt-1 w-4 h-4"
-                />
-                <div className="flex-1">
-                  <h3 className="font-medium">{student.name}</h3>
-                  <p className="text-sm text-gray-500">{student.phone}</p>
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                      {student.status}
-                    </span>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                      剩余 {student.remaining_hours} 课时
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {students.length === 0 && (
+      <div className="flex-1 overflow-y-auto">
+        {students.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             该班级暂无学生
           </div>
+        ) : (
+          <table className="w-full">
+            <thead className="bg-gray-50 sticky top-0">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">选择</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">姓名</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">联系电话</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">总课时</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">剩余课时</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">上课记录</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">缴费金额</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {students.map((student) => {
+                const disabled = isStudentDisabled(student);
+                const todayAttended = student.today_attended;
+                return (
+                <tr 
+                  key={student.record_id}
+                  className={`hover:bg-gray-50 cursor-pointer ${disabled ? 'bg-gray-100 text-gray-400' : selectedStudents.includes(student.feishu_id) ? 'bg-blue-50' : ''} ${todayAttended && !disabled ? 'border-l-4 border-l-green-500' : ''}`}
+                >
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                    <label className={`flex items-center ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                      <input
+                        type="checkbox"
+                        checked={selectedStudents.includes(student.feishu_id)}
+                        onChange={() => !disabled && onStudentToggle(student.feishu_id)}
+                        disabled={disabled}
+                        className="w-5 h-5 rounded cursor-pointer"
+                      />
+                    </label>
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    <div className="flex items-center gap-2">
+                      {student.name}
+                      {todayAttended && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">今日已上课</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600">{student.phone}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600">{student.total_hours}</td>
+                  <td className="px-4 py-3 text-sm">
+                    <span className={disabled ? 'text-red-400' : student.remaining_hours < 5 ? 'text-red-600 font-medium' : 'text-gray-600'}>
+                      {student.remaining_hours}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={(e) => handleAttendanceClick(e, student)}
+                      className={`text-sm ${student.today_attended ? 'text-green-600 hover:text-green-800 hover:underline' : 'text-blue-600 hover:text-blue-800 hover:underline'}`}
+                    >
+                      {student.attendance_count || 0} 次
+                    </button>
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600">
+                    {student.payment_amount > 0 ? `¥${student.payment_amount.toLocaleString()}` : '-'}
+                  </td>
+                </tr>
+              );
+              })}
+            </tbody>
+          </table>
         )}
       </div>
 
-      <div className="p-4 border-t bg-gray-50">
+      <div className="p-4 border-t bg-gray-50 flex-shrink-0">
         <div className="flex justify-between items-center">
           <span className="text-gray-600">
             已选 <strong>{selectedStudents.length}</strong> 人
@@ -152,6 +221,39 @@ export default function StudentGrid({
           />
         </div>
       </div>
+
+      {/* 上课记录弹框 */}
+      {attendanceModal.open && attendanceModal.student && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setAttendanceModal({ open: false, student: null })}>
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">{attendanceModal.student.name} - 上课记录</h3>
+              <button
+                onClick={() => setAttendanceModal({ open: false, student: null })}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">
+                共 <strong>{attendanceModal.student.attendance_count || 0}</strong> 次上课记录
+              </p>
+              {attendanceModal.student.attendance_dates?.length > 0 ? (
+                <div className="max-h-60 overflow-y-auto border rounded-lg p-3">
+                  {attendanceModal.student.attendance_dates.map((date, index) => (
+                    <div key={index} className="py-2 border-b last:border-b-0 text-sm">
+                      {date}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-400 text-sm">暂无上课记录</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -163,18 +265,10 @@ interface BatchActionsProps {
 
 function BatchActions({ selectedCount, onBatchAttendance }: BatchActionsProps) {
   const [showConfirm, setShowConfirm] = useState(false);
-  const [action, setAction] = useState('');
-  const [actionLabel, setActionLabel] = useState('');
 
   const handleConfirm = () => {
-    onBatchAttendance(action);
+    onBatchAttendance('present');
     setShowConfirm(false);
-  };
-
-  const openConfirm = (act: string, label: string) => {
-    setAction(act);
-    setActionLabel(label);
-    setShowConfirm(true);
   };
 
   if (selectedCount === 0) {
@@ -185,22 +279,10 @@ function BatchActions({ selectedCount, onBatchAttendance }: BatchActionsProps) {
     <>
       <div className="flex gap-2 flex-wrap">
         <button
-          onClick={() => openConfirm('present', '已上课')}
+          onClick={() => setShowConfirm(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           批量已上课
-        </button>
-        <button
-          onClick={() => openConfirm('late', '迟到')}
-          className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-        >
-          批量迟到
-        </button>
-        <button
-          onClick={() => openConfirm('absent', '旷课')}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          批量旷课
         </button>
       </div>
 
@@ -209,9 +291,7 @@ function BatchActions({ selectedCount, onBatchAttendance }: BatchActionsProps) {
           <div className="bg-white rounded-lg p-6 max-w-md">
             <h3 className="text-lg font-semibold mb-4">确认批量操作</h3>
             <p className="text-gray-600 mb-4">
-              将标记 <strong>{selectedCount}</strong> 位学生为&quot;
-              {actionLabel}&quot;
-              {action !== 'late' && '，每人将扣减 1 课时'}
+              将标记 <strong>{selectedCount}</strong> 位学生为&quot;已上课&quot;，每人将扣减 1 课时
             </p>
             <div className="flex justify-end gap-3">
               <button
