@@ -113,29 +113,56 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: false, message: '请选择所属班级' })
       }
 
-      const studentRecords = await getRecords(STUDENT_TABLE_ID)
-      
+      const [studentRecords, classRecords] = await Promise.all([
+        getRecords(STUDENT_TABLE_ID),
+        getRecords(CLASS_TABLE_ID)
+      ])
+      // 构建班级名称到ID的映射
+      const classNameToId: Record<string, string> = {}
+      const classIdToName: Record<string, string> = {}
+      classRecords.forEach((cls: any) => {
+        const classId = cls.record_id
+        const className = cls.fields?.name || cls.fields?.['班级名称'] || ''
+        if (className && classId) {
+          classNameToId[className] = classId
+          classIdToName[classId] = className
+        }
+      })
       let foundStudent = null
-      
+
       for (const record of studentRecords) {
-        const name = record.fields?.['学员姓名'] || record.fields?.name || ''
-        const classRef = record.fields?.['所属班级']
-        
-        let studentClassId = ''
+        const name = record.fields?.['姓名'] || record.fields?.['学员姓名'] || record.fields?.name || ''
+        const classRef = record.fields?.['报名班级'] || record.fields?.['所属班级']
+
+        let studentClassIds: string[] = []
         if (classRef) {
-          if (Array.isArray(classRef) && classRef[0]) {
-            studentClassId = classRef[0]
+          if (Array.isArray(classRef)) {
+            classRef.forEach((ref: any) => {
+              if (ref?.record_ids && Array.isArray(ref.record_ids)) {
+                studentClassIds.push(...ref.record_ids)
+              } else if (typeof ref === 'string') {
+                studentClassIds.push(ref)
+              }
+            })
           } else if (typeof classRef === 'string') {
-            studentClassId = classRef
+            studentClassIds.push(classRef)
           }
         }
-        
-        if (name === username && studentClassId === classId) {
+
+        // 获取用户选择的班级ID
+        const selectedClassId = classNameToId[classId] || classId
+
+        // 检查学员的班级是否包含用户选择的班级
+        const hasMatchingClass = studentClassIds.some(id => 
+          id === selectedClassId || id === classId || classIdToName[id] === classId
+        )
+
+        if (name === username && hasMatchingClass) {
           foundStudent = record
           break
         }
       }
-      
+
       if (foundStudent) {
         return NextResponse.json({
           success: true,

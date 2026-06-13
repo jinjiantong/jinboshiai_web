@@ -121,7 +121,7 @@ export default function Footer() {
             {/* 品牌信息 */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="/logo.png" alt="金博士AI Logo" className="h-20 w-auto" style={{ imageRendering: 'auto' }} />
+                <span className="text-2xl font-bold text-white">金博士AI</span>
               </div>
               <p className="text-slate-400 mb-6 leading-relaxed">
                 专注零基础AI技能实战教学，让AI不再是小众技术，而是人人可用的效率与成长工具。
@@ -172,13 +172,15 @@ export default function Footer() {
                   </li>
                 ))}
                 <li>
-                  <button
-                    onClick={() => setIsLoginModalOpen(true)}
-                    className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 w-full text-left"
+                  <Link
+                    href="/dashboard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-400 hover:text-white transition-colors flex items-center gap-2"
                   >
                     <Building2 className="w-4 h-4" />
                     后台管理
-                  </button>
+                  </Link>
                 </li>
               </ul>
             </div>

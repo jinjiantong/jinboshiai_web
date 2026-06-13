@@ -1,5 +1,6 @@
 import './globals.css'
 import Chatbot from '@/components/Chatbot'
+import { headers } from 'next/headers'
 
 export const metadata = {
   title: '金博士AI - 零基础AI实战教育培训',

@@ -17,6 +17,24 @@ import ConfirmModal from './components/ConfirmModal'
 import { useAssignment, Assignment } from './hooks/useAssignment'
 
 function AssignmentPageContent() {
+  useEffect(() => {
+    const savedLogin = localStorage.getItem('dashboard_login');
+    if (!savedLogin) {
+      window.location.href = '/dashboard';
+      return;
+    }
+    try {
+      const loginData = JSON.parse(savedLogin);
+      if (!loginData.expiryTime || Date.now() >= loginData.expiryTime) {
+        localStorage.removeItem('dashboard_login');
+        window.location.href = '/dashboard';
+      }
+    } catch (e) {
+      localStorage.removeItem('dashboard_login');
+      window.location.href = '/dashboard';
+    }
+  }, []);
+
   const {
     assignments,
     loading,

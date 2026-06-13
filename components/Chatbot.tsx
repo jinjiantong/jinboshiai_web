@@ -36,8 +36,20 @@ export default function Chatbot() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
+  const [isVisible, setIsVisible] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const path = window.location.pathname
+    if (path.startsWith('/dashboard') || path.startsWith('/class-management') ||
+        path.startsWith('/student-management') || path.startsWith('/assignment') ||
+        path.startsWith('/admin')) {
+      setIsVisible(false)
+    } else {
+      setIsVisible(true)
+    }
+  }, [])
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -134,6 +146,8 @@ export default function Chatbot() {
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
   }
+
+  if (!isVisible) return null
 
   return (
     <>

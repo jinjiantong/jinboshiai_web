@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ClassList from './components/ClassList';
 import StudentGrid from './components/StudentGrid';
 
@@ -9,6 +9,24 @@ export default function ClassManagementPage() {
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const savedLogin = localStorage.getItem('dashboard_login');
+    if (!savedLogin) {
+      window.location.replace('/dashboard');
+      return;
+    }
+    try {
+      const loginData = JSON.parse(savedLogin);
+      if (!loginData.expiryTime || Date.now() >= loginData.expiryTime) {
+        localStorage.removeItem('dashboard_login');
+        window.location.replace('/dashboard');
+      }
+    } catch (e) {
+      localStorage.removeItem('dashboard_login');
+      window.location.replace('/dashboard');
+    }
+  }, []);
 
   const toggleStudent = (id: string) => {
     setSelectedStudents(prev =>

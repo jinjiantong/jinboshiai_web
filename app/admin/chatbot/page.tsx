@@ -1,11 +1,29 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Bot, Database, RefreshCw, CheckCircle, XCircle, Loader2, Server, Activity, BarChart3, Layers, HardDrive, Clock, TrendingUp, MessageSquare, Users, Zap, Eye, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
 export default function ChatbotAdminPage() {
+  useEffect(() => {
+    const savedLogin = localStorage.getItem('dashboard_login');
+    if (!savedLogin) {
+      window.location.href = '/dashboard';
+      return;
+    }
+    try {
+      const loginData = JSON.parse(savedLogin);
+      if (!loginData.expiryTime || Date.now() >= loginData.expiryTime) {
+        localStorage.removeItem('dashboard_login');
+        window.location.href = '/dashboard';
+      }
+    } catch (e) {
+      localStorage.removeItem('dashboard_login');
+      window.location.href = '/dashboard';
+    }
+  }, []);
+
   const [syncing, setSyncing] = useState(false)
   const [syncResult, setSyncResult] = useState<{ success: boolean; message: string } | null>(null)
   const [systemStatus, setSystemStatus] = useState<{ qdrant: boolean; mysql: boolean; redis: boolean; api: boolean } | null>(null)

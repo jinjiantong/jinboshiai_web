@@ -36,6 +36,28 @@ function extractText(value: any): string {
   return String(value)
 }
 
+function AuthGuard({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const savedLogin = localStorage.getItem('dashboard_login');
+    if (!savedLogin) {
+      window.location.href = '/dashboard';
+      return;
+    }
+    try {
+      const loginData = JSON.parse(savedLogin);
+      if (!loginData.expiryTime || Date.now() >= loginData.expiryTime) {
+        localStorage.removeItem('dashboard_login');
+        window.location.href = '/dashboard';
+      }
+    } catch (e) {
+      localStorage.removeItem('dashboard_login');
+      window.location.href = '/dashboard';
+    }
+  }, []);
+
+  return <>{children}</>;
+}
+
 interface Student {
   record_id: string
   fields: {
@@ -144,15 +166,33 @@ export default function StudentManagement() {
   const [modalMode, setModalMode] = useState<'add' | 'edit' | 'addCourseHours'>('add')
   const [selectedItem, setSelectedItem] = useState<any>(null)
   const [loading, setLoading] = useState(false)
-  
+
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [pendingDeleteItem, setPendingDeleteItem] = useState<any>(null)
-  
+
   const [students, setStudents] = useState<Student[]>([])
   const [teachers, setTeachers] = useState<Teacher[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [attendance, setAttendance] = useState<Attendance[]>([])
   const [payments, setPayments] = useState<Payment[]>([])
+
+  useEffect(() => {
+    const savedLogin = localStorage.getItem('dashboard_login');
+    if (!savedLogin) {
+      window.location.href = '/dashboard';
+      return;
+    }
+    try {
+      const loginData = JSON.parse(savedLogin);
+      if (!loginData.expiryTime || Date.now() >= loginData.expiryTime) {
+        localStorage.removeItem('dashboard_login');
+        window.location.href = '/dashboard';
+      }
+    } catch (e) {
+      localStorage.removeItem('dashboard_login');
+      window.location.href = '/dashboard';
+    }
+  }, []);
   
   const [courseRelations, setCourseRelations] = useState<Record<string, {
     teacherName: string;

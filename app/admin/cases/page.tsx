@@ -1,9 +1,28 @@
 'use client'
 
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Bot, Sparkles, Database, Brain, Zap, MessageSquare, BarChart3, Users, Clock, CheckCircle, ArrowRight, Layers, Cpu } from 'lucide-react'
 
 export default function CasesPage() {
+  useEffect(() => {
+    const savedLogin = localStorage.getItem('dashboard_login');
+    if (!savedLogin) {
+      window.location.href = '/dashboard';
+      return;
+    }
+    try {
+      const loginData = JSON.parse(savedLogin);
+      if (!loginData.expiryTime || Date.now() >= loginData.expiryTime) {
+        localStorage.removeItem('dashboard_login');
+        window.location.href = '/dashboard';
+      }
+    } catch (e) {
+      localStorage.removeItem('dashboard_login');
+      window.location.href = '/dashboard';
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-7xl mx-auto">
