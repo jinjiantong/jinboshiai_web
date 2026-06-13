@@ -35,6 +35,38 @@ async function getAccessToken(): Promise<string> {
   }
 }
 
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  try {
+    const token = await getAccessToken();
+    const recordId = params.id;
+    
+    const response = await axios.get(
+      `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TEACHERS_TABLE_ID}/records/${recordId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+
+    if (response.data.code === 0) {
+      const record = response.data.data;
+      record.fields = validateAndConvertFields(record.fields || {}, 'teachers');
+      return NextResponse.json({ 
+        code: 0, 
+        data: record,
+        message: '老师信息获取成功' 
+      });
+    } else {
+      throw new Error(`Failed to get teacher: ${response.data.msg}`);
+    }
+  } catch (error: any) {
+    console.error('Error getting teacher:', error);
+    return NextResponse.json({ 
+      code: -1, 
+      msg: error.message || 'Failed to get teacher' 
+    }, { status: 500 });
+  }
+}
+
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const token = await getAccessToken();

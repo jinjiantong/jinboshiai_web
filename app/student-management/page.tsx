@@ -110,6 +110,32 @@ interface Payment {
   }
 }
 
+// 通用函数：解析各种格式的关联字段（可在组件内外使用）
+const parseLinkedIds = (field: any, fieldName: string = ''): string[] => {
+  if (!field) {
+    return []
+  }
+  if (Array.isArray(field)) {
+    if (field.length > 0 && typeof field[0] === 'string') {
+      // 字符串数组格式，如 ['id1', 'id2']
+      return field
+    } else if (field[0]?.record_ids) {
+      // record_ids 格式，如 [{ record_ids: ['id1', 'id2'] }]
+      return field.flatMap((f: any) => f.record_ids || [])
+    } else if (field[0]?.record_id) {
+      // record_id 格式，如 [{ record_id: 'id1' }]
+      return field.map((f: any) => f.record_id).filter(Boolean)
+    } else if (field[0]?.value !== undefined) {
+      // checkbox/text 多选格式，如 [{ text: '名称', value: 123 }]
+      // 这种格式下返回的是选项的值（可能是ID或索引），需要根据实际情况处理
+      return field.map((f: any) => String(f.value || f.text || '')).filter(Boolean)
+    }
+  } else if (typeof field === 'string') {
+    return [field]
+  }
+  return []
+}
+
 export default function StudentManagement() {
   const { success, error } = useToast()
   const [activeModule, setActiveModule] = useState<ActiveModule>('students')
@@ -257,10 +283,29 @@ export default function StudentManagement() {
             
             const relations: Record<string, { className: string; teacherName: string; paymentAmount: number; totalHours: number; remainingHours: number }> = {}
             
+            // 构建班级->授课老师的映射
+            const classTeacherMap = new Map<string, string[]>()
+            coursesList.forEach((course: any) => {
+              const teacherIds = parseLinkedIds(course.fields?.['授课老师'])
+              if (teacherIds.length > 0) {
+                classTeacherMap.set(course.record_id, teacherIds)
+              }
+            })
+            
             ;(studentsData.data || []).forEach((student: any) => {
-              const classIds = student.fields['报名班级']?.[0]?.record_ids || []
-              const teacherIds = student.fields['授课老师']?.[0]?.record_ids || []
+              const classIds = parseLinkedIds(student.fields['报名班级'])
+              let teacherIds = parseLinkedIds(student.fields['授课老师'])
               const studentId = student.record_id
+              
+              // 如果学员没有授课老师但有报名班级，从班级获取授课老师
+              if (teacherIds.length === 0 && classIds.length > 0) {
+                classIds.forEach(classId => {
+                  const classTeachers = classTeacherMap.get(classId) || []
+                  teacherIds = [...teacherIds, ...classTeachers]
+                })
+                // 去重
+                teacherIds = [...new Set(teacherIds)]
+              }
               
               const classNames = classIds.map((id: string) => classMap.get(id)).filter(Boolean)
               const teacherNames = teacherIds.map((id: string) => teacherMap.get(id)).filter(Boolean)
@@ -285,15 +330,22 @@ export default function StudentManagement() {
           break
         case 'teachers':
           try {
-            const teachersRes = await fetch('/api/student-management/teachers/full', {
-              signal: AbortSignal.timeout(15000)
-            })
+            const [teachersRes, coursesRes] = await Promise.all([
+              fetch('/api/student-management/teachers/full', {
+                signal: AbortSignal.timeout(15000)
+              }),
+              fetch('/api/student-management/courses?force_refresh=true')
+            ])
             if (!teachersRes.ok) throw new Error('老师API响应失败')
             const teachersData = await teachersRes.json()
             if (teachersData.code === 0) {
               setTeachers(teachersData.data || [])
             } else {
               throw new Error(teachersData.msg || '获取老师数据失败')
+            }
+            if (coursesRes.ok) {
+              const coursesData = await coursesRes.json()
+              setCourses(coursesData.data || [])
             }
           } catch (error) {
             console.error('加载老师数据失败:', error)
@@ -326,15 +378,7 @@ export default function StudentManagement() {
             const relations: Record<string, { teacherName: string; studentCount: number }> = {}
             
             coursesList.forEach((course: any) => {
-              const teacherField = course.fields['授课老师']
-              let teacherIds: string[] = []
-              if (Array.isArray(teacherField)) {
-                if (teacherField.length > 0 && typeof teacherField[0] === 'string') {
-                  teacherIds = teacherField
-                } else if (teacherField[0]?.record_ids) {
-                  teacherIds = teacherField[0].record_ids
-                }
-              }
+              const teacherIds = parseLinkedIds(course.fields['授课老师'])
               const teacherNames = teacherIds.map((id: string) => teacherMap.get(id)).filter(Boolean)
               const studentField = course.fields['关联学员']?.[0]
               const studentCount = studentField?.text_arr?.length || 
@@ -397,8 +441,22 @@ export default function StudentManagement() {
           extractText(item.fields['姓名']).includes(searchQuery) ||
           item.fields['联系电话']?.toString().includes(searchQuery)
         
-        const teacherIds = item.fields['授课老师']?.[0]?.record_ids || []
-        const classIds = item.fields['报名班级']?.[0]?.record_ids || []
+        // 获取学员的授课老师（优先使用档案中的，没有则从班级获取）
+        let teacherIds = parseLinkedIds(item.fields['授课老师'])
+        const classIds = parseLinkedIds(item.fields['报名班级'])
+        
+        // 如果学员没有授课老师但有报名班级，从班级获取授课老师
+        if (teacherIds.length === 0 && classIds.length > 0) {
+          classIds.forEach(classId => {
+            const course = courses.find(c => c.record_id === classId)
+            if (course) {
+              const classTeacherIds = parseLinkedIds(course.fields?.['授课老师'])
+              teacherIds = [...teacherIds, ...classTeacherIds]
+            }
+          })
+          teacherIds = [...new Set(teacherIds)]
+        }
+        
         const matchesTeacher = !filterTeacher || teacherIds.includes(filterTeacher)
         const matchesClass = !filterClass || classIds.includes(filterClass)
         
@@ -470,25 +528,29 @@ export default function StudentManagement() {
         if (teachersRes.ok) {
           const teachersData = await teachersRes.json()
           for (const teacher of teachersData.data || []) {
-            const classField = teacher.fields['上课班级ID']
-            let classIds: string[] = []
-            if (Array.isArray(classField)) {
-              if (classField.length > 0 && typeof classField[0] === 'string') {
-                classIds = classField
-              } else if (classField[0]?.record_ids) {
-                classIds = classField[0].record_ids
+            try {
+              const classField = teacher.fields['上课班级ID']
+              let classIds: string[] = []
+              if (Array.isArray(classField)) {
+                if (classField.length > 0 && typeof classField[0] === 'string') {
+                  classIds = classField
+                } else if (classField[0]?.record_ids) {
+                  classIds = classField[0].record_ids
+                }
               }
-            }
-            if (classIds.includes(itemRecordId)) {
-              const newClassIds = classIds.filter((id: string) => id !== itemRecordId)
-              await fetch(`/api/student-management/teachers/${teacher.record_id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  recordId: teacher.record_id,
-                  fields: { '上课班级ID': newClassIds.length > 0 ? newClassIds : [] }
+              if (classIds.includes(itemRecordId)) {
+                const newClassIds = classIds.filter((id: string) => id !== itemRecordId)
+                await fetch(`/api/student-management/teachers/${teacher.record_id}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    recordId: teacher.record_id,
+                    fields: { '上课班级ID': newClassIds.length > 0 ? newClassIds : [] }
+                  })
                 })
-              })
+              }
+            } catch (e) {
+              console.error('更新老师班级关联失败:', e)
             }
           }
         }
@@ -523,15 +585,24 @@ export default function StudentManagement() {
         }
       }
       
-      await fetch(`/api/student-management/${activeModule}/${itemRecordId}`, {
+      const deleteRes = await fetch(`/api/student-management/${activeModule}/${itemRecordId}`, {
         method: 'DELETE'
       })
+      
+      const deleteResult = await deleteRes.json()
+      
+      if (deleteResult.code === 0) {
+        success(`${activeModule === 'courses' ? '班级' : activeModule === 'teachers' ? '老师' : '学员'}删除成功`)
+      } else {
+        error(deleteResult.msg || '删除失败')
+      }
       
       setTimeout(() => {
         loadData()
       }, 300)
-    } catch (error) {
-      console.error('删除失败:', error)
+    } catch (err) {
+      console.error('删除失败:', err)
+      error('删除失败，请重试')
       loadData()
     }
   }
@@ -539,6 +610,136 @@ export default function StudentManagement() {
   const cancelDelete = () => {
     setDeleteConfirmOpen(false)
     setPendingDeleteItem(null)
+  }
+
+  const syncTeacherClasses = async (teacherRecordId: string, classIds: string[], oldClassIds?: any) => {
+    try {
+      console.log('syncTeacherClasses 调用:', { teacherRecordId, classIds, oldClassIds })
+      const oldIds: string[] = []
+      if (oldClassIds) {
+        console.log('oldClassIds 是数组:', Array.isArray(oldClassIds), 'oldClassIds:', oldClassIds)
+        if (Array.isArray(oldClassIds) && oldClassIds.length > 0 && typeof oldClassIds[0] === 'string') {
+          oldIds.push(...oldClassIds)
+        } else if (oldClassIds[0]?.record_ids) {
+          oldIds.push(...oldClassIds[0].record_ids)
+        } else if (typeof oldClassIds === 'object' && oldClassIds !== null && 'record_ids' in oldClassIds) {
+          // 可能是 {record_ids: [...]} 格式
+          oldIds.push(...(oldClassIds as any).record_ids)
+        }
+      }
+      console.log('解析后的 oldIds:', oldIds)
+      
+      const removedClassIds = oldIds.filter((id: string) => !classIds.includes(id))
+      for (const classId of removedClassIds) {
+        const courseRes = await fetch(`/api/student-management/courses/${classId}`)
+        if (courseRes.ok) {
+          const courseData = await courseRes.json()
+          const courseRecord = courseData.data?.record || courseData.data
+          const existingTeachers = courseRecord?.fields?.['授课老师'] || []
+          let teacherIds: string[] = []
+          if (Array.isArray(existingTeachers)) {
+            teacherIds = existingTeachers.flatMap((t: any) => t.record_ids || (typeof t === 'string' ? [t] : []))
+          }
+          const newTeacherIds = teacherIds.filter((id: string) => id !== teacherRecordId)
+          // 飞书 link 类型字段需要 [{ record_id: 'xxx' }] 格式
+          const formattedTeachers = newTeacherIds.map((id: string) => ({ record_id: id }))
+          await fetch(`/api/student-management/courses/${classId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ recordId: classId, fields: { '授课老师': formattedTeachers } })
+          })
+        }
+      }
+      
+      for (const classId of classIds) {
+        const courseRes = await fetch(`/api/student-management/courses/${classId}`)
+        if (courseRes.ok) {
+          const courseData = await courseRes.json()
+          const courseRecord = courseData.data?.record || courseData.data
+          const existingTeachers = courseRecord?.fields?.['授课老师'] || []
+          let existingIds: string[] = []
+          if (Array.isArray(existingTeachers)) {
+            existingIds = existingTeachers.flatMap((t: any) => t.record_ids || (typeof t === 'string' ? [t] : []))
+          }
+          if (!existingIds.includes(teacherRecordId)) {
+            // 飞书 link 类型字段需要 [{ record_id: 'xxx' }] 格式
+            const formattedTeachers = [...existingIds, teacherRecordId].map((id: string) => ({ record_id: id }))
+            await fetch(`/api/student-management/courses/${classId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ recordId: classId, fields: { '授课老师': formattedTeachers } })
+            })
+          }
+        }
+      }
+    } catch (e) {
+      console.error('同步老师班级失败:', e)
+    }
+  }
+
+  const syncCourseTeachers = async (courseRecordId: string, teacherIds: string[], oldTeacherIds?: any) => {
+    try {
+      const oldIds: string[] = []
+      if (oldTeacherIds) {
+        if (Array.isArray(oldTeacherIds) && oldTeacherIds.length > 0 && typeof oldTeacherIds[0] === 'string') {
+          oldIds.push(...oldTeacherIds)
+        } else if (oldTeacherIds[0]?.record_ids) {
+          oldIds.push(...oldTeacherIds[0].record_ids)
+        }
+      }
+      
+      const removedTeacherIds = oldIds.filter((id: string) => !teacherIds.includes(id))
+      for (const teacherId of removedTeacherIds) {
+        const teacherRes = await fetch(`/api/student-management/teachers/${teacherId}`)
+        if (teacherRes.ok) {
+          const teacherData = await teacherRes.json()
+          const teacherRecord = teacherData.data?.record || teacherData.data
+          const existingClasses = teacherRecord?.fields?.['上课班级ID'] || []
+          let classIds: string[] = []
+          if (Array.isArray(existingClasses)) {
+            classIds = existingClasses.flatMap((c: any) => {
+              if (typeof c === 'string') return [c]
+              if (c?.record_ids && Array.isArray(c.record_ids)) return c.record_ids
+              if (c?.record_id) return [c.record_id]
+              return []
+            })
+          }
+          const newClassIds = classIds.filter((id: string) => id !== courseRecordId)
+          await fetch(`/api/student-management/teachers/${teacherId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ recordId: teacherId, fields: { '上课班级ID': newClassIds } })
+          })
+        }
+      }
+      
+      for (const teacherId of teacherIds) {
+        const teacherRes = await fetch(`/api/student-management/teachers/${teacherId}`)
+        if (teacherRes.ok) {
+          const teacherData = await teacherRes.json()
+          const teacherRecord = teacherData.data?.record || teacherData.data
+          const existingClasses = teacherRecord?.fields?.['上课班级ID'] || []
+          let classIds: string[] = []
+          if (Array.isArray(existingClasses)) {
+            classIds = existingClasses.flatMap((c: any) => {
+              if (typeof c === 'string') return [c]
+              if (c?.record_ids && Array.isArray(c.record_ids)) return c.record_ids
+              if (c?.record_id) return [c.record_id]
+              return []
+            })
+          }
+          if (!classIds.includes(courseRecordId)) {
+            await fetch(`/api/student-management/teachers/${teacherId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ recordId: teacherId, fields: { '上课班级ID': [...classIds, courseRecordId] } })
+            })
+          }
+        }
+      }
+    } catch (e) {
+      console.error('同步班级老师失败:', e)
+    }
   }
 
   const handleSubmit = async (formData: any) => {
@@ -623,186 +824,101 @@ export default function StudentManagement() {
       }
       
       setLoading(true)
-      setIsModalOpen(false)
       
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
+      let response: Response
+      try {
+        response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
+      } catch (fetchError) {
+        console.error('网络请求失败:', fetchError)
+        setLoading(false)
+        error('网络请求失败，请检查网络连接')
+        loadData()
+        return
+      }
       
       if (response.ok) {
-        const result = await response.json()
-        
-        if (activeModule === 'teachers') {
-          const manageClassField = formData['上课班级ID']
-          const teacherRecordId = modalMode === 'edit' && selectedItem ? selectedItem.record_id : result.data?.record_id
-          
-          if (modalMode === 'edit' && selectedItem) {
-            const oldClassField = selectedItem.fields['上课班级ID']
-            let oldClassIds: string[] = []
-            if (Array.isArray(oldClassField)) {
-              if (oldClassField.length > 0 && typeof oldClassField[0] === 'string') {
-                oldClassIds = oldClassField
-              } else if (oldClassField[0]?.record_ids) {
-                oldClassIds = oldClassField[0].record_ids
-              }
-            }
-            
-            let newClassIds: string[] = []
-            if (manageClassField && Array.isArray(manageClassField) && manageClassField.length > 0) {
-              newClassIds = manageClassField.map((item: any) => typeof item === 'string' ? item : item?.record_ids?.[0]).filter(Boolean)
-            }
-            
-            const removedClassIds = oldClassIds.filter((id: string) => !newClassIds.includes(id))
-            for (const classId of removedClassIds) {
-              try {
-                const courseRes = await fetch(`/api/student-management/courses/${classId}`)
-                if (courseRes.ok) {
-                  const courseData = await courseRes.json()
-                  const courseRecord = courseData.data?.record || courseData.data
-                  const existingTeachers = courseRecord?.fields?.['授课老师'] || []
-                  let teacherIds: string[] = []
-                  if (Array.isArray(existingTeachers)) {
-                    teacherIds = existingTeachers.flatMap((t: any) => t.record_ids || (typeof t === 'string' ? [t] : []))
-                  }
-                  const newTeacherIds = teacherIds.filter((id: string) => id !== teacherRecordId)
-                  await fetch(`/api/student-management/courses/${classId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      recordId: classId,
-                      fields: { '授课老师': newTeacherIds }
-                    })
-                  })
-                }
-              } catch (e) {
-                console.error('清除班级授课老师失败:', e)
-              }
-            }
+        let result: any
+        try {
+          result = await response.json()
+        } catch (jsonError) {
+          // JSON解析失败，但HTTP请求成功，可能数据已添加
+          console.error('响应JSON解析失败:', jsonError)
+          setLoading(false)
+          setIsModalOpen(false)
+          setSelectedItem(null)
+          // 如果是添加操作且请求成功，数据很可能已添加
+          if (modalMode === 'add') {
+            success('添加成功')
+            setTimeout(() => loadData(), 100)
+          } else {
+            error('响应解析失败，请刷新页面查看')
+            loadData()
           }
-          
-          if (manageClassField && Array.isArray(manageClassField) && manageClassField.length > 0 && teacherRecordId) {
-            for (const classItem of manageClassField) {
-              const classId = typeof classItem === 'string' ? classItem : classItem?.record_ids?.[0]
-              if (classId && typeof classId === 'string') {
-                try {
-                  const courseRes = await fetch(`/api/student-management/courses/${classId}`)
-                  if (courseRes.ok) {
-                    const courseData = await courseRes.json()
-                    const courseRecord = courseData.data?.record || courseData.data
-                    const existingTeachers = courseRecord?.fields?.['授课老师'] || []
-                    let existingIds: string[] = []
-                    if (Array.isArray(existingTeachers)) {
-                      existingIds = existingTeachers.flatMap((t: any) => t.record_ids || (typeof t === 'string' ? [t] : []))
-                    } else if (typeof existingTeachers === 'string') {
-                      existingIds = [existingTeachers]
-                    }
-                    if (!existingIds.includes(teacherRecordId)) {
-                      await fetch(`/api/student-management/courses/${classId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          recordId: classId,
-                          fields: {
-                            '授课老师': [...existingIds, teacherRecordId]
-                          }
-                        })
-                      })
-                    }
-                  }
-                } catch (syncErr) {
-                  console.error('同步班级授课老师失败:', syncErr)
-                }
-              }
-            }
-          }
+          return
         }
         
-        if (activeModule === 'courses') {
-          const courseRecordId = modalMode === 'edit' && selectedItem ? selectedItem.record_id : result.data?.record_id
-          const teacherField = formData['授课老师']
-          let newTeacherIds: string[] = []
-          if (Array.isArray(teacherField)) {
-            if (teacherField.length > 0 && typeof teacherField[0] === 'string') {
-              newTeacherIds = teacherField
-            } else if (teacherField[0]?.record_ids) {
-              newTeacherIds = teacherField[0].record_ids
-            }
-          }
-          
-          if (modalMode === 'edit' && selectedItem) {
-            const oldTeacherField = selectedItem.fields['授课老师']
-            let oldTeacherIds: string[] = []
-            if (Array.isArray(oldTeacherField)) {
-              if (oldTeacherField.length > 0 && typeof oldTeacherField[0] === 'string') {
-                oldTeacherIds = oldTeacherField
-              } else if (oldTeacherField[0]?.record_ids) {
-                oldTeacherIds = oldTeacherField[0].record_ids
-              }
-            }
-            
-            const removedTeacherIds = oldTeacherIds.filter((id: string) => !newTeacherIds.includes(id))
-            for (const teacherId of removedTeacherIds) {
-              try {
-                const teacherRes = await fetch(`/api/student-management/teachers/${teacherId}`)
-                if (teacherRes.ok) {
-                  const teacherData = await teacherRes.json()
-                  const teacherRecord = teacherData.data?.record || teacherData.data
-                  const existingClasses = teacherRecord?.fields?.['上课班级ID'] || []
-                  let classIds: string[] = []
-                  if (Array.isArray(existingClasses)) {
-                    classIds = existingClasses.flatMap((c: any) => c.record_ids || (typeof c === 'string' ? [c] : []))
-                  }
-                  const newClassIds = classIds.filter((id: string) => id !== courseRecordId)
-                  await fetch(`/api/student-management/teachers/${teacherId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      recordId: teacherId,
-                      fields: { '上课班级ID': newClassIds }
-                    })
-                  })
-                }
-              } catch (e) {
-                console.error('清除老师上课班级失败:', e)
-              }
-            }
-          }
-          
-          for (const teacherId of newTeacherIds) {
-            try {
-              const teacherRes = await fetch(`/api/student-management/teachers/${teacherId}`)
-              if (teacherRes.ok) {
-                const teacherData = await teacherRes.json()
-                const teacherRecord = teacherData.data?.record || teacherData.data
-                const existingClasses = teacherRecord?.fields?.['上课班级ID'] || []
-                let classIds: string[] = []
-                if (Array.isArray(existingClasses)) {
-                  classIds = existingClasses.flatMap((c: any) => c.record_ids || (typeof c === 'string' ? [c] : []))
-                }
-                if (!classIds.includes(courseRecordId)) {
-                  await fetch(`/api/student-management/teachers/${teacherId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      recordId: teacherId,
-                      fields: { '上课班级ID': [...classIds, courseRecordId] }
-                    })
-                  })
-                }
-              }
-            } catch (e) {
-              console.error('同步老师上课班级失败:', e)
-            }
-          }
+        if (result.code !== 0) {
+          setIsModalOpen(false)
+          setSelectedItem(null)
+          setLoading(false)
+          error(result.msg || (modalMode === 'add' ? '添加失败' : '更新失败'))
+          loadData()
+          return
         }
         
+        success(modalMode === 'add' ? '添加成功' : '更新成功')
+        setLoading(false)
+        setIsModalOpen(false)
+        
+        // 在清空 selectedItem 之前保存需要同步的数据
+        const oldClassIdsForSync = modalMode === 'edit' ? selectedItem?.fields?.['上课班级ID'] : null
+        const oldTeacherIdsForSync = modalMode === 'edit' ? selectedItem?.fields?.['授课老师'] : null
+        const currentSelectedItem = selectedItem
+        setSelectedItem(null)
+        
+        // 执行关联同步（不阻塞UI）
         setTimeout(() => {
+          if (activeModule === 'teachers') {
+            const manageClassField = formData['上课班级ID']
+            console.log('老师提交同步 - manageClassField:', manageClassField, 'oldClassIdsForSync:', oldClassIdsForSync)
+            const teacherRecordId = modalMode === 'edit' && currentSelectedItem ? currentSelectedItem.record_id : (result.data?.record?.record_id || result.data?.record_id)
+            if (teacherRecordId && manageClassField && Array.isArray(manageClassField)) {
+              syncTeacherClasses(teacherRecordId, manageClassField, oldClassIdsForSync)
+            } else {
+              console.log('未调用 syncTeacherClasses: teacherRecordId=', teacherRecordId, 'manageClassField=', manageClassField)
+            }
+          }
+          
+          if (activeModule === 'courses') {
+            const teacherField = formData['授课老师']
+            const courseRecordId = modalMode === 'edit' && currentSelectedItem ? currentSelectedItem.record_id : (result.data?.record?.record_id || result.data?.record_id)
+            // 从老师字段对象中提取老师ID字符串
+            let teacherIds: string[] = []
+            if (Array.isArray(teacherField)) {
+              for (const teacher of teacherField) {
+                if (typeof teacher === 'string') {
+                  teacherIds.push(teacher)
+                } else if (teacher?.record_ids && Array.isArray(teacher.record_ids)) {
+                  teacherIds.push(...teacher.record_ids)
+                }
+              }
+            }
+            if (courseRecordId && teacherIds) {
+              syncCourseTeachers(courseRecordId, teacherIds, oldTeacherIdsForSync)
+            }
+          }
+          
           loadData()
         }, 100)
       } else {
-        const errorData = await response.json()
+        setIsModalOpen(false)
+        setSelectedItem(null)
+        setLoading(false)
+        const errorData = await response.json().catch(() => ({ msg: '请求失败' }))
         error(errorData.msg || (modalMode === 'add' ? '添加失败' : '更新失败'))
         loadData()
       }
@@ -898,18 +1014,6 @@ export default function StudentManagement() {
       
       <div className="space-y-2 text-sm text-gray-600 mb-4">
         <p>电话: {teacher.fields['联系电话'] || '-'}</p>
-        {teacher.fields['上课班级ID']?.[0]?.record_ids?.length > 0 && (
-          <div>
-            <p className="text-xs text-gray-500 mb-1">管理班级:</p>
-            <div className="flex flex-wrap gap-1">
-              {teacher.fields['上课班级ID'][0].record_ids.map((recordId: string, index: number) => (
-                <span key={index} className="px-2 py-0.5 bg-green-50 text-green-600 rounded text-xs">
-                  {teacher.fields['管理班级分类']?.[index] || teacher.fields['上课班级ID'][0].text_arr[index] || recordId}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
       
       <div className="flex gap-2">
@@ -1221,15 +1325,35 @@ export default function StudentManagement() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{extractText(item.fields['老师姓名']) || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{item.fields['联系电话'] || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {item.fields['上课班级ID']?.[0]?.record_ids?.length > 0 ? (
-                              <div className="flex flex-wrap gap-1">
-                                {item.fields['上课班级ID'][0].record_ids.map((recordId: string, index: number) => (
-                                  <span key={index} className="px-2 py-0.5 bg-green-50 text-green-600 rounded text-xs">
-                                    {item.fields['管理班级分类']?.[index] || item.fields['上课班级ID'][0].text_arr[index] || recordId}
-                                  </span>
-                                ))}
-                              </div>
-                            ) : '-'}
+                            {(() => {
+                              const classField = item.fields['上课班级ID'];
+                              let classIds: string[] = [];
+                              // 支持两种格式：字符串数组或嵌套对象
+                              if (Array.isArray(classField)) {
+                                if (classField.length > 0 && typeof classField[0] === 'string') {
+                                  classIds = classField;
+                                } else if (classField[0]?.record_ids) {
+                                  classIds = classField[0].record_ids;
+                                }
+                              }
+                              if (!classIds || classIds.length === 0) return '-';
+                              // 过滤掉空值
+                              classIds = classIds.filter(Boolean);
+                              if (classIds.length === 0) return '-';
+                              return (
+                                <div className="flex flex-wrap gap-1">
+                                  {classIds.map((classId: string, index: number) => {
+                                    const course = courses.find((c: any) => c.record_id === classId);
+                                    const className = course?.fields?.['班级名称'] || classId;
+                                    return (
+                                      <span key={index} className="px-2 py-0.5 bg-green-50 text-green-600 rounded text-xs">
+                                        {className}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              );
+                            })()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <div className="flex items-center gap-2">
@@ -1361,6 +1485,7 @@ export default function StudentManagement() {
           data={selectedItem}
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleSubmit}
+          loading={loading}
           students={students}
           teachers={teachers}
           courses={courses}
@@ -1387,12 +1512,13 @@ interface FormModalProps {
   data: any
   onClose: () => void
   onSubmit: (data: any) => void
+  loading?: boolean
   students?: any[]
   teachers?: any[]
   courses?: any[]
 }
 
-function FormModal({ mode, module, data, onClose, onSubmit, students = [], teachers = [], courses = [] }: FormModalProps) {
+function FormModal({ mode, module, data, onClose, onSubmit, loading = false, students = [], teachers = [], courses = [] }: FormModalProps) {
   const [formData, setFormData] = useState<any>({})
   const [teacherList, setTeacherList] = useState<any[]>(teachers)
 
@@ -1561,8 +1687,32 @@ function FormModal({ mode, module, data, onClose, onSubmit, students = [], teach
                   const classId = e.target.value
                   if (classId) {
                     handleChange('报名班级', [{ record_ids: [classId] }])
+                    // 根据班级自动关联授课老师
+                    const selectedClass = courses.find(c => c.record_id === classId)
+                    console.log('选择班级:', classId, '找到班级:', selectedClass)
+                    if (selectedClass) {
+                      const teacherField = selectedClass.fields?.['授课老师']
+                      console.log('班级授课老师字段:', teacherField)
+                      let teacherIds: string[] = []
+                      if (teacherField) {
+                        if (Array.isArray(teacherField)) {
+                          teacherIds = teacherField.flatMap((t: any) => t.record_ids || (typeof t === 'string' ? [t] : []))
+                        } else if (typeof teacherField === 'string') {
+                          teacherIds = [teacherField]
+                        }
+                      }
+                      console.log('解析后的老师ID:', teacherIds)
+                      // 也从 teachers 数组中查找老师名称用于显示
+                      const teacherNames = teacherIds.map(tid => {
+                        const teacher = teachers.find(t => t.record_id === tid)
+                        return teacher?.fields?.['姓名'] || teacher?.fields?.['老师姓名'] || tid
+                      })
+                      console.log('老师名称:', teacherNames)
+                      handleChange('授课老师', teacherIds)
+                    }
                   } else {
                     handleChange('报名班级', [])
+                    handleChange('授课老师', [])
                   }
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
@@ -1684,35 +1834,43 @@ function FormModal({ mode, module, data, onClose, onSubmit, students = [], teach
                       selectedIds = [classField]
                     }
                     const isSelected = selectedIds.includes(cls.record_id)
+                    // 检查班级是否已被其他老师关联（排除当前编辑的老师）
+                    const existingTeacherIds = cls.fields?.['授课老师'] || []
+                    let classTeacherIds: string[] = []
+                    if (Array.isArray(existingTeacherIds)) {
+                      classTeacherIds = existingTeacherIds.flatMap((t: any) => t.record_ids || (typeof t === 'string' ? [t] : []))
+                    } else if (typeof existingTeacherIds === 'string') {
+                      classTeacherIds = [existingTeacherIds]
+                    }
+                    // 编辑模式：排除当前老师；新建模式：所有已关联的班级都禁用
+                    const isDisabled = mode === 'add'
+                      ? classTeacherIds.length > 0
+                      : (classTeacherIds.length > 0 && !classTeacherIds.includes(data?.record_id))
                     return (
                       <button
                         key={cls.record_id}
                         type="button"
+                        disabled={isDisabled}
                         onClick={async () => {
+                          if (isDisabled) return
                           let newIds = [...selectedIds]
                           if (isSelected) {
                             newIds = newIds.filter((id: string) => id !== cls.record_id)
                           } else {
                             newIds.push(cls.record_id)
                           }
-                          
-                          const classData = newIds.length > 0 ? [{
-                            record_ids: newIds,
-                            table_id: 'tblDDKeft6iLlGAx',
-                            text: newIds.join(','),
-                            text_arr: newIds,
-                            type: 'text'
-                          }] : []
-                          
-                          handleChange('上课班级ID', classData)
+                          handleChange('上课班级ID', newIds)
                         }}
                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                           isSelected
                             ? 'bg-green-600 text-white shadow-md'
+                            : isDisabled
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         {cls.fields?.['班级名称'] || cls.fields?.['班级分类'] || '未命名班级'}
+                        {isDisabled && ' (已关联)'}
                       </button>
                     )
                   })
@@ -1743,16 +1901,6 @@ function FormModal({ mode, module, data, onClose, onSubmit, students = [], teach
                 placeholder="请输入班级名称"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">上课时间</label>
-              <input
-                type="text"
-                value={formData['上课时间段'] || ''}
-                onChange={(e) => handleChange('上课时间段', e.target.value)}
-                placeholder="如: 周一至周五 19:00-21:00"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               />
             </div>
             <div>
@@ -1797,6 +1945,16 @@ function FormModal({ mode, module, data, onClose, onSubmit, students = [], teach
                   </option>
                 ))}
               </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">上课时间</label>
+              <input
+                type="text"
+                value={formData['上课时间段'] || ''}
+                onChange={(e) => handleChange('上课时间段', e.target.value)}
+                placeholder="如：每周一、三、五 14:00-16:00"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -1950,9 +2108,10 @@ function FormModal({ mode, module, data, onClose, onSubmit, students = [], teach
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-purple-300 disabled:cursor-not-allowed"
             >
-              {mode === 'add' ? '添加' : '保存'}
+              {loading ? '处理中...' : (mode === 'add' ? '添加' : '保存')}
             </button>
           </div>
         </form>

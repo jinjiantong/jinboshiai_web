@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Upload, File, Star } from 'lucide-react';
+import { X, Upload, File, Star, ChevronDown } from 'lucide-react';
 import { Assignment } from '../hooks/useAssignment';
 
 interface AssignmentModalProps {
@@ -15,11 +15,24 @@ export interface AssignmentFormData {
   '作业标题': string;
   '作业描述': string;
   '关联学员'?: any;
-  '关联课程'?: any;
-  '作业分数'?: number;
-  '作业状态': string;
+  '关联班级'?: any;
   '是否优秀': boolean;
-  '作业附件'?: File[];
+  '作品链接'?: string;
+  '作业附件'?: Array<{ token: string; name: string }>;
+}
+
+interface Student {
+  record_id: string;
+  fields: {
+    '姓名'?: string;
+  };
+}
+
+interface Course {
+  record_id: string;
+  fields: {
+    '班级名称'?: string;
+  };
 }
 
 export function AssignmentModal({
@@ -32,20 +45,25 @@ export function AssignmentModal({
     '作业标题': '',
     '作业描述': '',
     '关联学员': undefined,
-    '关联课程': undefined,
-    '作业分数': undefined,
-    '作业状态': '未提交',
+    '关联班级': undefined,
     '是否优秀': false,
+    '作品链接': '',
     '作业附件': []
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [students, setStudents] = useState<Student[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [selectedClassId, setSelectedClassId] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      fetchData();
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -54,28 +72,83 @@ export function AssignmentModal({
     };
   }, [isOpen]);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [studentsRes, coursesRes] = await Promise.all([
+        fetch('/api/student-management/students?force_refresh=true'),
+        fetch('/api/student-management/courses?force_refresh=true')
+      ]);
+      
+      const studentsData = await studentsRes.json();
+      const coursesData = await coursesRes.json();
+      
+      if (studentsData.code === 0) {
+        setStudents(studentsData.data || []);
+      }
+      
+      if (coursesData.code === 0) {
+        setCourses(coursesData.data || []);
+      }
+    } catch (error) {
+      console.error('获取数据失败:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       if (assignment) {
+        const classField = assignment.fields['关联班级'];
+        let classId = '';
+        if (Array.isArray(classField)) {
+          classId = classField[0]?.record_ids?.[0] || classField[0]?.text || '';
+        } else if (typeof classField === 'string') {
+          classId = classField;
+        }
+        
+        const studentField = assignment.fields['关联学员'];
+        let studentId = '';
+        if (Array.isArray(studentField)) {
+          studentId = studentField[0]?.record_ids?.[0] || studentField[0]?.text || '';
+        } else if (typeof studentField === 'string') {
+          studentId = studentField;
+        }
+
+        // 解析作业附件
+        const attachmentField = assignment.fields['作业附件'];
+        let attachments: Array<{ token: string; name: string }> = [];
+        if (attachmentField && Array.isArray(attachmentField)) {
+          attachments = attachmentField
+            .filter((att: any) => att && typeof att === 'object')
+            .map((att: any) => ({
+              token: att.file_token || att.token || '',
+              name: att.name || att.filename || '未命名文件'
+            }))
+            .filter((att: any) => att.token);
+        }
+        
+        setSelectedClassId(classId);
+        
         setFormData({
           '作业标题': assignment.fields['作业标题'] || '',
-          '作业描述': assignment.fields['作业描述'] || '',
-          '关联学员': assignment.fields['关联学员'],
-          '关联课程': assignment.fields['关联课程'],
-          '作业分数': assignment.fields['作业分数'],
-          '作业状态': assignment.fields['作业状态'] || '未提交',
-          '是否优秀': assignment.fields['是否优秀'] || false,
-          '作业附件': []
+          '作业描述': assignment.fields['作业内容'] || assignment.fields['作业描述'] || '',
+          '关联学员': studentId ? { text: studentId } : undefined,
+          '关联班级': classId ? { text: classId } : undefined,
+          '是否优秀': assignment.fields['是否优秀作品'] || assignment.fields['是否优秀'] || assignment.fields['优秀作业标记'] || false,
+          '作品链接': assignment.fields['作品链接'] || assignment.fields['存档路径'] || '',
+          '作业附件': attachments
         });
       } else {
+        setSelectedClassId('');
         setFormData({
           '作业标题': '',
           '作业描述': '',
           '关联学员': undefined,
-          '关联课程': undefined,
-          '作业分数': undefined,
-          '作业状态': '未提交',
+          '关联班级': undefined,
           '是否优秀': false,
+          '作品链接': '',
           '作业附件': []
         });
       }
@@ -104,6 +177,10 @@ export function AssignmentModal({
       newErrors['作业描述'] = '请输入作业描述';
     }
     
+    if (!formData['关联学员']?.text) {
+      newErrors['关联学员'] = '请选择关联学员';
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -127,6 +204,37 @@ export function AssignmentModal({
     }
   };
 
+  const handleClassChange = (classId: string) => {
+    setSelectedClassId(classId);
+    setFormData(prev => ({
+      ...prev,
+      '关联班级': classId ? { text: classId } : undefined,
+      '关联学员': undefined
+    }));
+  };
+
+  const handleStudentChange = (studentId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      '关联学员': studentId ? { text: studentId } : undefined
+    }));
+  };
+
+  const filteredStudents = selectedClassId 
+    ? students.filter(student => {
+        const classField = student.fields['报名班级'];
+        if (!classField) return false;
+        if (Array.isArray(classField)) {
+          return classField.some(c => {
+            if (typeof c === 'string') return c === selectedClassId;
+            if (c?.record_ids) return c.record_ids.includes(selectedClassId);
+            return false;
+          });
+        }
+        return false;
+      })
+    : students;
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -137,27 +245,53 @@ export function AssignmentModal({
     setIsDragging(false);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
     
     const files = Array.from(e.dataTransfer.files);
     const validFiles = files.filter(file => file.size <= 10 * 1024 * 1024);
     
-    setFormData(prev => ({
-      ...prev,
-      '作业附件': [...(prev['作业附件'] || []), ...validFiles]
-    }));
+    for (const file of validFiles) {
+      await uploadFile(file);
+    }
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter(file => file.size <= 10 * 1024 * 1024);
     
-    setFormData(prev => ({
-      ...prev,
-      '作业附件': [...(prev['作业附件'] || []), ...validFiles]
-    }));
+    for (const file of validFiles) {
+      await uploadFile(file);
+    }
+  };
+
+  const uploadFile = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/assignments/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.code === 0) {
+        setFormData(prev => ({
+          ...prev,
+          '作业附件': [...(prev['作业附件'] || []), {
+            token: result.data.token,
+            name: result.data.name
+          }]
+        }));
+      } else {
+        console.error('上传失败:', result.msg);
+      }
+    } catch (error) {
+      console.error('上传文件错误:', error);
+    }
   };
 
   const removeFile = (index: number) => {
@@ -171,6 +305,11 @@ export function AssignmentModal({
     if (e.target === e.currentTarget) {
       onClose();
     }
+  };
+
+  const getStudentName = (studentId: string) => {
+    const student = students.find(s => s.record_id === studentId);
+    return student?.fields?.['姓名'] || studentId;
   };
 
   if (!isOpen) return null;
@@ -237,67 +376,59 @@ export function AssignmentModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  关联学员
+                  关联班级
+                </label>
+                <select
+                  value={selectedClassId}
+                  onChange={(e) => handleClassChange(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                >
+                  <option value="">请选择班级</option>
+                  {courses.map(course => (
+                    <option key={course.record_id} value={course.record_id}>
+                      {course.fields?.['班级名称'] || '未知班级'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  关联学员 <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData['关联学员']?.text || ''}
-                  onChange={(e) => handleInputChange('关联学员', e.target.value ? { text: e.target.value, value: e.target.value } : undefined)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  onChange={(e) => handleStudentChange(e.target.value)}
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    errors['关联学员'] ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 >
-                  <option value="">请选择学员</option>
-                  <option value="学员A">学员A</option>
-                  <option value="学员B">学员B</option>
-                  <option value="学员C">学员C</option>
+                  <option value="">
+                    {selectedClassId ? '请选择学员' : '请先选择班级'}
+                  </option>
+                  {filteredStudents.map(student => (
+                    <option key={student.record_id} value={student.record_id}>
+                      {student.fields?.['姓名'] || '未知学员'}
+                    </option>
+                  ))}
                 </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  关联课程
-                </label>
-                <select
-                  value={formData['关联课程']?.text || ''}
-                  onChange={(e) => handleInputChange('关联课程', e.target.value ? { text: e.target.value, value: e.target.value } : undefined)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                >
-                  <option value="">请选择课程</option>
-                  <option value="课程A">课程A</option>
-                  <option value="课程B">课程B</option>
-                  <option value="课程C">课程C</option>
-                </select>
+                {errors['关联学员'] && (
+                  <p className="mt-1 text-sm text-red-500">{errors['关联学员']}</p>
+                )}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  作业分数
-                </label>
-                <input
-                  type="number"
-                  value={formData['作业分数'] || ''}
-                  onChange={(e) => handleInputChange('作业分数', e.target.value ? Number(e.target.value) : undefined)}
-                  placeholder="0-100"
-                  min="0"
-                  max="100"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  提交状态
-                </label>
-                <select
-                  value={formData['作业状态']}
-                  onChange={(e) => handleInputChange('作业状态', e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                >
-                  <option value="未提交">未提交</option>
-                  <option value="已提交">已提交</option>
-                  <option value="已完成">已完成</option>
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                作品链接
+              </label>
+              <input
+                type="url"
+                value={formData['作品链接'] || ''}
+                onChange={(e) => handleInputChange('作品链接', e.target.value)}
+                placeholder="请输入作品链接（如百度网盘链接）"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              />
             </div>
 
             <div className="flex items-center gap-3">
@@ -350,9 +481,6 @@ export function AssignmentModal({
                       <div className="flex items-center gap-2">
                         <File className="w-4 h-4 text-gray-500" />
                         <span className="text-sm text-gray-700 truncate">{file.name}</span>
-                        <span className="text-xs text-gray-400">
-                          ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                        </span>
                       </div>
                       <button
                         type="button"

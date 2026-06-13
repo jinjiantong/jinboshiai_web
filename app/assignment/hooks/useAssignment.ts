@@ -21,8 +21,9 @@ export interface Assignment {
 
 export interface AssignmentFilters {
   student_id?: string;
-  course_id?: string;
-  status?: string;
+  class_id?: string;
+  date_from?: string;
+  date_to?: string;
 }
 
 export interface UserInfo {
@@ -43,7 +44,6 @@ export interface UseAssignmentReturn {
   deleteAssignment: (id: string) => Promise<{ success: boolean; message?: string }>;
   setFilters: (filters: AssignmentFilters) => void;
   canOperate: (assignment?: Assignment) => boolean;
-  canMarkExcellent: (assignment?: Assignment) => boolean;
 }
 
 function extractText(value: any): string {
@@ -109,8 +109,9 @@ export function useAssignment(): UseAssignmentReturn {
     try {
       const params = new URLSearchParams();
       if (newFilters?.student_id) params.append('student_id', newFilters.student_id);
-      if (newFilters?.course_id) params.append('course_id', newFilters.course_id);
-      if (newFilters?.status) params.append('status', newFilters.status);
+      if (newFilters?.class_id) params.append('class_id', newFilters.class_id);
+      if (newFilters?.date_from) params.append('date_from', newFilters.date_from);
+      if (newFilters?.date_to) params.append('date_to', newFilters.date_to);
       params.append('force_refresh', 'true');
       
       const url = `/api/assignments${params.toString() ? `?${params.toString()}` : ''}`;
@@ -248,16 +249,6 @@ export function useAssignment(): UseAssignmentReturn {
     return false;
   }, [user]);
 
-  const canMarkExcellent = useCallback((assignment?: Assignment): boolean => {
-    if (!user) return false;
-    
-    if (user.role === 'admin') return true;
-    
-    if (user.role === 'teacher') return true;
-    
-    return false;
-  }, [user]);
-
   return {
     assignments,
     loading,
@@ -270,7 +261,6 @@ export function useAssignment(): UseAssignmentReturn {
     deleteAssignment,
     setFilters,
     canOperate,
-    canMarkExcellent,
   };
 }
 

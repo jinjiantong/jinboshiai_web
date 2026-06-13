@@ -120,21 +120,21 @@ export default function Dashboard() {
             <p className="text-sm text-gray-500">管理学员信息</p>
           </Link>
 
-          <button className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group">
+          <Link href={`/assignment?name=${encodeURIComponent(userInfo.name)}&type=${encodeURIComponent(userInfo.type)}`} target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
             <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-50 transition-colors">
               <ClipboardList className="w-7 h-7 text-orange-600 group-hover:scale-110 transition-transform" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-1">作业管理系统</h3>
             <p className="text-sm text-gray-500">管理学生作业</p>
-          </button>
+          </Link>
 
-          <button className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group">
+          <Link href="/class-management" target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
             <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-50 transition-colors">
               <Clock className="w-7 h-7 text-purple-600 group-hover:scale-110 transition-transform" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-1">上课管理系统</h3>
             <p className="text-sm text-gray-500">管理上课安排</p>
-          </button>
+          </Link>
 
           <Link href="/admin/chatbot" target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
             <div className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-cyan-50 transition-colors">

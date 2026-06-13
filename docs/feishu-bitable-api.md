@@ -20,6 +20,8 @@
 | 课程表 | `tblThjrxFT0mZ3pL` | 课程信息表 |
 | 缴费记录 | `tblhIFrvvseuEgIh` | 缴费信息表 |
 | 考勤记录 | `tbl28gcD5cNjhYg8` | 考勤信息表 |
+| 作业学情表 | `tblEUJfrNGtkUJLR` | 作业信息表 |
+| 学员课时表 | `tblYolOuKVjujV9J` | 学员课时记录表 |
 
 ---
 
@@ -125,6 +127,64 @@
 
 ---
 
+## 作业学情表 (`tblEUJfrNGtkUJLR`)
+
+### 字段结构
+
+| 字段名 | 类型 | UI类型 | 说明 |
+|--------|------|--------|------|
+| 作业ID | 1005 | AutoNumber | 自动编号 |
+| 对应课时 | 2 | Number | 数字类型 |
+| 作业标题 | 1 | Text | 文本 |
+| 作业内容 | 1 | Text | 文本 |
+| 提交状态 | 3 | SingleSelect | 单选：已提交/未提交 |
+| 作业附件 | 17 | Attachment | 附件 |
+| 老师批改状态 | 3 | SingleSelect | 单选：已批改/未批改 |
+| 学习评分 | 2 | Number | 数字类型 |
+| 学习评语 | 1 | Text | 文本 |
+| 优秀作业标记 | 7 | Checkbox | 复选框 |
+| 错题汇总 | 1 | Text | 文本 |
+| 提交截止日期 | 5 | DateTime | 日期时间 |
+| 关联班级 | 18 | SingleLink | 单向关联 → 课程记录表 |
+| 关联学员 | 18 | SingleLink | 单向关联 → 学员档案表 |
+| 是否优秀作品 | 7 | Checkbox | 复选框 |
+| 存档路径 | 1 | Text | 文本 |
+| 作品命名 | 20 | Formula | 公式（自动生成） |
+| 添加日期 | 5 | DateTime | 日期时间 |
+
+### 字段类型说明
+
+| type | ui_type | 说明 |
+|------|---------|------|
+| 1 | Text | 文本 |
+| 2 | Number | 数字 |
+| 3 | SingleSelect | 单选 |
+| 5 | DateTime | 日期时间 |
+| 7 | Checkbox | 复选框 |
+| 17 | Attachment | 附件 |
+| 18 | SingleLink | 单向关联 |
+| 20 | Formula | 公式 |
+| 1005 | AutoNumber | 自动编号 |
+
+---
+
+## 学员课时表 (`tblYolOuKVjujV9J`)
+
+### 字段结构
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| 学员课时ID | 文本 | 自动生成的编号 |
+| 关联学员 | 关联 | 关联的学员 |
+| 关联班级 | 关联 | 关联的班级 |
+| 购买课时 | 数字 | 购买的课时数 |
+| 已消耗课时 | 数字 | 已消耗的课时数 |
+| 剩余课时 | 数字 | 剩余课时数 |
+| 购买日期 | 日期 | 购买时间 |
+| 有效期至 | 日期 | 有效期截止 |
+
+---
+
 ## API 接口列表
 
 ### 学员管理
@@ -180,6 +240,24 @@
 | POST | `/api/student-management/attendance` | 添加考勤记录 |
 | PUT | `/api/student-management/attendance` | 更新考勤记录 |
 | DELETE | `/api/student-management/attendance` | 删除考勤记录 |
+
+### 作业管理
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/api/assignments` | 获取作业列表 |
+| POST | `/api/assignments` | 添加作业 |
+| PUT | `/api/assignments/[id]` | 更新作业 |
+| DELETE | `/api/assignments/[id]` | 删除作业 |
+
+### 学员课时管理
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/api/student-management/student-course-hours` | 获取学员课时列表 |
+| POST | `/api/student-management/student-course-hours` | 添加学员课时 |
+| PUT | `/api/student-management/student-course-hours` | 更新学员课时 |
+| DELETE | `/api/student-management/student-course-hours` | 删除学员课时 |
 
 ---
 

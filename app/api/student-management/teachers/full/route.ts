@@ -74,7 +74,15 @@ export async function GET() {
     
     const allClassIds = new Set<string>();
     teachers.forEach((teacher: any) => {
-      const classIds = teacher.fields['上课班级ID']?.[0]?.record_ids || [];
+      const classField = teacher.fields['上课班级ID'];
+      let classIds: string[] = [];
+      if (Array.isArray(classField)) {
+        if (classField.length > 0 && typeof classField[0] === 'string') {
+          classIds = classField;
+        } else if (classField[0]?.record_ids) {
+          classIds = classField[0].record_ids;
+        }
+      }
       classIds.forEach((id: string) => allClassIds.add(id));
     });
     
@@ -84,15 +92,31 @@ export async function GET() {
       
       const classIdToInfo = new Map<string, any>();
       Array.from(allClassIds).forEach((id, index) => {
+        console.log(`班级ID: ${id}, 获取结果:`, classResults[index]);
         classIdToInfo.set(id, classResults[index]);
       });
       
       teachers.forEach((teacher: any) => {
-        const classIds = teacher.fields['上课班级ID']?.[0]?.record_ids || [];
+        const classField = teacher.fields['上课班级ID'];
+        let classIds: string[] = [];
+        if (Array.isArray(classField)) {
+          if (classField.length > 0 && typeof classField[0] === 'string') {
+            classIds = classField;
+          } else if (classField[0]?.record_ids) {
+            classIds = classField[0].record_ids;
+          }
+        }
         if (classIds.length > 0) {
           teacher.fields['管理班级分类'] = classIds.map((id: string) => {
             const info = classIdToInfo.get(id);
-            return info?.['班级名称'] || '未命名班级';
+            // 如果没有获取到班级信息，说明班级不存在或已删除
+            if (!info || Object.keys(info).length === 0) {
+              return '班级已删除';
+            }
+            // 尝试多种可能的班级名称字段
+            const name = info?.['班级名称'] || info?.['text_arr']?.[0] || info?.['名称'] || info?.['班级'] || '未命名班级';
+            // 处理飞书文本格式 { text: "xxx" }
+            return typeof name === 'object' && name?.text ? name.text : name;
           });
         }
       });

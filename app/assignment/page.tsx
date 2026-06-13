@@ -3,50 +3,56 @@
 import { useState, useEffect } from 'react'
 import {
   FileText,
-  Grid3X3,
-  List,
   Plus,
   RefreshCw,
   User,
   GraduationCap,
   Loader2
 } from 'lucide-react'
-import { ToastProvider, useToast } from '../components/ui/Toast'
-import { ModalConfirm } from '../components/ui/ModalConfirm'
+import { ToastProvider } from '../components/ui/Toast'
 import FilterSidebar from './components/FilterSidebar'
 import AssignmentList from './components/AssignmentList'
 import AssignmentModal, { AssignmentFormData } from './components/AssignmentModal'
 import ConfirmModal from './components/ConfirmModal'
 import { useAssignment, Assignment } from './hooks/useAssignment'
 
-type ViewMode = 'grid' | 'list'
-
 function AssignmentPageContent() {
-  const { success, error } = useToast()
   const {
     assignments,
     loading,
+    error,
     user,
     fetchAssignments,
     createAssignment,
     updateAssignment,
     deleteAssignment,
-    canOperate,
-    canMarkExcellent
+    canOperate
   } = useAssignment()
 
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
-  const [refreshKey, setRefreshKey] = useState(0)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error'>('success')
 
   useEffect(() => {
     fetchAssignments()
-  }, [refreshKey])
+  }, [fetchAssignments])
+
+  const showSuccessToast = (message: string) => {
+    setToastMessage(message)
+    setToastType('success')
+    setTimeout(() => setToastMessage(''), 3000)
+  }
+
+  const showErrorToast = (message: string) => {
+    setToastMessage(message)
+    setToastType('error')
+    setTimeout(() => setToastMessage(''), 3000)
+  }
 
   const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1)
+    fetchAssignments()
   }
 
   const handleAdd = () => {
@@ -66,13 +72,15 @@ function AssignmentPageContent() {
 
   const handleConfirmDelete = async () => {
     if (!selectedAssignment) return
-
+    
     const result = await deleteAssignment(selectedAssignment.record_id)
+    
     if (result.success) {
-      success('作业删除成功')
+      showSuccessToast('作业删除成功')
     } else {
-      error(result.message || '删除作业失败')
+      showErrorToast('删除作业失败')
     }
+    
     setIsDeleteModalOpen(false)
     setSelectedAssignment(null)
   }
@@ -82,54 +90,44 @@ function AssignmentPageContent() {
     setSelectedAssignment(null)
   }
 
-  const handleMarkExcellent = async (assignment: Assignment) => {
-    const newValue = !assignment.fields['是否优秀']
-    const result = await updateAssignment(assignment.record_id, {
-      '是否优秀': newValue
-    })
-
-    if (result.success) {
-      success(newValue ? '已标记为优秀作业' : '已取消优秀作业标记')
-    } else {
-      error(result.message || '操作失败')
-    }
-  }
-
   const handleModalSubmit = async (formData: AssignmentFormData) => {
     setIsModalOpen(false)
 
+    const buildFields = (data: AssignmentFormData) => {
+      const fields: any = {
+        '作业标题': data['作业标题'],
+        '作业描述': data['作业描述'],
+        '是否优秀作品': data['是否优秀'] ? true : false,
+        '存档路径': data['作品链接'] || ''
+      }
+      
+      if (data['关联班级']) {
+        fields['关联班级'] = [data['关联班级'].text]
+      }
+      
+      if (data['关联学员']) {
+        fields['关联学员'] = [data['关联学员'].text]
+      }
+      
+      if (data['作业附件'] && data['作业附件'].length > 0) {
+        fields['作业附件'] = data['作业附件']
+      }
+      
+      return fields
+    }
+
+    let result: { success: boolean; message?: string }
+
     if (selectedAssignment) {
-      const result = await updateAssignment(selectedAssignment.record_id, {
-        '作业标题': formData['作业标题'],
-        '作业描述': formData['作业描述'],
-        '关联学员': formData['关联学员'],
-        '关联课程': formData['关联课程'],
-        '作业分数': formData['作业分数'],
-        '作业状态': formData['作业状态'],
-        '是否优秀': formData['是否优秀']
-      })
-
-      if (result.success) {
-        success('作业更新成功')
-      } else {
-        error(result.message || '更新作业失败')
-      }
+      result = await updateAssignment(selectedAssignment.record_id, buildFields(formData))
     } else {
-      const result = await createAssignment({
-        '作业标题': formData['作业标题'],
-        '作业描述': formData['作业描述'],
-        '关联学员': formData['关联学员'],
-        '关联课程': formData['关联课程'],
-        '作业分数': formData['作业分数'],
-        '作业状态': formData['作业状态'],
-        '是否优秀': formData['是否优秀']
-      })
+      result = await createAssignment(buildFields(formData))
+    }
 
-      if (result.success) {
-        success('作业创建成功')
-      } else {
-        error(result.message || '创建作业失败')
-      }
+    if (result.success) {
+      showSuccessToast(result.message || '操作成功')
+    } else {
+      showErrorToast(result.message || '操作失败')
     }
   }
 
@@ -140,13 +138,14 @@ function AssignmentPageContent() {
   const getUserRoleBadge = () => {
     if (!user) return null
 
-    const roleConfig = {
+    const roleConfig: Record<string, { icon: any; text: string; bgColor: string; textColor: string }> = {
       admin: { icon: User, text: '管理员', bgColor: 'bg-purple-100', textColor: 'text-purple-600' },
       teacher: { icon: GraduationCap, text: '老师', bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
       student: { icon: User, text: '学生', bgColor: 'bg-green-100', textColor: 'text-green-600' }
     }
 
-    const config = roleConfig[user.role]
+    const role = user.role || user.type
+    const config = roleConfig[role]
     if (!config) return null
 
     const Icon = config.icon
@@ -157,6 +156,11 @@ function AssignmentPageContent() {
         {config.text}
       </span>
     )
+  }
+
+  const getAssignmentTitle = (assignment: Assignment | null) => {
+    if (!assignment) return ''
+    return assignment.fields['作业标题'] || assignment.fields['title'] || '未命名作业'
   }
 
   return (
@@ -180,25 +184,6 @@ function AssignmentPageContent() {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'grid' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  <Grid3X3 className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'list' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  <List className="w-5 h-5" />
-                </button>
-              </div>
-
               <button
                 onClick={handleAdd}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -221,31 +206,37 @@ function AssignmentPageContent() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex gap-6">
-          <aside className="w-72 flex-shrink-0">
-            <FilterSidebar onFilter={handleFilter} />
-          </aside>
-
-          <main className="flex-1">
-            {loading && assignments.length === 0 ? (
-              <div className="bg-white rounded-xl shadow-sm p-12 flex flex-col items-center justify-center">
-                <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-                <span className="text-gray-600">正在加载作业...</span>
-              </div>
-            ) : (
-              <AssignmentList
-                assignments={assignments}
-                loading={false}
-                error={null}
-                canOperate={canOperate()}
-                canMarkExcellent={canMarkExcellent()}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onMarkExcellent={handleMarkExcellent}
-              />
-            )}
-          </main>
+        <div className="mb-6">
+          <FilterSidebar onFilter={handleFilter} />
         </div>
+
+        <main>
+          {loading && assignments.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm p-12 flex flex-col items-center justify-center">
+              <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
+              <span className="text-gray-600">正在加载作业...</span>
+            </div>
+          ) : error ? (
+            <div className="bg-white rounded-xl shadow-sm p-12 flex flex-col items-center justify-center">
+              <p className="text-red-600 mb-4">{error}</p>
+              <button
+                onClick={handleRefresh}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                重试
+              </button>
+            </div>
+          ) : (
+            <AssignmentList
+              assignments={assignments}
+              loading={loading}
+              error={error}
+              canOperate={canOperate}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        </main>
       </div>
 
       <AssignmentModal
@@ -260,8 +251,16 @@ function AssignmentPageContent() {
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
         title="确认删除"
-        message={`确定要删除作业"${selectedAssignment?.fields['作业标题']}"吗？此操作无法撤销。`}
+        message={`确定要删除作业"${getAssignmentTitle(selectedAssignment)}"吗？此操作无法撤销。`}
       />
+
+      {toastMessage && (
+        <div className={`fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white ${
+          toastType === 'success' ? 'bg-green-600' : 'bg-red-600'
+        }`}>
+          {toastMessage}
+        </div>
+      )}
     </div>
   )
 }

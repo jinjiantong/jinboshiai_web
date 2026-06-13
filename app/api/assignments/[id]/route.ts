@@ -72,40 +72,64 @@ export async function PUT(
     const token = await getAccessToken();
     const body = await request.json();
 
+    console.log('=== PUT /api/assignments/[id] ===');
+    console.log('body:', JSON.stringify(body, null, 2));
+
     const fields: Record<string, any> = {};
 
-    if (body.homework_id || body.作业ID) {
-      fields['作业ID'] = body.homework_id || body.作业ID;
+    if (body['作业标题']) {
+      fields['作业标题'] = body['作业标题'];
     }
-    if (body.title || body.作业标题) {
-      fields['作业标题'] = body.title || body.作业标题;
+    if (body['作业描述']) {
+      fields['作业内容'] = body['作业描述'];
     }
-    if (body.description || body.作业描述) {
-      fields['作业描述'] = body.description || body.作业描述;
+    if (body['关联班级']) {
+      const classData = body['关联班级'];
+      if (Array.isArray(classData)) {
+        fields['关联班级'] = classData;
+      } else {
+        fields['关联班级'] = [classData];
+      }
     }
-    if (body.student_id || body.关联学员) {
-      fields['关联学员'] = body.student_id || body.关联学员;
+    if (body['关联学员']) {
+      const studentData = body['关联学员'];
+      if (Array.isArray(studentData)) {
+        fields['关联学员'] = studentData;
+      } else {
+        fields['关联学员'] = [studentData];
+      }
     }
-    if (body.course_id || body.关联课程) {
-      fields['关联课程'] = body.course_id || body.关联课程;
+    if (body['是否优秀作品'] !== undefined) {
+      fields['是否优秀作品'] = body['是否优秀作品'];
     }
-    if (body.due_date || body.截止日期) {
-      const dueDate = body.due_date || body.截止日期;
-      fields['截止日期'] = typeof dueDate === 'number' ? dueDate : new Date(dueDate).getTime();
+    if (body['存档路径']) {
+      fields['存档路径'] = body['存档路径'];
     }
-    if (body.status || body.作业状态) {
-      fields['作业状态'] = body.status || body.作业状态;
+    if (body['作业附件']) {
+      const attachments = body['作业附件'];
+      if (Array.isArray(attachments)) {
+        const attachmentData = attachments.map((att: any) => {
+          if (typeof att === 'string') {
+            return { file_token: att };
+          }
+          return { file_token: att.token || att };
+        }).filter(att => att.file_token);
+        
+        if (attachmentData.length > 0) {
+          fields['作业附件'] = attachmentData;
+        }
+      }
     }
-    if (body.submission_date || body.提交日期) {
-      const submissionDate = body.submission_date || body.提交日期;
-      fields['提交日期'] = typeof submissionDate === 'number' ? submissionDate : new Date(submissionDate).getTime();
+    if (body['提交截止日期']) {
+      const dueDate = body['提交截止日期'];
+      if (typeof dueDate === 'number') {
+        fields['提交截止日期'] = dueDate;
+      } else {
+        fields['提交截止日期'] = new Date(dueDate).getTime();
+      }
     }
-    if (body.score || body.作业分数) {
-      fields['作业分数'] = body.score || body.作业分数;
-    }
-    if (body.feedback || body.作业反馈) {
-      fields['作业反馈'] = body.feedback || body.作业反馈;
-    }
+
+    console.log('转换后fields:', JSON.stringify(fields, null, 2));
 
     const response = await axios.put(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${ASSIGNMENTS_TABLE_ID}/records/${id}`,

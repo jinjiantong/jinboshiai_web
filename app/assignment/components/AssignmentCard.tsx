@@ -35,7 +35,7 @@ export function AssignmentCard({
   onMarkExcellent
 }: AssignmentCardProps) {
   const getSubmissionStatus = () => {
-    const status = assignment.fields['作业状态']
+    const status = assignment.fields['提交状态'] || assignment.fields['作业状态']
     if (status === '已提交' || status === '已完成') {
       return { label: '已提交', color: 'bg-green-100 text-green-800' }
     }
@@ -43,7 +43,7 @@ export function AssignmentCard({
   }
 
   const submissionStatus = getSubmissionStatus()
-  const isExcellent = assignment.fields['是否优秀']
+  const isExcellent = assignment.fields['是否优秀作品']
 
   const studentName = extractText(assignment.fields['关联学员'])
   const courseName = extractText(assignment.fields['关联课程'])

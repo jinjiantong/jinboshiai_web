@@ -41,39 +41,85 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const studentId = searchParams.get('student_id');
-    const courseId = searchParams.get('course_id');
-    const status = searchParams.get('status');
+    const classId = searchParams.get('class_id');
+    const dateFrom = searchParams.get('date_from');
+    const dateTo = searchParams.get('date_to');
     const forceRefresh = searchParams.get('force_refresh') === 'true';
     
     const cacheKey = 'assignments:list';
     const cachedData = listCache.get(cacheKey);
     if (cachedData && !forceRefresh) {
       let filteredData = cachedData;
-      if (studentId) {
-        filteredData = filteredData.filter((item: any) => {
-          const recordId = item.record_id || item.fields?.作业ID;
-          return recordId && recordId.toString().includes(studentId);
-        });
-      }
-      if (courseId) {
+      
+      if (studentId && studentId !== 'all') {
+        const studentIds = studentId.split(',');
         filteredData = filteredData.filter((item: any) => {
           const fields = item.fields || item;
-          const linkedCourse = fields.关联课程;
-          if (Array.isArray(linkedCourse)) {
-            return linkedCourse.some((c: any) => 
-              (typeof c === 'string' && c.includes(courseId)) ||
-              (typeof c === 'object' && c.text && c.text.includes(courseId))
-            );
+          const linkedStudent = fields.关联学员;
+          if (Array.isArray(linkedStudent)) {
+            return linkedStudent.some((s: any) => {
+              if (typeof s === 'string') {
+                return studentIds.includes(s);
+              }
+              if (typeof s === 'object') {
+                // 同时检查 record_ids 和 text
+                if (s.record_ids && Array.isArray(s.record_ids)) {
+                  if (s.record_ids.some((id: string) => studentIds.includes(id))) {
+                    return true;
+                  }
+                }
+                if (s.text && studentIds.includes(s.text)) {
+                  return true;
+                }
+              }
+              return false;
+            });
           }
           return false;
         });
       }
-      if (status) {
+      
+      if (classId) {
+        const classIds = classId.split(',');
         filteredData = filteredData.filter((item: any) => {
           const fields = item.fields || item;
-          return fields.作业状态 === status;
+          const linkedCourse = fields.关联班级;
+          if (Array.isArray(linkedCourse)) {
+            return linkedCourse.some((c: any) => {
+              if (typeof c === 'string') {
+                return classIds.includes(c);
+              }
+              if (typeof c === 'object' && c.record_ids) {
+                return c.record_ids.some((id: string) => classIds.includes(id));
+              }
+              if (typeof c === 'object' && c.text) {
+                return classIds.includes(c.text);
+              }
+              return false;
+            });
+          }
+          return false;
         });
       }
+      
+      if (dateFrom) {
+        const fromTime = new Date(dateFrom).getTime();
+        filteredData = filteredData.filter((item: any) => {
+          const fields = item.fields || item;
+          const submissionDate = fields.提交日期 || fields.截止日期;
+          return submissionDate && submissionDate >= fromTime;
+        });
+      }
+      
+      if (dateTo) {
+        const toTime = new Date(dateTo).getTime() + 86400000;
+        filteredData = filteredData.filter((item: any) => {
+          const fields = item.fields || item;
+          const submissionDate = fields.提交日期 || fields.截止日期;
+          return submissionDate && submissionDate <= toTime;
+        });
+      }
+      
       return successResponse(filteredData);
     }
     
@@ -86,34 +132,88 @@ export async function GET(request: Request) {
 
     if (response.data.code === 0) {
       const items = response.data.data?.items || [];
+      
+      console.log('=== 作业数据调试 ===');
+      console.log('作业数量:', items.length);
+      if (items.length > 0) {
+        console.log('第一条作业的所有字段:', Object.keys(items[0].fields));
+        console.log('作业附件字段值:', items[0].fields['作业附件']);
+        console.log('存档路径字段值:', items[0].fields['存档路径']);
+      }
+      
       listCache.set(cacheKey, items);
       
       let filteredData = items;
-      if (studentId) {
-        filteredData = filteredData.filter((item: any) => {
-          const recordId = item.record_id || item.fields?.作业ID;
-          return recordId && recordId.toString().includes(studentId);
-        });
-      }
-      if (courseId) {
+      
+      if (studentId && studentId !== 'all') {
+        const studentIds = studentId.split(',');
         filteredData = filteredData.filter((item: any) => {
           const fields = item.fields || item;
-          const linkedCourse = fields.关联课程;
-          if (Array.isArray(linkedCourse)) {
-            return linkedCourse.some((c: any) => 
-              (typeof c === 'string' && c.includes(courseId)) ||
-              (typeof c === 'object' && c.text && c.text.includes(courseId))
-            );
+          const linkedStudent = fields.关联学员;
+          if (Array.isArray(linkedStudent)) {
+            return linkedStudent.some((s: any) => {
+              if (typeof s === 'string') {
+                return studentIds.includes(s);
+              }
+              if (typeof s === 'object') {
+                // 同时检查 record_ids 和 text
+                if (s.record_ids && Array.isArray(s.record_ids)) {
+                  if (s.record_ids.some((id: string) => studentIds.includes(id))) {
+                    return true;
+                  }
+                }
+                if (s.text && studentIds.includes(s.text)) {
+                  return true;
+                }
+              }
+              return false;
+            });
           }
           return false;
         });
       }
-      if (status) {
+      
+      if (classId) {
+        const classIds = classId.split(',');
         filteredData = filteredData.filter((item: any) => {
           const fields = item.fields || item;
-          return fields.作业状态 === status;
+          const linkedCourse = fields.关联班级;
+          if (Array.isArray(linkedCourse)) {
+            return linkedCourse.some((c: any) => {
+              if (typeof c === 'string') {
+                return classIds.includes(c);
+              }
+              if (typeof c === 'object' && c.record_ids) {
+                return c.record_ids.some((id: string) => classIds.includes(id));
+              }
+              if (typeof c === 'object' && c.text) {
+                return classIds.includes(c.text);
+              }
+              return false;
+            });
+          }
+          return false;
         });
       }
+      
+      if (dateFrom) {
+        const fromTime = new Date(dateFrom).getTime();
+        filteredData = filteredData.filter((item: any) => {
+          const fields = item.fields || item;
+          const submissionDate = fields.提交日期 || fields.截止日期;
+          return submissionDate && submissionDate >= fromTime;
+        });
+      }
+      
+      if (dateTo) {
+        const toTime = new Date(dateTo).getTime() + 86400000;
+        filteredData = filteredData.filter((item: any) => {
+          const fields = item.fields || item;
+          const submissionDate = fields.提交日期 || fields.截止日期;
+          return submissionDate && submissionDate <= toTime;
+        });
+      }
+      
       return successResponse(filteredData);
     } else {
       throw new Error(`获取作业列表失败: ${response.data.msg}`);
@@ -129,40 +229,64 @@ export async function POST(request: Request) {
     const token = await getAccessToken();
     const body = await request.json();
     
+    console.log('=== POST /api/assignments ===');
+    console.log('body:', JSON.stringify(body, null, 2));
+    
     const fields: Record<string, any> = {};
     
-    if (body.homework_id || body.作业ID) {
-      fields['作业ID'] = body.homework_id || body.作业ID;
+    if (body['作业标题']) {
+      fields['作业标题'] = body['作业标题'];
     }
-    if (body.title || body.作业标题) {
-      fields['作业标题'] = body.title || body.作业标题;
+    if (body['作业描述']) {
+      fields['作业内容'] = body['作业描述'];
     }
-    if (body.description || body.作业描述) {
-      fields['作业描述'] = body.description || body.作业描述;
+    if (body['关联班级']) {
+      const classData = body['关联班级'];
+      if (Array.isArray(classData)) {
+        fields['关联班级'] = classData;
+      } else {
+        fields['关联班级'] = [classData];
+      }
     }
-    if (body.student_id || body.关联学员) {
-      fields['关联学员'] = body.student_id || body.关联学员;
+    if (body['关联学员']) {
+      const studentData = body['关联学员'];
+      if (Array.isArray(studentData)) {
+        fields['关联学员'] = studentData;
+      } else {
+        fields['关联学员'] = [studentData];
+      }
     }
-    if (body.course_id || body.关联课程) {
-      fields['关联课程'] = body.course_id || body.关联课程;
+    if (body['是否优秀作品'] !== undefined) {
+      fields['是否优秀作品'] = body['是否优秀作品'];
     }
-    if (body.due_date || body.截止日期) {
-      const dueDate = body.due_date || body.截止日期;
-      fields['截止日期'] = typeof dueDate === 'number' ? dueDate : new Date(dueDate).getTime();
+    if (body['存档路径']) {
+      fields['存档路径'] = body['存档路径'];
     }
-    if (body.status || body.作业状态) {
-      fields['作业状态'] = body.status || body.作业状态;
+    if (body['作业附件']) {
+      const attachments = body['作业附件'];
+      if (Array.isArray(attachments)) {
+        const attachmentData = attachments.map((att: any) => {
+          if (typeof att === 'string') {
+            return { file_token: att };
+          }
+          return { file_token: att.token || att };
+        }).filter(att => att.file_token);
+        
+        if (attachmentData.length > 0) {
+          fields['作业附件'] = attachmentData;
+        }
+      }
     }
-    if (body.submission_date || body.提交日期) {
-      const submissionDate = body.submission_date || body.提交日期;
-      fields['提交日期'] = typeof submissionDate === 'number' ? submissionDate : new Date(submissionDate).getTime();
+    if (body['提交截止日期']) {
+      const dueDate = body['提交截止日期'];
+      if (typeof dueDate === 'number') {
+        fields['提交截止日期'] = dueDate;
+      } else {
+        fields['提交截止日期'] = new Date(dueDate).getTime();
+      }
     }
-    if (body.score || body.作业分数) {
-      fields['作业分数'] = body.score || body.作业分数;
-    }
-    if (body.feedback || body.作业反馈) {
-      fields['作业反馈'] = body.feedback || body.作业反馈;
-    }
+    
+    console.log('转换后fields:', JSON.stringify(fields, null, 2));
     
     const response = await axios.post(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${ASSIGNMENTS_TABLE_ID}/records`,
@@ -174,6 +298,8 @@ export async function POST(request: Request) {
         }
       }
     );
+    
+    console.log('飞书API响应:', JSON.stringify(response.data, null, 2));
 
     if (response.data.code === 0) {
       listCache.invalidate('assignments:list');
