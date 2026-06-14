@@ -23,7 +23,6 @@ export default function Footer() {
 
   const navLinks = [
     { name: '作品展示', href: '#portfolio' },
-    { name: 'AI达人', href: '#path' },
     { name: '课程体系', href: '#courses' },
     { name: '关于我们', href: '#about' },
     { name: '联系我们', href: '#join' },
