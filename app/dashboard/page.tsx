@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error'>('success')
   const [classes, setClasses] = useState<ClassOption[]>([])
+  const [classError, setClassError] = useState('')
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalClasses: 0,
@@ -29,6 +30,15 @@ export default function Dashboard() {
     const params = new URLSearchParams(window.location.search)
     const name = params.get('name')
     const type = params.get('type')
+
+    // 先获取统计数据（无论是否登录都需要）
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setStats(data.data)
+        }
+      })
 
     // 检查本地存储的登录状态
     const savedLogin = localStorage.getItem('dashboard_login')
@@ -62,18 +72,36 @@ export default function Dashboard() {
       .then(data => {
         if (data.success && data.data) {
           setClasses(data.data)
+          setClassError('')
+        } else {
+          setClassError(data.message || '获取班级列表失败')
         }
       })
-      .catch(err => console.error('Failed to fetch classes:', err))
-
-    fetch('/api/stats')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setStats(data.data)
-        }
+      .catch(err => {
+        console.error('Failed to fetch classes:', err)
+        setClassError('获取班级列表失败，请刷新页面')
       })
   }, [])
+
+  useEffect(() => {
+    if (isLoginModalOpen && loginType === 'student') {
+      setClassError('')
+      fetch('/api/classes')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data) {
+            setClasses(data.data)
+            setClassError('')
+          } else {
+            setClassError(data.message || '获取班级列表失败')
+          }
+        })
+        .catch(err => {
+          console.error('Failed to fetch classes:', err)
+          setClassError('获取班级列表失败，请刷新页面')
+        })
+    }
+  }, [isLoginModalOpen, loginType])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -233,6 +261,9 @@ export default function Dashboard() {
                           </option>
                         ))}
                       </select>
+                      {classError && (
+                        <p className="mt-2 text-sm text-red-600">{classError}</p>
+                      )}
                     </div>
                   </div>
                 )}
@@ -281,6 +312,7 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {userInfo.type !== 'student' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white rounded-xl shadow-sm p-6 border">
             <div className="flex items-center gap-4">
@@ -318,8 +350,19 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          {userInfo.type === 'student' ? (
+            <Link href={`/assignment?name=${encodeURIComponent(userInfo.name)}&type=${encodeURIComponent(userInfo.type)}`} target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
+              <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-50 transition-colors">
+                <ClipboardList className="w-7 h-7 text-orange-600 group-hover:scale-110 transition-transform" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-1">作业管理系统</h3>
+              <p className="text-sm text-gray-500">管理学生作业</p>
+            </Link>
+          ) : (
+            <>
           <Link href={`/course?name=${encodeURIComponent(userInfo.name)}&type=${encodeURIComponent(userInfo.type)}`} target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow hover:border-primary/30 group block">
             <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-50 transition-colors">
               <BookOpen className="w-7 h-7 text-green-600 group-hover:scale-110 transition-transform" />
@@ -367,6 +410,8 @@ export default function Dashboard() {
             <h3 className="text-lg font-semibold text-gray-800 mb-1">实验室企业案例</h3>
             <p className="text-sm text-gray-500">金博士AI技术案例展示</p>
           </Link>
+            </>
+          )}
         </div>
       </main>
     </div>

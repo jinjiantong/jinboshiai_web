@@ -41,12 +41,12 @@ async function getRecordCount(tableId: string): Promise<number> {
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${tableId}/records`,
       {
         headers: { Authorization: `Bearer ${token}` },
-        params: { page_size: 100 }
+        params: { page_size: 1, get_count: true }
       }
     )
 
     if (response.data.code === 0) {
-      return response.data.data?.items?.length || 0
+      return response.data.data?.total || response.data.data?.items?.length || 0
     }
     return 0
   } catch (error: any) {
