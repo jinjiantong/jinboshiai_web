@@ -20,7 +20,7 @@ export default function Contact() {
             联系我们
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-            加入金博士AI，成为AI达人
+            面向学生、职场人、个体经营者，免费咨询服务开放
           </h2>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             开启您的AI学习之旅，让AI成为您的职场利器

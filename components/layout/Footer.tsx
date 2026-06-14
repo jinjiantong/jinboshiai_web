@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Phone, Mail, MapPin, X, Eye, EyeOff, User, GraduationCap, Building2 } from 'lucide-react'
+import PrivacyModal from '@/components/PrivacyModal'
+import TermsModal from '@/components/TermsModal'
 
 interface ClassOption {
   id: string
@@ -20,6 +22,8 @@ export default function Footer() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error'>('success')
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false)
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
 
   const navLinks = [
     { name: '作品展示', href: '#portfolio' },
@@ -210,12 +214,12 @@ export default function Footer() {
               <p className="mt-1">吉ICP备2024020391号</p>
             </div>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="#" className="text-slate-500 hover:text-white text-sm transition-colors">
+              <button onClick={() => setIsPrivacyModalOpen(true)} className="text-slate-500 hover:text-white text-sm transition-colors">
                 隐私政策
-              </Link>
-              <Link href="#" className="text-slate-500 hover:text-white text-sm transition-colors">
+              </button>
+              <button onClick={() => setIsTermsModalOpen(true)} className="text-slate-500 hover:text-white text-sm transition-colors">
                 服务条款
-              </Link>
+              </button>
               <Link href="#" className="text-slate-500 hover:text-white text-sm transition-colors">
                 网站地图
               </Link>
@@ -341,6 +345,8 @@ export default function Footer() {
           </div>
         </div>
       )}
+      <PrivacyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />
+      <TermsModal isOpen={isTermsModalOpen} onClose={() => setIsTermsModalOpen(false)} />
     </>
   )
 }

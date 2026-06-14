@@ -51,6 +51,71 @@ body {
   animation: fadeIn 0.6s ease-out;
 }
 
+/* Logo 炫酷动画 */
+@keyframes logoGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(56, 126, 245, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 25px rgba(56, 126, 245, 1));
+  }
+}
+
+@keyframes logoSpin {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes logo3DRoll {
+  0% {
+    transform: translateY(0) rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotateX(10deg) rotateY(-10deg);
+  }
+  50% {
+    transform: translateY(-5px) rotateX(0deg) rotateY(10deg);
+  }
+  75% {
+    transform: translateY(-10px) rotateX(-10deg) rotateY(-5deg);
+  }
+  100% {
+    transform: translateY(0) rotateX(0deg) rotateY(0deg);
+  }
+}
+
+@keyframes logoWave {
+  0%, 100% {
+    transform: translateY(0) skewX(0deg);
+  }
+  25% {
+    transform: translateY(-5px) skewX(2deg);
+  }
+  50% {
+    transform: translateY(0) skewX(0deg);
+  }
+  75% {
+    transform: translateY(-5px) skewX(-2deg);
+  }
+}
+
+.animate-logo-bounce {
+  animation: logo3DRoll 5s ease-in-out infinite, logoGlow 3s ease-in-out infinite;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.animate-logo-bounce:hover {
+  animation: logoSpin 1s linear infinite, logoGlow 0.5s ease-in-out infinite;
+  transform: scale(1.15) rotateY(180deg);
+  filter: drop-shadow(0 0 40px rgba(56, 126, 245, 1));
+}
+
 /* 平滑滚动 */
 html {
   scroll-behavior: smooth;

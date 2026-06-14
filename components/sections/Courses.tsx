@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { BookOpen, Loader2, Clock, ArrowRight, Sparkles, FileText, Video, Users, ChevronRight } from 'lucide-react'
+import { BookOpen, Loader2, Clock, ArrowRight, Sparkles, FileText, Video, Users, ChevronRight, Briefcase, Layers, FlaskConical, Monitor, Code, Lightbulb, Wrench, Zap, Brain, Bot, PenTool, Image, Video as VideoIcon, FileCode, Workflow } from 'lucide-react'
 
 interface Module {
   title: string
@@ -20,6 +20,27 @@ interface Course {
   result: string
   gradient: string
   color: string
+}
+
+const iconMap: { [key: string]: any } = {
+  BookOpen, Monitor, Code, Lightbulb, Wrench, Zap, Brain, Bot, PenTool, Image, VideoIcon, FileCode, Workflow, Layers, Briefcase, FlaskConical
+}
+
+const getIconByTitle = (title: string) => {
+  const lowerTitle = title.toLowerCase()
+  if (lowerTitle.includes('课程简介')) return BookOpen
+  if (lowerTitle.includes('ai概念') || lowerTitle.includes('概念')) return Brain
+  if (lowerTitle.includes('提示词')) return Lightbulb
+  if (lowerTitle.includes('技能')) return Zap
+  if (lowerTitle.includes('ai办公') || lowerTitle.includes('办公')) return Monitor
+  if (lowerTitle.includes('智能体') || lowerTitle.includes('龙虾')) return Bot
+  if (lowerTitle.includes('0基础') || lowerTitle.includes('编程') || lowerTitle.includes('应用')) return Code
+  if (lowerTitle.includes('企业') || lowerTitle.includes('案例')) return Briefcase
+  if (lowerTitle.includes('ai编程') || lowerTitle.includes('编程')) return Code
+  if (lowerTitle.includes('ai视觉') || lowerTitle.includes('视觉')) return Image
+  if (lowerTitle.includes('ai音视频') || lowerTitle.includes('音视频')) return VideoIcon
+  if (lowerTitle.includes('ai工作流') || lowerTitle.includes('工作流')) return Workflow
+  return Layers
 }
 
 export default function Courses() {
@@ -89,7 +110,7 @@ export default function Courses() {
             <div className="w-8 h-px bg-[#387EF5]"></div>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
-            系统化课程体系
+            零基础，也能打造企业级解决方案
           </h2>
           <p className="text-lg text-slate-500 max-w-xl mx-auto">
             从入门到实战，循序渐进掌握AI核心技能，开启智能办公新时代
@@ -121,7 +142,10 @@ export default function Courses() {
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-5">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#387EF5] to-[#6B9FFF] flex items-center justify-center shadow-lg shadow-blue-500/20">
-                      <BookOpen className="w-5 h-5 text-white" />
+                      {(() => {
+                        const IconComponent = getIconByTitle(course.title)
+                        return <IconComponent className="w-5 h-5 text-white" />
+                      })()}
                     </div>
                     <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-100">
                       <Clock className="w-3.5 h-3.5 text-slate-400" />
@@ -186,10 +210,10 @@ export default function Courses() {
           <div className="bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-3xl p-8 lg:p-12 border border-slate-100">
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12 mb-10">
               {[
-                { icon: FileText, num: '8+', label: '实战课程', desc: '涵盖AI办公、视觉设计、音视频创作等核心技能' },
-                { icon: Video, label: '30+', num: '课时', desc: '随到随学，灵活安排学习时间' },
-                { icon: Users, label: '1000+', num: '学员', desc: '学员好评如潮，口碑见证' }
-              ].map((item, i) => (
+                  { icon: Briefcase, num: '10+', label: '企业级通用解决方案', desc: '从工具到生产力的蜕变' },
+                  { icon: FlaskConical, num: '10+', label: '实验室项目', desc: '学员主导独立完成' },
+                  { icon: Layers, num: '30+', label: '实战项目', desc: 'AI办公,技能,工作流,AI编程,龙虾智能体' }
+                ].map((item, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 20 }}
@@ -202,26 +226,12 @@ export default function Courses() {
                     <item.icon className="w-6 h-6 text-[#387EF5]" />
                   </div>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="text-2xl font-bold text-slate-900">{item.num || item.label}</span>
-                    {item.num && <span className="text-lg text-slate-500">{item.label}</span>}
+                    <span className="text-4xl font-bold text-slate-900">{item.num || item.label}</span>
+                    {item.num && <span className="text-xl text-slate-500">{item.label}</span>}
                   </div>
                   <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
                 </motion.div>
               ))}
-            </div>
-
-            <div className="text-center">
-              <motion.a
-                href="#join"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#387EF5] text-white rounded-full font-medium hover:bg-[#387EF5]/90 transition-all shadow-lg shadow-blue-500/20"
-              >
-                <Sparkles className="w-5 h-5" />
-                <span>立即咨询报名</span>
-                <ArrowRight className="w-5 h-5" />
-              </motion.a>
-              <p className="mt-4 text-sm text-slate-400">限时优惠，名额有限</p>
             </div>
           </div>
         </motion.div>

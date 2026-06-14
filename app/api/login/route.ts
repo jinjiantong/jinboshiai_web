@@ -117,17 +117,20 @@ export async function POST(request: Request) {
         getRecords(STUDENT_TABLE_ID),
         getRecords(CLASS_TABLE_ID)
       ])
-      // 构建班级名称到ID的映射
+
+      const userSelectedClassId = classId
+
       const classNameToId: Record<string, string> = {}
       const classIdToName: Record<string, string> = {}
       classRecords.forEach((cls: any) => {
-        const classId = cls.record_id
+        const recordId = cls.record_id
         const className = cls.fields?.name || cls.fields?.['班级名称'] || ''
-        if (className && classId) {
-          classNameToId[className] = classId
-          classIdToName[classId] = className
+        if (className && recordId) {
+          classNameToId[className] = recordId
+          classIdToName[recordId] = className
         }
       })
+
       let foundStudent = null
 
       for (const record of studentRecords) {
@@ -149,12 +152,8 @@ export async function POST(request: Request) {
           }
         }
 
-        // 获取用户选择的班级ID
-        const selectedClassId = classNameToId[classId] || classId
-
-        // 检查学员的班级是否包含用户选择的班级
         const hasMatchingClass = studentClassIds.some(id => 
-          id === selectedClassId || id === classId || classIdToName[id] === classId
+          id === userSelectedClassId || classIdToName[id] === classId
         )
 
         if (name === username && hasMatchingClass) {

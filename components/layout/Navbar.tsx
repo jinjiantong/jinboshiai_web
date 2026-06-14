@@ -19,8 +19,9 @@ export default function Navbar() {
 
   const navItems = [
     { name: '作品展示', href: '#portfolio' },
+    { name: '企业方案', href: '#portfolio' },
+    { name: '实验室项目', href: '#portfolio' },
     { name: '课程体系', href: '#courses' },
-    { name: '关于我们', href: '#about' },
   ]
 
   return (
@@ -35,7 +36,11 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center">
-              <img src="/logo_touming.png" alt="金博士AI Logo" className="h-20 w-auto" style={{ imageRendering: 'auto' }} />
+              <img src="/newlogo_blue.png" alt="金博士AI Logo" className="h-20 w-auto animate-logo-bounce" style={{ imageRendering: 'auto' }} />
+              <div className="ml-3 flex flex-col leading-tight mt-2">
+                <span className="text-slate-600 text-xs font-semibold tracking-widest uppercase">Jin Dr. AI</span>
+                <span className="text-slate-600 text-xl font-bold tracking-wider">金博士AI实验室</span>
+              </div>
             </Link>
           </div>
 
