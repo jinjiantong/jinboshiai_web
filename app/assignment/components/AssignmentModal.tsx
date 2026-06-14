@@ -9,6 +9,12 @@ interface AssignmentModalProps {
   onClose: () => void;
   onSubmit: (data: AssignmentFormData) => void;
   assignment?: Assignment;
+  currentUser?: {
+    user_id: string;
+    name: string;
+    role: string;
+  };
+  students: Student[];
 }
 
 export interface AssignmentFormData {
@@ -39,8 +45,11 @@ export function AssignmentModal({
   isOpen,
   onClose,
   onSubmit,
-  assignment
+  assignment,
+  currentUser,
+  students
 }: AssignmentModalProps) {
+  const isStudent = currentUser?.role === 'student';
   const [formData, setFormData] = useState<AssignmentFormData>({
     '作业标题': '',
     '作业描述': '',
@@ -55,7 +64,6 @@ export function AssignmentModal({
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const [students, setStudents] = useState<Student[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedClassId, setSelectedClassId] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -116,7 +124,6 @@ export function AssignmentModal({
           studentId = studentField;
         }
 
-        // 解析作业附件
         const attachmentField = assignment.fields['作业附件'];
         let attachments: Array<{ token: string; name: string }> = [];
         if (attachmentField && Array.isArray(attachmentField)) {
@@ -141,20 +148,47 @@ export function AssignmentModal({
           '作业附件': attachments
         });
       } else {
-        setSelectedClassId('');
-        setFormData({
-          '作业标题': '',
-          '作业描述': '',
-          '关联学员': undefined,
-          '关联班级': undefined,
-          '是否优秀': false,
-          '作品链接': '',
-          '作业附件': []
-        });
+        if (isStudent && students.length > 0) {
+          const studentName = currentUser?.name || '';
+          const matchedStudent = students.find(s => s.fields?.['姓名'] === studentName);
+          
+          let classRecordId = '';
+          if (matchedStudent) {
+            const classField = matchedStudent.fields?.['报名班级'];
+            if (classField && Array.isArray(classField)) {
+              const firstItem = classField[0];
+              if (firstItem && firstItem.record_ids && firstItem.record_ids.length > 0) {
+                classRecordId = firstItem.record_ids[0];
+              }
+            }
+          }
+          
+          setSelectedClassId(classRecordId);
+          setFormData({
+            '作业标题': '',
+            '作业描述': '',
+            '关联学员': { text: matchedStudent ? matchedStudent.record_id : studentName },
+            '关联班级': classRecordId ? { text: classRecordId } : undefined,
+            '是否优秀': false,
+            '作品链接': '',
+            '作业附件': []
+          });
+        } else if (!isStudent) {
+          setSelectedClassId('');
+          setFormData({
+            '作业标题': '',
+            '作业描述': '',
+            '关联学员': undefined,
+            '关联班级': undefined,
+            '是否优秀': false,
+            '作品链接': '',
+            '作业附件': []
+          });
+        }
       }
       setErrors({});
     }
-  }, [isOpen, assignment]);
+  }, [isOpen, assignment, students, isStudent, currentUser]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -381,9 +415,12 @@ export function AssignmentModal({
                 <select
                   value={selectedClassId}
                   onChange={(e) => handleClassChange(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  disabled={isStudent}
+                  className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    isStudent ? 'bg-gray-100 cursor-not-allowed' : ''
+                  } ${errors['关联班级'] ? 'border-red-500' : 'border-gray-300'}`}
                 >
-                  <option value="">请选择班级</option>
+                  <option value="">{isStudent ? '（不可更改）' : '请选择班级'}</option>
                   {courses.map(course => (
                     <option key={course.record_id} value={course.record_id}>
                       {course.fields?.['班级名称'] || '未知班级'}
@@ -399,12 +436,13 @@ export function AssignmentModal({
                 <select
                   value={formData['关联学员']?.text || ''}
                   onChange={(e) => handleStudentChange(e.target.value)}
+                  disabled={isStudent}
                   className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                    errors['关联学员'] ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                    isStudent ? 'bg-gray-100 cursor-not-allowed' : ''
+                  } ${errors['关联学员'] ? 'border-red-500' : 'border-gray-300'}`}
                 >
                   <option value="">
-                    {selectedClassId ? '请选择学员' : '请先选择班级'}
+                    {isStudent ? currentUser?.name || '（不可更改）' : (selectedClassId ? '请选择学员' : '请先选择班级')}
                   </option>
                   {filteredStudents.map(student => (
                     <option key={student.record_id} value={student.record_id}>

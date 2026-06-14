@@ -40,11 +40,18 @@ function AssignmentPageContent() {
     loading,
     error,
     user,
+    students,
+    courses,
+    totalCount,
+    currentPage,
+    pageSize,
     fetchAssignments,
     createAssignment,
     updateAssignment,
     deleteAssignment,
-    canOperate
+    canOperate,
+    setCurrentPage,
+    setPageSize
   } = useAssignment()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -119,6 +126,8 @@ function AssignmentPageContent() {
         '存档路径': data['作品链接'] || ''
       }
       
+      console.log('buildFields input:', JSON.stringify(data, null, 2));
+      
       if (data['关联班级']) {
         fields['关联班级'] = [data['关联班级'].text]
       }
@@ -130,6 +139,8 @@ function AssignmentPageContent() {
       if (data['作业附件'] && data['作业附件'].length > 0) {
         fields['作业附件'] = data['作业附件']
       }
+      
+      console.log('buildFields output:', JSON.stringify(fields, null, 2));
       
       return fields
     }
@@ -207,7 +218,7 @@ function AssignmentPageContent() {
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <Plus className="w-5 h-5" />
-                新增作业
+                {user?.role === 'student' ? '提交作业' : '新增作业'}
               </button>
 
               <button
@@ -247,11 +258,18 @@ function AssignmentPageContent() {
           ) : (
             <AssignmentList
               assignments={assignments}
+              students={students}
+              courses={courses}
               loading={loading}
               error={error}
               canOperate={canOperate}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              totalCount={totalCount}
+              currentPage={currentPage}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
             />
           )}
         </main>
@@ -262,6 +280,8 @@ function AssignmentPageContent() {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
         assignment={selectedAssignment || undefined}
+        currentUser={user}
+        students={students}
       />
 
       <ConfirmModal

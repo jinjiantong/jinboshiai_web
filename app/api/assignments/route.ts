@@ -45,6 +45,8 @@ export async function GET(request: Request) {
     const dateFrom = searchParams.get('date_from');
     const dateTo = searchParams.get('date_to');
     const forceRefresh = searchParams.get('force_refresh') === 'true';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const pageSize = parseInt(searchParams.get('page_size') || '10', 10);
     
     const cacheKey = 'assignments:list';
     const cachedData = listCache.get(cacheKey);
@@ -120,7 +122,18 @@ export async function GET(request: Request) {
         });
       }
       
-      return successResponse(filteredData);
+      const totalCount = filteredData.length;
+      const startIndex = (page - 1) * pageSize;
+      const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
+      
+      return NextResponse.json({
+        code: 0,
+        msg: 'success',
+        data: paginatedData,
+        total: totalCount,
+        page,
+        page_size: pageSize
+      });
     }
     
     const token = await getAccessToken();
@@ -214,7 +227,18 @@ export async function GET(request: Request) {
         });
       }
       
-      return successResponse(filteredData);
+      const totalCount = filteredData.length;
+      const startIndex = (page - 1) * pageSize;
+      const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
+      
+      return NextResponse.json({
+        code: 0,
+        msg: 'success',
+        data: paginatedData,
+        total: totalCount,
+        page,
+        page_size: pageSize
+      });
     } else {
       throw new Error(`获取作业列表失败: ${response.data.msg}`);
     }
@@ -230,7 +254,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     console.log('=== POST /api/assignments ===');
-    console.log('body:', JSON.stringify(body, null, 2));
+    console.log('接收到的body:', JSON.stringify(body, null, 2));
     
     const fields: Record<string, any> = {};
     
@@ -309,6 +333,7 @@ export async function POST(request: Request) {
     }
   } catch (error: any) {
     console.error('添加作业错误:', error);
-    return errorResponse(error.message || '添加作业失败');
+    console.error('错误详情:', error.response?.data || error.message);
+    return errorResponse(error.response?.data?.msg || error.message || '添加作业失败');
   }
 }

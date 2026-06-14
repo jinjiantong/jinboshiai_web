@@ -32,17 +32,32 @@ export interface UserInfo {
   role: 'admin' | 'teacher' | 'student';
 }
 
+export interface Student {
+  record_id: string;
+  fields: {
+    '姓名'?: string;
+    [key: string]: any;
+  };
+}
+
 export interface UseAssignmentReturn {
   assignments: Assignment[];
+  students: Student[];
+  courses: any[];
   loading: boolean;
   error: string | null;
   filters: AssignmentFilters;
   user: UserInfo | null;
+  totalCount: number;
+  currentPage: number;
+  pageSize: number;
   fetchAssignments: (filters?: AssignmentFilters) => Promise<void>;
   createAssignment: (data: Partial<Assignment['fields']>) => Promise<{ success: boolean; message?: string }>;
   updateAssignment: (id: string, data: Partial<Assignment['fields']>) => Promise<{ success: boolean; message?: string }>;
   deleteAssignment: (id: string) => Promise<{ success: boolean; message?: string }>;
   setFilters: (filters: AssignmentFilters) => void;
+  setCurrentPage: (page: number) => void;
+  setPageSize: (size: number) => void;
   canOperate: (assignment?: Assignment) => boolean;
 }
 
@@ -64,6 +79,16 @@ function getUserFromStorage(): UserInfo | null {
   if (typeof window === 'undefined') return null;
   
   try {
+    const dashboardLogin = localStorage.getItem('dashboard_login');
+    if (dashboardLogin) {
+      const loginData = JSON.parse(dashboardLogin);
+      return {
+        user_id: loginData.id || loginData.recordId || '',
+        name: loginData.name || '',
+        role: loginData.type === 'teacher' ? 'teacher' : 'student'
+      };
+    }
+    
     const userStr = localStorage.getItem('userInfo');
     if (userStr) {
       const user = JSON.parse(userStr);
@@ -92,14 +117,50 @@ function getUserFromStorage(): UserInfo | null {
 
 export function useAssignment(): UseAssignmentReturn {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<AssignmentFilters>({});
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     const userInfo = getUserFromStorage();
     setUser(userInfo);
+  }, []);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await fetch('/api/student-management/students?force_refresh=true');
+        if (response.ok) {
+          const result = await response.json();
+          if (result.code === 0) {
+            setStudents(result.data || []);
+          }
+        }
+      } catch (error) {
+        console.error('获取学员列表失败:', error);
+      }
+    };
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch('/api/student-management/courses?force_refresh=true');
+        if (response.ok) {
+          const result = await response.json();
+          if (result.code === 0) {
+            setCourses(result.data || []);
+          }
+        }
+      } catch (error) {
+        console.error('获取班级列表失败:', error);
+      }
+    };
+    fetchStudents();
+    fetchCourses();
   }, []);
 
   const fetchAssignments = useCallback(async (newFilters?: AssignmentFilters) => {
@@ -113,6 +174,8 @@ export function useAssignment(): UseAssignmentReturn {
       if (newFilters?.date_from) params.append('date_from', newFilters.date_from);
       if (newFilters?.date_to) params.append('date_to', newFilters.date_to);
       params.append('force_refresh', 'true');
+      params.append('page', currentPage.toString());
+      params.append('page_size', pageSize.toString());
       
       const url = `/api/assignments${params.toString() ? `?${params.toString()}` : ''}`;
       const response = await fetch(url);
@@ -125,6 +188,7 @@ export function useAssignment(): UseAssignmentReturn {
       
       if (result.code === 0) {
         setAssignments(result.data || []);
+        setTotalCount(result.total || result.data?.length || 0);
       } else {
         throw new Error(result.msg || '获取作业列表失败');
       }
@@ -135,7 +199,7 @@ export function useAssignment(): UseAssignmentReturn {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentPage, pageSize]);
 
   const createAssignment = useCallback(async (data: Partial<Assignment['fields']>): Promise<{ success: boolean; message?: string }> => {
     setLoading(true);
@@ -242,24 +306,82 @@ export function useAssignment(): UseAssignmentReturn {
     if (user.role === 'teacher') return true;
     
     if (user.role === 'student' && assignment) {
-      const linkedStudent = extractText(assignment.fields['关联学员']);
-      return linkedStudent.includes(user.user_id) || linkedStudent.includes(user.name);
+      const fieldValue = assignment.fields['关联学员'];
+      const studentName = user.name?.trim() || '';
+      
+      // 首先检查是否是空对象（不属于任何人）
+      if (Array.isArray(fieldValue) && fieldValue.length > 0) {
+        const item = fieldValue[0];
+        if (item && typeof item === 'object') {
+          const isEmptyObject = (!item.record_ids || item.record_ids.length === 0) &&
+                               (!item.text_arr || item.text_arr.length === 0) &&
+                               (!item.text);
+          if (isEmptyObject) {
+            return false;
+          }
+          
+          // 使用 record_ids 查找关联学员的真实姓名
+          if (item.record_ids && Array.isArray(item.record_ids) && students.length > 0) {
+            for (const rid of item.record_ids) {
+              const matchedStudent = students.find(s => s.record_id === rid);
+              if (matchedStudent && matchedStudent.fields['姓名'] === studentName) {
+                return true;
+              }
+            }
+          }
+          
+          // 检查 text 字段是否匹配
+          if (item.text && item.text === studentName) {
+            return true;
+          }
+        }
+      }
+      
+      // 检查 text_arr
+      if (Array.isArray(fieldValue) && fieldValue.length > 0) {
+        const item = fieldValue[0];
+        if (item && item.text_arr && Array.isArray(item.text_arr)) {
+          if (item.text_arr.includes(studentName)) {
+            return true;
+          }
+        }
+      }
+      
+      return false;
     }
     
     return false;
-  }, [user]);
+  }, [user, students]);
+
+  const handleSetCurrentPage = useCallback((page: number) => {
+    setCurrentPage(page);
+    fetchAssignments(filters);
+  }, [fetchAssignments, filters]);
+
+  const handleSetPageSize = useCallback((size: number) => {
+    setPageSize(size);
+    setCurrentPage(1);
+    fetchAssignments(filters);
+  }, [fetchAssignments, filters]);
 
   return {
     assignments,
+    students,
+    courses,
     loading,
     error,
     filters,
     user,
+    totalCount,
+    currentPage,
+    pageSize,
     fetchAssignments,
     createAssignment,
     updateAssignment,
     deleteAssignment,
     setFilters,
+    setCurrentPage: handleSetCurrentPage,
+    setPageSize: handleSetPageSize,
     canOperate,
   };
 }

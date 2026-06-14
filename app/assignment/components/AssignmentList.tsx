@@ -2,15 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import { Assignment } from '../hooks/useAssignment'
-import { AlertCircle, Inbox, File, Image, Video, ExternalLink, Edit2, Trash2, X, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
+import { AlertCircle, Inbox, File, Image, Video, ExternalLink, Edit2, Trash2, X, ZoomIn, ZoomOut, RotateCw, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface AssignmentListProps {
   assignments: Assignment[]
+  students: Student[]
+  courses: any[]
   loading: boolean
   error: string | null
   canOperate: (assignment: Assignment) => boolean
   onEdit: (assignment: Assignment) => void
   onDelete: (assignment: Assignment) => void
+  totalCount?: number
+  currentPage?: number
+  pageSize?: number
+  onPageChange?: (page: number) => void
+  onPageSizeChange?: (size: number) => void
 }
 
 interface Student {
@@ -64,6 +71,16 @@ function getStudentNameFromField(fieldValue: any, students: Student[]): string {
   if (Array.isArray(fieldValue)) {
     fieldValue.forEach((item: any) => {
       if (item && typeof item === 'object') {
+        // 检查是否是空对象（没有 record_ids, text, text_arr）
+        const isEmptyObject = (!item.record_ids || item.record_ids.length === 0) &&
+                             (!item.text_arr || item.text_arr.length === 0) &&
+                             (!item.text);
+        
+        if (isEmptyObject) {
+          // 空对象，返回空字符串（后续会显示为"-"）
+          return;
+        }
+        
         // 优先使用 record_ids 查找
         if (item.record_ids && Array.isArray(item.record_ids)) {
           item.record_ids.forEach((rid: string) => {
@@ -79,7 +96,6 @@ function getStudentNameFromField(fieldValue: any, students: Student[]): string {
           if (matched && matched.fields['姓名']) {
             names.push(matched.fields['姓名'])
           } else if (!item.record_ids || item.record_ids.length === 0) {
-            // 如果没有 record_ids 或 record_ids 没找到，使用 text 作为姓名
             names.push(item.text)
           }
         }
@@ -194,45 +210,21 @@ function getAttachmentType(name: string): 'image' | 'video' | 'other' {
 
 export function AssignmentList({
   assignments,
+  students,
+  courses,
   loading,
   error,
   canOperate,
   onEdit,
-  onDelete
+  onDelete,
+  totalCount = 0,
+  currentPage = 1,
+  pageSize = 10,
+  onPageChange,
+  onPageSizeChange
 }: AssignmentListProps) {
   const [previewAttachment, setPreviewAttachment] = useState<{url: string, type: string} | null>(null)
   const [imageZoom, setImageZoom] = useState(100)
-  const [students, setStudents] = useState<Student[]>([])
-  const [courses, setCourses] = useState<Course[]>([])
-
-  useEffect(() => {
-    fetchStudents()
-    fetchCourses()
-  }, [])
-
-  const fetchStudents = async () => {
-    try {
-      const res = await fetch('/api/student-management/students?force_refresh=true')
-      const data = await res.json()
-      if (data.code === 0) {
-        setStudents(data.data || [])
-      }
-    } catch (err) {
-      console.error('获取学员数据失败:', err)
-    }
-  }
-
-  const fetchCourses = async () => {
-    try {
-      const res = await fetch('/api/student-management/courses?force_refresh=true')
-      const data = await res.json()
-      if (data.code === 0) {
-        setCourses(data.data || [])
-      }
-    } catch (err) {
-      console.error('获取班级数据失败:', err)
-    }
-  }
 
   const getAttachmentType = (name: string): 'image' | 'video' | 'other' => {
     const ext = name.toLowerCase().split('.').pop() || ''
@@ -427,7 +419,7 @@ export function AssignmentList({
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-center gap-1">
-                      {canOperate && (
+                      {canOperate(assignment) && (
                         <>
                           <button
                             onClick={() => onEdit(assignment)}
@@ -453,6 +445,48 @@ export function AssignmentList({
           </tbody>
         </table>
       </div>
+
+      {totalCount > pageSize && (
+        <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">每页显示：</span>
+            <select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
+              className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={5}>5条</option>
+              <option value={10}>10条</option>
+              <option value={20}>20条</option>
+              <option value={50}>50条</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">
+              共 {totalCount} 条，第 {currentPage}/{Math.ceil(totalCount / pageSize)} 页
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onPageChange?.(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 text-gray-600 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                title="上一页"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => onPageChange?.(currentPage + 1)}
+                disabled={currentPage >= Math.ceil(totalCount / pageSize)}
+                className="p-2 text-gray-600 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                title="下一页"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {previewAttachment && (
         <div 
