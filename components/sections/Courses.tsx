@@ -118,7 +118,7 @@ const services = [
 
 export default function Courses() {
   return (
-    <section id="courses" className="py-20 lg:py-28 bg-white">
+    <section id="courses" className="py-20 lg:py-28 bg-gradient-to-b from-slate-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -127,9 +127,9 @@ export default function Courses() {
           className="text-center mb-12"
         >
           <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-8 h-px bg-slate-300"></div>
-            <span className="text-xs font-medium text-slate-400 tracking-widest uppercase">Curriculum</span>
-            <div className="w-8 h-px bg-slate-300"></div>
+            <div className="w-8 h-px bg-primary"></div>
+            <span className="text-xs font-medium text-primary tracking-widest uppercase">Curriculum</span>
+            <div className="w-8 h-px bg-primary"></div>
           </div>
           
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-3">
@@ -147,11 +147,11 @@ export default function Courses() {
           className="mb-12"
         >
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-slate-600" />
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-white" />
             </div>
             <div>
-              <div className="text-xs text-slate-400 uppercase tracking-wider">课程内容</div>
+              <div className="text-xs text-primary font-medium uppercase tracking-wider">课程内容</div>
             </div>
           </div>
           
@@ -166,12 +166,14 @@ export default function Courses() {
                   transition={{ duration: 0.4, delay: index * 0.08 }}
                   viewport={{ once: true }}
                   whileHover={{ y: -4 }}
-                  className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:border-slate-300 hover:shadow-md transition-all duration-300"
+                  className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300"
                 >
+                  <div className="h-0.5 bg-gradient-to-r from-primary via-primary to-transparent"></div>
+                  
                   <div className="p-5">
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="w-11 h-11 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                        <IconComponent className="w-5 h-5 text-slate-500 group-hover:text-primary transition-colors" />
+                      <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary transition-colors">
+                        <IconComponent className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
                       </div>
                       <div>
                         <div className="text-3xl font-bold text-slate-200">{course.number}</div>
@@ -180,14 +182,14 @@ export default function Courses() {
                     
                     <h3 className="text-lg font-semibold text-slate-900 mb-1">{course.title}</h3>
                     {course.subtitle && (
-                      <p className="text-sm text-slate-400 mb-4">{course.subtitle}</p>
+                      <p className="text-sm text-primary/70 mb-4">{course.subtitle}</p>
                     )}
                     
                     <div className="space-y-4">
                       {course.sections.map((section, sIndex) => (
                         <div key={sIndex}>
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="w-5 h-5 rounded text-[10px] font-medium bg-slate-100 text-slate-500 flex items-center justify-center">
+                            <div className="w-5 h-5 rounded text-[10px] font-medium bg-primary text-white flex items-center justify-center">
                               {sIndex + 1}
                             </div>
                             <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">{section.title}</div>
@@ -195,7 +197,7 @@ export default function Courses() {
                           <div className="space-y-1.5 pl-7">
                             {section.lessons.map((lesson, lIndex) => (
                               <div key={lIndex} className="flex items-start gap-2 text-[13px] text-slate-600">
-                                <span className="w-1 h-1 rounded-full bg-slate-300 mt-2 flex-shrink-0"></span>
+                                <span className="w-1 h-1 rounded-full bg-primary/40 mt-2 flex-shrink-0"></span>
                                 <span className="leading-relaxed">{lesson}</span>
                               </div>
                             ))}
@@ -215,20 +217,20 @@ export default function Courses() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-slate-50 rounded-xl p-5"
+            className="bg-white rounded-xl p-5 border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                <Calendar className="w-5 h-5 text-slate-500" />
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shadow-md shadow-primary/20">
+                <Calendar className="w-5 h-5 text-white" />
               </div>
               <h4 className="font-semibold text-slate-800">上课安排</h4>
             </div>
             <ul className="space-y-2">
               {schedule.map((item, index) => (
                 <li key={index} className="flex items-start gap-2 text-[13px]">
-                  <span className="w-1 h-1 rounded-full bg-slate-400 mt-2 flex-shrink-0"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></span>
                   <div>
-                    <span className="font-medium text-slate-700">{item.label}：</span>
+                    <span className="font-medium text-primary">{item.label}：</span>
                     <span className="text-slate-500">{item.value}</span>
                   </div>
                 </li>
@@ -241,16 +243,16 @@ export default function Courses() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 }}
             viewport={{ once: true }}
-            className="bg-slate-900 rounded-xl p-5 text-white"
+            className="bg-gradient-to-br from-primary to-blue-700 rounded-xl p-5 text-white shadow-lg shadow-primary/30"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white/80" />
+              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
               <h4 className="font-semibold">欢迎咨询</h4>
             </div>
             <div className="space-y-2 mb-4">
-              <p className="text-sm text-white/60">课程详细价格及优惠信息，请联系我们获取最新报价。</p>
+              <p className="text-sm text-white/80">课程详细价格及优惠信息，请联系我们获取最新报价。</p>
             </div>
             <div className="space-y-2 text-sm">
               {[
@@ -258,16 +260,16 @@ export default function Courses() {
                 '8人小班，一对一指导',
                 '企业级项目实战'
               ].map((item, index) => (
-                <div key={index} className="flex items-center gap-2 text-white/80">
-                  <CheckCircle2 className="w-4 h-4 text-white/50" />
+                <div key={index} className="flex items-center gap-2 text-white/90">
+                  <CheckCircle2 className="w-4 h-4 text-white/70" />
                   <span>{item}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10">
-              <div className="flex items-center gap-2 text-white/90 text-sm">
-                <span className="font-medium">130 5120 2991</span>
-                <ArrowRight className="w-3 h-3" />
+            <div className="mt-4 pt-3 border-t border-white/20">
+              <div className="flex items-center gap-2 text-white text-sm">
+                <span className="font-semibold">130 5120 2991</span>
+                <ArrowRight className="w-4 h-4" />
               </div>
             </div>
           </motion.div>
@@ -277,22 +279,22 @@ export default function Courses() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.16 }}
             viewport={{ once: true }}
-            className="bg-slate-50 rounded-xl p-5"
+            className="bg-white rounded-xl p-5 border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                <Award className="w-5 h-5 text-slate-500" />
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shadow-md shadow-primary/20">
+                <Award className="w-5 h-5 text-white" />
               </div>
               <h4 className="font-semibold text-slate-800">专属护航服务</h4>
             </div>
             <ul className="space-y-3">
               {services.map((item, index) => (
                 <li key={index} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded text-[10px] font-medium bg-white text-slate-500 flex items-center justify-center shadow-sm flex-shrink-0 mt-0.5">
+                  <div className="w-5 h-5 rounded text-[10px] font-medium bg-primary text-white flex items-center justify-center shadow-sm flex-shrink-0 mt-0.5">
                     {index + 1}
                   </div>
                   <div>
-                    <span className="font-medium text-slate-700 text-[13px]">{item.label}</span>
+                    <span className="font-medium text-primary text-[13px]">{item.label}</span>
                     <p className="text-[12px] text-slate-500 mt-0.5">{item.value}</p>
                   </div>
                 </li>
