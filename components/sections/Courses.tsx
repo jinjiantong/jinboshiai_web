@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { BookOpen, Clock, Shield, Users, Calendar, CheckCircle, Phone, Sparkles } from 'lucide-react'
+import { BookOpen, Clock, Shield, Users, Calendar, CheckCircle, Sparkles } from 'lucide-react'
 
 const courses = [
   {
@@ -244,19 +244,6 @@ export default function Courses() {
             </ul>
           </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-primary px-8 py-6 text-center inline-block w-full"
-        >
-          <p className="text-white/90 text-lg mb-2">立即咨询，开启您的AI学习之旅</p>
-          <p className="text-white font-mono text-xl font-semibold flex items-center justify-center gap-2">
-            <Phone className="w-5 h-5" />
-            130 5120 2991
-          </p>
-        </motion.div>
       </div>
     </section>
   )
