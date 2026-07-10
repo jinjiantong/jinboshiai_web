@@ -16,12 +16,14 @@ interface Portfolio {
     开发者: string
     作品跳转链接: string
     作品分类: string
-    作品展示平台: string
+    作品展示平台: string[]
     作品附件类型: string
     是否展示: boolean
-    作品附件: Array<{ name: string; size: number; file_token: string }>
+    作品附件: Array<{ name: string; size: number; file_token: string; download_url: string }>
     架构图: Array<{ name: string; size: number; token: string }>
     创建日期: number
+    cover_image: string | null
+    access_token: string
   }
 }
 
@@ -214,10 +216,7 @@ export default function PortfolioPage() {
     )
   }
 
-  const currentAttachment = currentPortfolio?.fields.作品附件?.[0]
-  const currentCover = currentAttachment 
-    ? `https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/v2/cover/${currentAttachment.file_token}/?height=1080&width=1920`
-    : null
+  const currentCover = currentPortfolio?.fields.cover_image || null
 
   const PortfolioContent = () => (
     <div 
