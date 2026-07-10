@@ -19,9 +19,9 @@ export default function Navbar() {
 
   const navItems = [
     { name: '作品展示', href: '#portfolio' },
-    { name: '企业方案', href: '#portfolio' },
-    { name: '实验室项目', href: '#portfolio' },
+    { name: '往期活动', href: '#portfolio' },
     { name: '课程体系', href: '#courses' },
+    { name: '联系我们', href: '#join' },
   ]
 
   return (
@@ -57,14 +57,6 @@ export default function Navbar() {
                 {item.name}
               </motion.a>
             ))}
-            <motion.a
-              href="#join"
-              whileHover={{ scale: 1.05, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-primary text-white px-6 py-2.5 rounded-full font-medium hover:bg-primary-dark transition-all shadow-md hover:shadow-lg"
-            >
-              联系我们
-            </motion.a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -94,13 +86,6 @@ export default function Navbar() {
                   {item.name}
                 </Link>
               ))}
-              <Link
-                href="#join"
-                className="bg-primary text-white px-6 py-3 rounded-full font-medium text-center hover:bg-primary-dark transition-all mt-2"
-                onClick={() => setIsOpen(false)}
-              >
-                联系我们
-              </Link>
             </div>
           </div>
         )}
