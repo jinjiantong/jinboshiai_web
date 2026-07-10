@@ -150,9 +150,9 @@ export default function Courses() {
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
-            <div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
               <div className="text-lg text-primary font-bold uppercase tracking-wider">以下是线下课程内容</div>
-              <div className="text-base text-slate-500 font-medium mt-1">线上课程尽情期待...</div>
+              <div className="text-base text-slate-500 font-medium">线上课程尽情期待...</div>
             </div>
           </div>
           
