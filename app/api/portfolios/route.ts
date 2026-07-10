@@ -91,7 +91,13 @@ export async function GET() {
           作品展示平台: record.fields.作品展示平台 || '',
           作品附件类型: record.fields.作品附件类型 || '',
           是否展示: record.fields.是否展示 || false,
-          作品附件: record.fields.作品附件 || [],
+          作品附件: record.fields.作品附件?.map((f: any) => ({
+            name: f.name,
+            size: f.size,
+            file_token: f.file_token,
+            type: f.type,
+            url: f.url
+          })) || [],
           架构图: record.fields.架构图 || [],
           创建日期: record.fields.创建日期 || null,
         }
