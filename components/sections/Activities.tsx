@@ -100,7 +100,7 @@ export default function Activities() {
                   
                   <div className="mt-auto pt-4 border-t" style={{ borderColor: '#e0e0e0' }}>
                     <div className="text-xs mb-3 font-mono" style={{ color: '#737373', letterSpacing: '0.05em' }}>
-                      7月20号开课 · jinboshiai.com
+                      7月20号开始分享 · jinboshiai.com
                     </div>
                     <a href="#join" className="inline-block px-5 py-2 text-xs font-semibold rounded cursor-pointer" style={{ background: '#FF6B35', color: 'white', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                       立即报名
