@@ -2,81 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Calendar, Users, MapPin, Sparkles } from 'lucide-react'
-
-interface Activity {
-  id: number
-  title: string
-  date: string
-  location: string
-  participants: number
-  description: string
-  coverImage: string
-  category: string
-}
-
-const activities: Activity[] = [
-  {
-    id: 1,
-    title: 'AI实战训练营第一期',
-    date: '2024年3月15日',
-    location: '北京顺义校区',
-    participants: 48,
-    description: '为期两周的AI实战训练营，学员们完成了从入门到实战的全方位学习。',
-    coverImage: 'https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=600&h=400&fit=crop',
-    category: '训练营'
-  },
-  {
-    id: 2,
-    title: '企业AI转型分享会',
-    date: '2024年4月20日',
-    location: '北京朝阳区',
-    participants: 120,
-    description: '邀请多位企业高管分享AI在各自领域的应用实践与成功案例。',
-    coverImage: 'https://images.unsplash.com/photo-1558403194-611308249627?w=600&h=400&fit=crop',
-    category: '分享会'
-  },
-  {
-    id: 3,
-    title: 'AI创业路演大赛',
-    date: '2024年5月10日',
-    location: '北京中关村',
-    participants: 35,
-    description: '学员们展示自己的AI创业项目，由投资人进行点评与指导。',
-    coverImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop',
-    category: '大赛'
-  },
-  {
-    id: 4,
-    title: 'AI技能工作坊',
-    date: '2024年6月5日',
-    location: '线上直播',
-    participants: 200,
-    description: '手把手教学员掌握龙虾智能体搭建技能，现场答疑互动。',
-    coverImage: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=400&fit=crop',
-    category: '工作坊'
-  },
-  {
-    id: 5,
-    title: 'AI教育研讨会',
-    date: '2024年6月18日',
-    location: '北京海淀区',
-    participants: 80,
-    description: '探讨AI在教育领域的应用趋势，分享最新的教学方法和案例。',
-    coverImage: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop',
-    category: '研讨会'
-  },
-  {
-    id: 6,
-    title: 'AI项目成果展',
-    date: '2024年7月1日',
-    location: '北京顺义校区',
-    participants: 60,
-    description: '学员们展示自己完成的企业级AI项目，优秀项目获得投资意向。',
-    coverImage: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&h=400&fit=crop',
-    category: '成果展'
-  }
-]
+import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 
 export default function Activities() {
   const [canScrollLeft, setCanScrollLeft] = useState(false)
@@ -115,7 +41,7 @@ export default function Activities() {
   }
 
   return (
-    <section id="activities" className="py-16 lg:py-20 bg-gradient-to-b from-slate-50 to-white">
+    <section id="activities" className="py-16 lg:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -142,90 +68,41 @@ export default function Activities() {
             className="flex gap-5 overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4 snap-x snap-mandatory"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {activities.map((activity, index) => (
-              <motion.div
-                key={activity.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.08 }}
-                viewport={{ once: true }}
-                className="flex-shrink-0 w-80 snap-start"
-              >
-                <div className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300">
-                  <div className="relative h-44 overflow-hidden">
-                    <img 
-                      src={activity.coverImage} 
-                      alt={activity.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 left-3 px-2.5 py-1 bg-primary/90 text-white text-xs font-medium rounded-full">
-                      {activity.category}
-                    </div>
-                  </div>
-                  
-                  <div className="p-4">
-                    <h3 className="font-semibold text-slate-900 mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                      {activity.title}
-                    </h3>
-                    
-                    <div className="space-y-2 text-sm text-slate-500">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-primary/70" />
-                        <span>{activity.date}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-primary/70" />
-                        <span className="truncate">{activity.location}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-primary/70" />
-                        <span>{activity.participants}人参与</span>
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-slate-600 mt-3 line-clamp-2 leading-relaxed">
-                      {activity.description}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: activities.length * 0.08 }}
+              transition={{ duration: 0.4 }}
               viewport={{ once: true }}
               className="flex-shrink-0 w-80 snap-start"
             >
-              <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl overflow-hidden h-full min-h-[340px] flex flex-col p-6 text-white">
+              <div className="relative bg-gradient-to-br from-primary to-blue-700 rounded-xl overflow-hidden h-full min-h-[360px] flex flex-col p-6 text-white shadow-lg shadow-primary/30">
                 <div className="absolute top-0 right-0 w-32 h-32 rounded-full border border-white/10 -translate-y-1/2 translate-x-1/2"></div>
                 <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full border border-white/10 translate-y-1/2 -translate-x-1/2"></div>
                 
                 <div className="relative z-10">
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center mb-4">
-                    <Sparkles className="w-5 h-5 text-white/80" />
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                    <Sparkles className="w-5 h-5 text-white" />
                   </div>
                   
-                  <h3 className="text-lg font-semibold mb-2 text-white">
-                    <span className="text-primary">学生怕没工作</span>
+                  <h3 className="text-xl font-bold mb-2 text-white leading-snug">
+                    <span>学生怕没工作</span>
                     <br />
-                    <span className="text-primary">职场人怕被裁</span>
+                    <span>职场人怕被裁</span>
                     <br />
-                    <span className="text-primary">老板怕被颠覆</span>
+                    <span>老板怕被颠覆</span>
                   </h3>
                   
-                  <p className="text-sm text-white/70 mb-4">
+                  <p className="text-sm text-white/80 mb-4">
                     AI 落地的真问题，我们坐下来聊聊
                   </p>
                   
-                  <div className="w-12 h-0.5 bg-primary mb-4"></div>
+                  <div className="w-12 h-0.5 bg-white/50 mb-4"></div>
                   
-                  <div className="mt-auto pt-4 border-t border-white/10">
-                    <div className="text-xs text-white/50 font-mono mb-2">
+                  <div className="mt-auto pt-4 border-t border-white/20">
+                    <div className="text-xs text-white/60 font-mono mb-3">
                       130 5120 2991 · jinboshiai.com
                     </div>
-                    <div className="inline-block px-4 py-1.5 bg-primary text-white text-xs font-semibold rounded-full">
+                    <div className="inline-block px-5 py-2 bg-white text-primary text-sm font-semibold rounded-full">
                       立即报名
                     </div>
                   </div>
