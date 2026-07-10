@@ -116,7 +116,7 @@ const services = [
 export default function Courses() {
   return (
     <section id="courses" className="py-20 lg:py-32 bg-[#fafaf8] relative">
-      <div className="absolute top-0 left-0 right-0 h-3 bg-[#FF6B35]"></div>
+      <div className="absolute top-0 left-0 right-0 h-3 bg-primary"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -125,11 +125,11 @@ export default function Courses() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-block px-4 py-2 bg-[#FF6B35]/10 text-[#FF6B35] rounded-full text-sm font-medium mb-6">
+          <div className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
             金博士 AI 实验室
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-            0基础进场，带着<span className="text-[#FF6B35]">企业级项目</span>出场
+            0基础进场，带着<span className="text-primary">企业级项目</span>出场
           </h2>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto">
             拒绝纸上谈兵，8人小班，手把手带你做真实企业项目
@@ -153,10 +153,10 @@ export default function Courses() {
                 viewport={{ once: true }}
                 className="bg-white border border-slate-200 rounded-lg overflow-hidden relative"
               >
-                <div className="absolute top-0 left-0 right-0 h-1 bg-[#FF6B35]"></div>
+                <div className="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
                 
                 <div className="p-6 border-b border-slate-200">
-                  <div className="text-5xl font-bold text-[#FF6B35] mb-3">{course.number}</div>
+                  <div className="text-5xl font-bold text-primary mb-3">{course.number}</div>
                   <h3 className="text-xl font-bold text-slate-900 leading-tight">{course.title}</h3>
                   {course.subtitle && (
                     <p className="text-base text-slate-500 mt-2">{course.subtitle}</p>
@@ -166,12 +166,12 @@ export default function Courses() {
                 <div className="p-6 space-y-5">
                   {course.sections.map((section, sIndex) => (
                     <div key={sIndex}>
-                      <div className="text-xs font-mono tracking-wider uppercase text-[#FF6B35] font-semibold mb-3 pb-2 border-b border-dashed border-slate-200">
+                      <div className="text-xs font-mono tracking-wider uppercase text-primary font-semibold mb-3 pb-2 border-b border-dashed border-slate-200">
                         {section.title}
                       </div>
                       <div className="space-y-2">
                         {section.lessons.map((lesson, lIndex) => (
-                          <div key={lIndex} className="text-sm text-slate-800 leading-relaxed pl-3 border-l-2 border-[#FF6B35]/30">
+                          <div key={lIndex} className="text-sm text-slate-800 leading-relaxed pl-3 border-l-2 border-primary/30">
                             {lesson}
                           </div>
                         ))}
@@ -191,11 +191,11 @@ export default function Courses() {
             viewport={{ once: true }}
             className="bg-slate-100 p-6 border-t-3"
           >
-            <h4 className="font-bold text-[#FF6B35] mb-4">上课安排</h4>
+            <h4 className="font-bold text-primary mb-4">上课安排</h4>
             <ul className="space-y-2">
               {schedule.map((item, index) => (
                 <li key={index} className="text-sm text-slate-800">
-                  <span className="text-[#FF6B35] font-semibold">{item.label}：</span>
+                  <span className="text-primary font-semibold">{item.label}：</span>
                   {item.value}
                 </li>
               ))}
@@ -207,7 +207,7 @@ export default function Courses() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             viewport={{ once: true }}
-            className="bg-white border-2 border-[#FF6B35] p-6"
+            className="bg-white border-2 border-primary p-6"
           >
             <div className="space-y-4">
               <div className="flex justify-between items-baseline">
@@ -216,13 +216,13 @@ export default function Courses() {
               </div>
               <div className="flex justify-between items-baseline">
                 <span className="text-sm text-slate-800">首期创始班特惠</span>
-                <span className="text-2xl font-bold text-[#FF6B35]">¥3,680</span>
+                <span className="text-2xl font-bold text-primary">¥3,680</span>
               </div>
               <div className="text-xs text-slate-400 pt-3 border-t border-dashed border-slate-200">
                 仅此一期，二期起逐步恢复原价
               </div>
             </div>
-            <div className="mt-4 bg-[#FF6B35] text-white px-4 py-3 rounded-lg flex items-center gap-2 font-semibold text-sm">
+            <div className="mt-4 bg-primary text-white px-4 py-3 rounded-lg flex items-center gap-2 font-semibold text-sm">
               <Shield className="w-4 h-4 flex-shrink-0" />
               无风险承诺：首节不满意，全额退
             </div>
@@ -235,11 +235,11 @@ export default function Courses() {
             viewport={{ once: true }}
             className="bg-slate-100 p-6"
           >
-            <h4 className="font-bold text-[#FF6B35] mb-4">专属护航服务</h4>
+            <h4 className="font-bold text-primary mb-4">专属护航服务</h4>
             <ul className="space-y-3">
               {services.map((item, index) => (
                 <li key={index} className="text-sm text-slate-800">
-                  <span className="text-[#FF6B35] font-semibold">{item.label}：</span>
+                  <span className="text-primary font-semibold">{item.label}：</span>
                   {item.value}
                 </li>
               ))}
@@ -251,7 +251,7 @@ export default function Courses() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-[#FF6B35] px-8 py-6 text-center inline-block w-full"
+          className="bg-primary px-8 py-6 text-center inline-block w-full"
         >
           <p className="text-white/90 text-lg mb-2">立即咨询，开启您的AI学习之旅</p>
           <p className="text-white font-mono text-xl font-semibold flex items-center justify-center gap-2">
