@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { BookOpen, Clock, Shield, Users, Calendar, CheckCircle, Sparkles } from 'lucide-react'
+import { BookOpen, Clock, Users, Calendar, CheckCircle, Sparkles } from 'lucide-react'
 
 const courses = [
   {
@@ -207,22 +207,24 @@ export default function Courses() {
             viewport={{ once: true }}
             className="bg-white border-2 border-primary p-6"
           >
-            <div className="space-y-4">
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm text-slate-800">完整课程原价</span>
-                <span className="text-lg text-slate-400 font-normal">¥4,980 / 8节</span>
-              </div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm text-slate-800">首期创始班特惠</span>
-                <span className="text-2xl font-bold text-primary">¥3,680</span>
-              </div>
-              <div className="text-xs text-slate-400 pt-3 border-t border-dashed border-slate-200">
-                仅此一期，二期起逐步恢复原价
-              </div>
-            </div>
-            <div className="mt-4 bg-primary text-white px-4 py-3 rounded-lg flex items-center gap-2 font-semibold text-sm">
-              <Shield className="w-4 h-4 flex-shrink-0" />
-              无风险承诺：首节不满意，全额退
+            <h4 className="font-bold text-primary mb-4">欢迎咨询</h4>
+            <div className="text-sm text-slate-600 leading-relaxed">
+              <p className="mb-3">课程详细价格及优惠信息，请联系我们获取最新报价。</p>
+              <p className="mb-3">我们提供：</p>
+              <ul className="space-y-1.5 ml-4">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">•</span>
+                  <span>首节不满意，全额退款保障</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">•</span>
+                  <span>8人小班，一对一指导</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">•</span>
+                  <span>企业级项目实战</span>
+                </li>
+              </ul>
             </div>
           </motion.div>
 
