@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Calendar, Users, MapPin, Image as ImageIcon } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, Users, MapPin, Sparkles } from 'lucide-react'
 
 interface Activity {
   id: number
@@ -190,6 +190,48 @@ export default function Activities() {
                 </div>
               </motion.div>
             ))}
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: activities.length * 0.08 }}
+              viewport={{ once: true }}
+              className="flex-shrink-0 w-80 snap-start"
+            >
+              <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl overflow-hidden h-full min-h-[340px] flex flex-col p-6 text-white">
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full border border-white/10 -translate-y-1/2 translate-x-1/2"></div>
+                <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full border border-white/10 translate-y-1/2 -translate-x-1/2"></div>
+                
+                <div className="relative z-10">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center mb-4">
+                    <Sparkles className="w-5 h-5 text-white/80" />
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold mb-2 text-white">
+                    <span className="text-primary">学生怕没工作</span>
+                    <br />
+                    <span className="text-primary">职场人怕被裁</span>
+                    <br />
+                    <span className="text-primary">老板怕被颠覆</span>
+                  </h3>
+                  
+                  <p className="text-sm text-white/70 mb-4">
+                    AI 落地的真问题，我们坐下来聊聊
+                  </p>
+                  
+                  <div className="w-12 h-0.5 bg-primary mb-4"></div>
+                  
+                  <div className="mt-auto pt-4 border-t border-white/10">
+                    <div className="text-xs text-white/50 font-mono mb-2">
+                      130 5120 2991 · jinboshiai.com
+                    </div>
+                    <div className="inline-block px-4 py-1.5 bg-primary text-white text-xs font-semibold rounded-full">
+                      立即报名
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
 
           {canScrollLeft && (
