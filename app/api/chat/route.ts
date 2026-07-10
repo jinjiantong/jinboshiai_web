@@ -19,7 +19,7 @@ const SYSTEM_PROMPT = `你是金博士AI课程咨询助手。
 - 持续服务，学习社群+答疑
 
 【联系方式】
-如有疑问，请联系：电话15811055744，邮箱26256649@qq.com`
+如有疑问，请联系：电话13051202991，邮箱26256649@qq.com，微信jinboshiai`
 
 let redisClient: ReturnType<typeof createClient> | null = null
 
@@ -164,7 +164,7 @@ ${ragResult.context}
     return NextResponse.json(
       {
         success: false,
-        message: '服务暂时不可用，请稍后再试或联系：15811055744'
+        message: '服务暂时不可用，请稍后再试或联系：13051202991'
       },
       { status: 500 }
     )
