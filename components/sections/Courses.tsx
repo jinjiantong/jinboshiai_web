@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { BookOpen, Clock, Users, Calendar, Sparkles, GraduationCap, Award, Rocket, CheckCircle2, ArrowRight } from 'lucide-react'
+import { BookOpen, Calendar, Sparkles, GraduationCap, Award, Rocket, CheckCircle2, ArrowRight } from 'lucide-react'
 
 const courses = [
   {
@@ -9,7 +9,6 @@ const courses = [
     number: '01',
     title: 'AI知识体系构建与实战',
     icon: GraduationCap,
-    gradient: 'from-blue-500 to-cyan-400',
     sections: [
       {
         title: '第一节',
@@ -47,7 +46,6 @@ const courses = [
     number: '02',
     title: 'AI企业级解决方案',
     icon: Rocket,
-    gradient: 'from-purple-500 to-pink-400',
     sections: [
       {
         title: '第一节',
@@ -82,7 +80,6 @@ const courses = [
     number: '03',
     title: 'AI实验室项目',
     icon: Award,
-    gradient: 'from-amber-500 to-orange-400',
     subtitle: '学员主导完成项目',
     sections: [
       {
@@ -121,32 +118,24 @@ const services = [
 
 export default function Courses() {
   return (
-    <section id="courses" className="py-20 lg:py-32 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <section id="courses" className="py-20 lg:py-28 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 mb-6"
-          >
-            <div className="w-12 h-px bg-gradient-to-r from-transparent to-primary"></div>
-            <span className="text-sm font-medium text-primary tracking-wider uppercase">Curriculum</span>
-            <div className="w-12 h-px bg-gradient-to-l from-transparent to-primary"></div>
-          </motion.div>
+          <div className="inline-flex items-center gap-3 mb-4">
+            <div className="w-8 h-px bg-slate-300"></div>
+            <span className="text-xs font-medium text-slate-400 tracking-widest uppercase">Curriculum</span>
+            <div className="w-8 h-px bg-slate-300"></div>
+          </div>
           
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-            0基础进场，带着<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">企业级项目</span>出场
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-3">
+            0基础进场，带着<span className="text-primary">企业级项目</span>出场
           </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+          <p className="text-base text-slate-500 max-w-xl mx-auto">
             拒绝纸上谈兵，8人小班，手把手带你做真实企业项目
           </p>
         </motion.div>
@@ -155,63 +144,58 @@ export default function Courses() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-12"
         >
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/25">
-              <BookOpen className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-slate-600" />
             </div>
             <div>
-              <div className="text-xs font-mono tracking-widest uppercase text-slate-400">课程内容</div>
-              <h3 className="text-xl font-bold text-slate-900">系统化学习路径</h3>
+              <div className="text-xs text-slate-400 uppercase tracking-wider">课程内容</div>
             </div>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {courses.map((course, index) => {
               const IconComponent = course.icon
               return (
                 <motion.div
                   key={course.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.4, delay: index * 0.08 }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -8 }}
-                  className="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+                  whileHover={{ y: -4 }}
+                  className="group bg-white rounded-xl border border-slate-200 overflow-hidden hover:border-slate-300 hover:shadow-md transition-all duration-300"
                 >
-                  <div className={`h-2 bg-gradient-to-r ${course.gradient}`}></div>
-                  
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${course.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                          <IconComponent className="w-7 h-7 text-white" />
-                        </div>
-                        <div>
-                          <div className="text-4xl font-bold text-slate-200 group-hover:text-primary/20 transition-colors">{course.number}</div>
-                        </div>
+                  <div className="p-5">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-11 h-11 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <IconComponent className="w-5 h-5 text-slate-500 group-hover:text-primary transition-colors" />
+                      </div>
+                      <div>
+                        <div className="text-3xl font-bold text-slate-200">{course.number}</div>
                       </div>
                     </div>
                     
-                    <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-1">{course.title}</h3>
                     {course.subtitle && (
-                      <p className="text-sm text-slate-500 mb-6">{course.subtitle}</p>
+                      <p className="text-sm text-slate-400 mb-4">{course.subtitle}</p>
                     )}
                     
-                    <div className="space-y-5">
+                    <div className="space-y-4">
                       {course.sections.map((section, sIndex) => (
-                        <div key={sIndex} className="relative">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${course.gradient} flex items-center justify-center text-white text-xs font-bold shadow-sm`}>
+                        <div key={sIndex}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-5 h-5 rounded text-[10px] font-medium bg-slate-100 text-slate-500 flex items-center justify-center">
                               {sIndex + 1}
                             </div>
-                            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{section.title}</div>
+                            <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">{section.title}</div>
                           </div>
-                          <div className="space-y-2 pl-11">
+                          <div className="space-y-1.5 pl-7">
                             {section.lessons.map((lesson, lIndex) => (
-                              <div key={lIndex} className="flex items-start gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
-                                <CheckCircle2 className="w-4 h-4 text-primary/50 mt-0.5 flex-shrink-0 group-hover:text-primary transition-colors" />
+                              <div key={lIndex} className="flex items-start gap-2 text-[13px] text-slate-600">
+                                <span className="w-1 h-1 rounded-full bg-slate-300 mt-2 flex-shrink-0"></span>
                                 <span className="leading-relaxed">{lesson}</span>
                               </div>
                             ))}
@@ -226,26 +210,26 @@ export default function Courses() {
           </div>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow"
+            className="bg-slate-50 rounded-xl p-5"
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/25">
-                <Calendar className="w-6 h-6 text-white" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                <Calendar className="w-5 h-5 text-slate-500" />
               </div>
-              <h4 className="font-bold text-slate-900 text-lg">上课安排</h4>
+              <h4 className="font-semibold text-slate-800">上课安排</h4>
             </div>
-            <ul className="space-y-3">
+            <ul className="space-y-2">
               {schedule.map((item, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                  <div className="text-sm">
-                    <span className="font-semibold text-primary">{item.label}</span>
-                    <span className="text-slate-500 ml-1">{item.value}</span>
+                <li key={index} className="flex items-start gap-2 text-[13px]">
+                  <span className="w-1 h-1 rounded-full bg-slate-400 mt-2 flex-shrink-0"></span>
+                  <div>
+                    <span className="font-medium text-slate-700">{item.label}：</span>
+                    <span className="text-slate-500">{item.value}</span>
                   </div>
                 </li>
               ))}
@@ -255,35 +239,35 @@ export default function Courses() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            transition={{ delay: 0.08 }}
             viewport={{ once: true }}
-            className="bg-primary/5 rounded-2xl p-6 border border-primary/20 shadow-sm hover:shadow-lg transition-shadow"
+            className="bg-slate-900 rounded-xl p-5 text-white"
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center shadow-lg shadow-primary/25">
-                <Sparkles className="w-6 h-6 text-white" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-white/80" />
               </div>
-              <h4 className="font-bold text-primary text-lg">欢迎咨询</h4>
+              <h4 className="font-semibold">欢迎咨询</h4>
             </div>
-            <div className="space-y-3 mb-6">
-              <p className="text-slate-600 text-sm">课程详细价格及优惠信息，请联系我们获取最新报价。</p>
+            <div className="space-y-2 mb-4">
+              <p className="text-sm text-white/60">课程详细价格及优惠信息，请联系我们获取最新报价。</p>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 text-sm">
               {[
                 '首节不满意，全额退款保障',
                 '8人小班，一对一指导',
                 '企业级项目实战'
               ].map((item, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm text-slate-700">
-                  <CheckCircle2 className="w-4 h-4 text-primary" />
+                <div key={index} className="flex items-center gap-2 text-white/80">
+                  <CheckCircle2 className="w-4 h-4 text-white/50" />
                   <span>{item}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-6 pt-4 border-t border-slate-200">
-              <div className="flex items-center gap-2 text-primary text-sm">
-                <span className="font-semibold">130 5120 2991</span>
-                <ArrowRight className="w-4 h-4" />
+            <div className="mt-4 pt-3 border-t border-white/10">
+              <div className="flex items-center gap-2 text-white/90 text-sm">
+                <span className="font-medium">130 5120 2991</span>
+                <ArrowRight className="w-3 h-3" />
               </div>
             </div>
           </motion.div>
@@ -291,25 +275,25 @@ export default function Courses() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.16 }}
             viewport={{ once: true }}
-            className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-shadow"
+            className="bg-slate-50 rounded-xl p-5"
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shadow-lg shadow-amber-500/25">
-                <Award className="w-6 h-6 text-white" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                <Award className="w-5 h-5 text-slate-500" />
               </div>
-              <h4 className="font-bold text-slate-900 text-lg">专属护航服务</h4>
+              <h4 className="font-semibold text-slate-800">专属护航服务</h4>
             </div>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               {services.map((item, index) => (
                 <li key={index} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-amber-500 text-xs font-bold">{index + 1}</span>
+                  <div className="w-5 h-5 rounded text-[10px] font-medium bg-white text-slate-500 flex items-center justify-center shadow-sm flex-shrink-0 mt-0.5">
+                    {index + 1}
                   </div>
                   <div>
-                    <span className="font-semibold text-amber-600">{item.label}</span>
-                    <p className="text-sm text-slate-500 mt-0.5">{item.value}</p>
+                    <span className="font-medium text-slate-700 text-[13px]">{item.label}</span>
+                    <p className="text-[12px] text-slate-500 mt-0.5">{item.value}</p>
                   </div>
                 </li>
               ))}
