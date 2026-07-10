@@ -64,7 +64,7 @@ export class QdrantClient {
     }
   }
 
-  async search(name: string, vector: number[], topK: number = 3): Promise<SearchResult[]> {
+  async search(name: string, vector: number[], topK: number = 5): Promise<SearchResult[]> {
     const response = await fetch(`${this.baseUrl}/collections/${name}/points/search`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -72,7 +72,7 @@ export class QdrantClient {
         vector,
         limit: topK,
         with_payload: true,
-        score_threshold: 0.05
+        score_threshold: 0.0
       })
     })
 
