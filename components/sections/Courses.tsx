@@ -257,16 +257,16 @@ export default function Courses() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-primary to-purple-600 rounded-2xl p-6 text-white shadow-xl"
+            className="bg-primary/5 rounded-2xl p-6 border border-primary/20 shadow-sm hover:shadow-lg transition-shadow"
           >
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center shadow-lg shadow-primary/25">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <h4 className="font-bold text-lg">欢迎咨询</h4>
+              <h4 className="font-bold text-primary text-lg">欢迎咨询</h4>
             </div>
             <div className="space-y-3 mb-6">
-              <p className="text-white/80 text-sm">课程详细价格及优惠信息，请联系我们获取最新报价。</p>
+              <p className="text-slate-600 text-sm">课程详细价格及优惠信息，请联系我们获取最新报价。</p>
             </div>
             <div className="space-y-2">
               {[
@@ -274,14 +274,14 @@ export default function Courses() {
                 '8人小班，一对一指导',
                 '企业级项目实战'
               ].map((item, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-white/80" />
+                <div key={index} className="flex items-center gap-2 text-sm text-slate-700">
+                  <CheckCircle2 className="w-4 h-4 text-primary" />
                   <span>{item}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-6 pt-4 border-t border-white/20">
-              <div className="flex items-center gap-2 text-white/90 text-sm">
+            <div className="mt-6 pt-4 border-t border-slate-200">
+              <div className="flex items-center gap-2 text-primary text-sm">
                 <span className="font-semibold">130 5120 2991</span>
                 <ArrowRight className="w-4 h-4" />
               </div>
