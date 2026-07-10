@@ -224,7 +224,7 @@ export default function PortfolioPage() {
       className="fixed inset-0 overflow-hidden select-none"
       style={{ 
         background: currentCover 
-          ? `url(${currentCover}) center/cover no-repeat` 
+          ? `url(${currentCover}) center/contain no-repeat` 
           : 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'
       }}
       onTouchStart={handleTouchStart}
@@ -248,14 +248,14 @@ export default function PortfolioPage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="relative w-full lg:w-3/5 h-[35vh] lg:h-full"
+                className="relative w-full lg:w-3/5 h-[50vh] lg:h-full"
               >
                 <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl relative">
                   {currentCover ? (
                     <img 
                       src={currentCover} 
                       alt={currentPortfolio.fields.作品名称}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain bg-slate-800/50"
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
