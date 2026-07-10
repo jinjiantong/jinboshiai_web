@@ -9,6 +9,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [showPortfolioDropdown, setShowPortfolioDropdown] = useState(false)
+  const [showAlert, setShowAlert] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -28,6 +29,12 @@ export default function Navbar() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  const handleStudentWorks = () => {
+    setShowPortfolioDropdown(false)
+    setShowAlert(true)
+    setTimeout(() => setShowAlert(false), 3000)
+  }
 
   const navItems = [
     { name: '往期活动', href: '#portfolio' },
@@ -91,13 +98,12 @@ export default function Navbar() {
                     >
                       作品展示台
                     </Link>
-                    <Link
-                      href="#portfolio"
-                      className="block px-4 py-3 text-sm text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors font-medium"
-                      onClick={() => setShowPortfolioDropdown(false)}
+                    <button
+                      onClick={handleStudentWorks}
+                      className="w-full text-left px-4 py-3 text-sm text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors font-medium"
                     >
-                      往期活动
-                    </Link>
+                      学员作品
+                    </button>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -140,13 +146,16 @@ export default function Navbar() {
               >
                 作品展示台
               </Link>
-              <Link
-                href="#portfolio"
-                className="text-slate-600 hover:text-primary transition-colors py-3 px-4 rounded-lg hover:bg-slate-50 font-medium"
-                onClick={() => setIsOpen(false)}
+              <button
+                onClick={() => {
+                  setIsOpen(false)
+                  setShowAlert(true)
+                  setTimeout(() => setShowAlert(false), 3000)
+                }}
+                className="w-full text-left text-slate-600 hover:text-primary transition-colors py-3 px-4 rounded-lg hover:bg-slate-50 font-medium"
               >
-                往期活动
-              </Link>
+                学员作品
+              </button>
               {navItems.map((item) => (
                 <Link
                   key={item.name}
@@ -161,6 +170,20 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {/* Alert Toast */}
+      <AnimatePresence>
+        {showAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl"
+          >
+            <p className="text-sm font-medium">正在制作中，尽情期待...</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   )
 }
