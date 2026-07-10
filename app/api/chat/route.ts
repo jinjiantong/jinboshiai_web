@@ -125,7 +125,18 @@ export async function POST(request: NextRequest) {
     let sources: any[] = []
 
     if (!ragResult.found || !ragResult.context) {
-      aiMessage = '抱歉，关于这个问题我暂时无法回答。建议您联系课程顾问获得更详细的解答。\n\n📞 电话：13051202991\n📧 邮箱：26256649@qq.com\n💬 微信：jinboshiai'
+      const fallbackPrompt = `${SYSTEM_PROMPT}
+
+【用户问题】
+${message}
+
+请直接回答用户问题。如果确实不了解，请诚实说明并引导用户联系顾问。`
+
+      const response = await chatCompletion([
+        { role: 'system', content: fallbackPrompt },
+        { role: 'user', content: message }
+      ])
+      aiMessage = response.content
     } else {
       const contextPrompt = `${SYSTEM_PROMPT}
 
