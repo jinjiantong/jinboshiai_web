@@ -54,10 +54,10 @@ body {
 /* Logo 炫酷动画 */
 @keyframes logoGlow {
   0%, 100% {
-    filter: drop-shadow(0 0 5px rgba(56, 126, 245, 0.3));
+    opacity: 1;
   }
   50% {
-    filter: drop-shadow(0 0 25px rgba(56, 126, 245, 1));
+    opacity: 0.85;
   }
 }
 
@@ -113,7 +113,6 @@ body {
 .animate-logo-bounce:hover {
   animation: logoSpin 1s linear infinite, logoGlow 0.5s ease-in-out infinite;
   transform: scale(1.15) rotateY(180deg);
-  filter: drop-shadow(0 0 40px rgba(56, 126, 245, 1));
 }
 
 /* 平滑滚动 */

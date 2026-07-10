@@ -194,17 +194,28 @@ export default function Footer() {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <Phone className="w-5 h-5 text-slate-400 mt-0.5" />
-                  <span className="text-slate-400">15811055744</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-slate-400 mt-0.5" />
-                  <span className="text-slate-400">26256649@qq.com</span>
+                  <div className="text-slate-400">
+                    <div>13051202991</div>
+                    <div>微信：jinboshiai</div>
+                  </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
-                  <span className="text-slate-400">XXXXX</span>
+                  <span className="text-slate-400">北京市顺义区临空经济核心区安庆大街7号良基科技广场A座316室</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Mail className="w-5 h-5 text-slate-400 mt-0.5" />
+                  <span className="text-slate-400">https://jinboshiai.com</span>
                 </li>
               </ul>
+            </div>
+
+            {/* 二维码 */}
+            <div className="mt-8 lg:mt-0">
+              <h3 className="text-lg font-semibold mb-4">扫码关注</h3>
+              <div className="w-48 h-48 bg-white rounded-lg p-2 shadow-lg">
+                <img src="/images/erweima.png" alt="微信二维码" className="w-full h-full object-contain" />
+              </div>
             </div>
           </div>
 

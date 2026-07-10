@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     let sources: any[] = []
 
     if (!ragResult.found || !ragResult.context) {
-      aiMessage = '抱歉，关于这个问题我暂时无法回答。建议您联系课程顾问获得更详细的解答。\n\n📞 电话：15811055744\n📧 邮箱：26256649@qq.com\n💬 微信：jinboshi-ai'
+      aiMessage = '抱歉，关于这个问题我暂时无法回答。建议您联系课程顾问获得更详细的解答。\n\n📞 电话：13051202991\n📧 邮箱：26256649@qq.com\n💬 微信：jinboshiai'
     } else {
       const contextPrompt = `${SYSTEM_PROMPT}
 

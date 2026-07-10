@@ -84,9 +84,9 @@ export default function Contact() {
               </motion.h4>
               <ul className="space-y-4">
                 {[
-                  { icon: Phone, label: '电话', value: '15811055744' },
-                  { icon: Mail, label: '邮箱', value: '26256649@qq.com' },
-                  { icon: MapPin, label: '地址', value: 'XXXXX' }
+                  { icon: Phone, label: '电话', value: '13051202991、微信：jinboshiai' },
+                  { icon: MapPin, label: '地址', value: '北京市顺义区临空经济核心区安庆大街7号良基科技广场A座316室' },
+                  { icon: Mail, label: '官网', value: 'https://jinboshiai.com' }
                 ].map((item, index) => {
                   const Icon = item.icon
                   return (
@@ -119,7 +119,7 @@ export default function Contact() {
               >
                 <h4 className="font-semibold text-slate-900 mb-3">欢迎咨询</h4>
                 <p className="text-slate-600 text-sm mb-4">
-                  微信：jinboshi-ai
+                  微信：jinboshiai
                 </p>
                 <motion.div 
                   whileHover={{ scale: 1.05, rotate: 2 }}
