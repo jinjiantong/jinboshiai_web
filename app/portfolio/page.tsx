@@ -2,41 +2,42 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Pause, Play, Maximize2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Pause, Play, Maximize2, ExternalLink, Calendar, Tag, User, Sparkles } from 'lucide-react'
 import { createPortal } from 'react-dom'
 
 interface Portfolio {
-  id: number
-  category_name: string
-  category_icon: string
-  category_color: string
-  title: string
-  description: string
-  author_name: string
-  author_avatar: string
-  author_title: string
-  tags: string
-  media_type: string
-  media_url: string
-  media_cover: string | null
-  sort_order: number
+  record_id: string
+  fields: {
+    作品名称: string
+    作品简介: string
+    应用场景: string
+    功能特性: string
+    技术方案: string
+    开发者: string
+    作品跳转链接: string
+    作品分类: string
+    作品展示平台: string
+    作品附件类型: string
+    是否展示: boolean
+    作品附件: Array<{ name: string; size: number; token: string }>
+    架构图: Array<{ name: string; size: number; token: string }>
+    创建日期: number
+  }
 }
 
-const iconMap: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
-  palette: ({ className, style }) => <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/></svg>,
-  bot: ({ className, style }) => <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>,
-  sparkles: ({ className, style }) => <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>,
-  code: ({ className, style }) => <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
-  brain: ({ className, style }) => <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M19.938 10.5a4 4 0 0 1 .585.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M19.967 17.484A4 4 0 0 1 18 18"/></svg>,
+const categoryColors: Record<string, { bg: string; text: string }> = {
+  'AI智能体': { bg: '#3B82F6', text: '蓝色' },
+  'AI游戏': { bg: '#F59E0B', text: '橙色' },
+  'AI应用': { bg: '#06B6D4', text: '青色' },
+  'AI架构': { bg: '#EAB308', text: '黄色' },
+  'AI数据分析': { bg: '#14B8A6', text: '绿色' },
+  'AI监控': { bg: '#EF4444', text: '红色' },
 }
 
-const colorMap: Record<string, { bg: string; text: string; light: string; gradient: string[] }> = {
-  blue: { bg: '#3B82F6', text: '#2563EB', light: '#DBEAFE', gradient: ['#1E40AF', '#3B82F6'] },
-  purple: { bg: '#8B5CF6', text: '#7C3AED', light: '#EDE9FE', gradient: ['#5B21B6', '#8B5CF6'] },
-  green: { bg: '#10B981', text: '#059669', light: '#D1FAE5', gradient: ['#047857', '#10B981'] },
-  orange: { bg: '#F59E0B', text: '#D97706', light: '#FEF3C7', gradient: ['#B45309', '#F59E0B'] },
-  pink: { bg: '#EC4899', text: '#DB2777', light: '#FCE7F3', gradient: ['#BE185D', '#EC4899'] },
-  red: { bg: '#EF4444', text: '#DC2626', light: '#FEE2E2', gradient: ['#B91C1C', '#EF4444'] },
+const platformLabels: Record<string, { label: string; color: string }> = {
+  '官网': { label: '官网', color: '#3B82F6' },
+  '展示台': { label: '展示台', color: '#F59E0B' },
+  '学员作品': { label: '学员作品', color: '#06B6D4' },
 }
 
 export default function PortfolioPage() {
@@ -46,13 +47,26 @@ export default function PortfolioPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null)
-  const [autoPlayInterval, setAutoPlayInterval] = useState(5000)
+  const [autoPlayInterval, setAutoPlayInterval] = useState(6000)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    
+    const chatButtons = document.querySelectorAll('[class*="fixed"][class*="bottom"]')
+    chatButtons.forEach(btn => {
+      (btn as HTMLElement).style.display = 'none'
+    })
+    
+    return () => {
+      chatButtons.forEach(btn => {
+        (btn as HTMLElement).style.display = ''
+      })
+    }
   }, [])
 
   const fetchPortfolios = useCallback(async () => {
@@ -65,7 +79,10 @@ export default function PortfolioPage() {
       const result = await response.json()
       
       if (result.success) {
-        setPortfolios(result.data)
+        const filtered = result.data.filter((item: any) => 
+          item.fields.是否展示 === true || item.fields.是否展示 === 'true'
+        )
+        setPortfolios(filtered)
       } else {
         setError(result.message || 'Failed to fetch portfolios')
       }
@@ -131,17 +148,49 @@ export default function PortfolioPage() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
   }, [])
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    const minSwipeDistance = 50
+    if (distance > minSwipeDistance) {
+      nextSlide()
+    } else if (distance < -minSwipeDistance) {
+      prevSlide()
+    }
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') prevSlide()
+      if (e.key === 'ArrowRight') nextSlide()
+      if (e.key === ' ') toggleAutoPlay()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [nextSlide, prevSlide])
+
   if (!mounted) return null
 
   const currentPortfolio = portfolios[currentIndex]
-  const colors = currentPortfolio ? (colorMap[currentPortfolio.category_color] || colorMap.blue) : colorMap.blue
+  const categoryColor = currentPortfolio?.fields.作品分类 
+    ? categoryColors[currentPortfolio.fields.作品分类] || { bg: '#6366F1', text: '默认' }
+    : { bg: '#6366F1', text: '默认' }
 
   if (loading) {
     return createPortal(
-      <div className="fixed inset-0 bg-slate-950 flex items-center justify-center z-[9999]">
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center z-[9999]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white/60 text-sm">加载中...</p>
+          <p className="text-white/60 text-sm">加载作品数据中...</p>
         </div>
       </div>,
       document.body
@@ -150,9 +199,9 @@ export default function PortfolioPage() {
 
   if (error || portfolios.length === 0) {
     return createPortal(
-      <div className="fixed inset-0 bg-slate-950 flex items-center justify-center z-[9999]">
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center z-[9999]">
         <div className="text-center">
-          <p className="text-white/60 mb-4">{error || '暂无作品数据'}</p>
+          <p className="text-white/60 mb-4">{error || '暂无展示作品'}</p>
           <button 
             onClick={() => window.location.reload()}
             className="px-6 py-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors"
@@ -165,165 +214,244 @@ export default function PortfolioPage() {
     )
   }
 
+  const currentAttachment = currentPortfolio?.fields.作品附件?.[0]
+  const currentCover = currentAttachment 
+    ? `https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/v2/cover/${currentAttachment.token}/?height=1080&width=1920`
+    : null
+
   const PortfolioContent = () => (
     <div 
       ref={containerRef}
-      className="fixed inset-0 bg-slate-950 overflow-hidden"
-      style={{ cursor: isAutoPlaying ? 'none' : 'default' }}
+      className="fixed inset-0 overflow-hidden select-none"
+      style={{ 
+        background: currentCover 
+          ? `url(${currentCover}) center/cover no-repeat` 
+          : 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
-      <div className="relative w-full h-full">
+      <div className="absolute inset-0 backdrop-blur-xl bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-slate-900/90" />
+      
+      <div className="relative w-full h-full flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentPortfolio.id}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="absolute inset-0 flex items-center justify-center p-8 lg:p-16"
+            key={currentPortfolio.record_id}
+            initial={{ opacity: 0, x: 100, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, x: -100, filter: 'blur(10px)' }}
+            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            className="absolute inset-0 flex items-center justify-center p-6 lg:p-12"
           >
-            <div className="relative w-full max-w-7xl h-full flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+            <div className="w-full max-w-6xl h-full flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="relative w-full lg:w-3/5 h-[40vh] lg:h-full bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl overflow-hidden shadow-2xl group"
+                className="relative w-full lg:w-3/5 h-[35vh] lg:h-full"
               >
-                {currentPortfolio.media_cover ? (
-                  <img 
-                    src={currentPortfolio.media_cover} 
-                    alt={currentPortfolio.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div 
-                      className="w-32 h-32 rounded-3xl flex items-center justify-center"
-                      style={{ backgroundColor: `${colors.bg}20` }}
-                    >
-                      <svg className="w-16 h-16" style={{ color: colors.bg }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                        <circle cx="9" cy="9" r="2"/>
-                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                      </svg>
+                <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl relative">
+                  {currentCover ? (
+                    <img 
+                      src={currentCover} 
+                      alt={currentPortfolio.fields.作品名称}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                      <div className="text-center">
+                        <Sparkles className="w-20 h-20 text-white/30 mx-auto mb-4" />
+                        <p className="text-white/40">暂无封面</p>
+                      </div>
                     </div>
+                  )}
+                  
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span 
+                        className="px-4 py-1.5 rounded-full text-xs font-semibold text-white shadow-lg"
+                        style={{ backgroundColor: categoryColor.bg }}
+                      >
+                        {currentPortfolio.fields.作品分类 || 'AI应用'}
+                      </span>
+                      {currentPortfolio.fields.作品附件类型 && (
+                        <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/20 text-white backdrop-blur-sm">
+                          {currentPortfolio.fields.作品附件类型}
+                        </span>
+                      )}
+                    </div>
+                    <h2 className="text-2xl lg:text-4xl font-bold text-white mb-2">
+                      {currentPortfolio.fields.作品名称}
+                    </h2>
+                    {currentPortfolio.fields.开发者 && (
+                      <p className="text-white/70 text-sm flex items-center gap-2">
+                        <User className="w-4 h-4" />
+                        {currentPortfolio.fields.开发者}
+                      </p>
+                    )}
                   </div>
-                )}
-                
-                <div className="absolute top-4 left-4 px-4 py-2 rounded-full text-sm font-medium text-white shadow-lg"
-                  style={{ backgroundColor: colors.bg }}
-                >
-                  {currentPortfolio.category_name}
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6">
-                  <h3 className="text-2xl lg:text-3xl font-bold text-white mb-2">{currentPortfolio.title}</h3>
-                  <p className="text-white/70 text-sm line-clamp-2">{currentPortfolio.description}</p>
                 </div>
               </motion.div>
 
               <motion.div 
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="w-full lg:w-2/5 flex flex-col justify-center"
+                className="w-full lg:w-2/5 flex flex-col justify-center max-h-[55vh] lg:max-h-none overflow-y-auto custom-scrollbar"
               >
-                <div className="mb-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div 
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold"
-                      style={{ backgroundColor: colors.bg }}
-                    >
-                      {currentPortfolio.author_avatar}
-                    </div>
+                <div className="space-y-6">
+                  {currentPortfolio.fields.作品简介 && (
                     <div>
-                      <div className="font-semibold text-white text-lg">{currentPortfolio.author_name}</div>
-                      <div className="text-white/50 text-sm">{currentPortfolio.author_title}</div>
+                      <h3 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2">作品简介</h3>
+                      <p className="text-white/90 text-sm lg:text-base leading-relaxed">
+                        {currentPortfolio.fields.作品简介}
+                      </p>
                     </div>
+                  )}
+
+                  {currentPortfolio.fields.应用场景 && (
+                    <div>
+                      <h3 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2">应用场景</h3>
+                      <p className="text-white/80 text-sm">
+                        {currentPortfolio.fields.应用场景}
+                      </p>
+                    </div>
+                  )}
+
+                  {currentPortfolio.fields.功能特性 && (
+                    <div>
+                      <h3 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2">功能特性</h3>
+                      <p className="text-white/80 text-sm">
+                        {currentPortfolio.fields.功能特性}
+                      </p>
+                    </div>
+                  )}
+
+                  {currentPortfolio.fields.技术方案 && (
+                    <div>
+                      <h3 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2">技术方案</h3>
+                      <p className="text-white/80 text-sm">
+                        {currentPortfolio.fields.技术方案}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
+                    {currentPortfolio.fields.作品展示平台 && (
+                      <span 
+                        className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/10 text-white/80"
+                        style={{ borderLeft: `3px solid ${platformLabels[currentPortfolio.fields.作品展示平台]?.color || '#6366F1'}` }}
+                      >
+                        {currentPortfolio.fields.作品展示平台}
+                      </span>
+                    )}
+                    {currentPortfolio.fields.创建日期 && (
+                      <span className="text-white/40 text-xs flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(currentPortfolio.fields.创建日期).toLocaleDateString('zh-CN')}
+                      </span>
+                    )}
                   </div>
-                </div>
 
-                <p className="text-white/70 text-base lg:text-lg leading-relaxed mb-8">
-                  {currentPortfolio.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2">
-                  {currentPortfolio.tags?.split(',').map((tag, tagIndex) => (
-                    <span 
-                      key={tagIndex} 
-                      className="px-4 py-2 rounded-full text-sm text-white/80 border border-white/20 hover:border-white/40 transition-colors"
+                  {currentPortfolio.fields.作品跳转链接 && (
+                    <a 
+                      href={currentPortfolio.fields.作品跳转链接}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all mt-4"
+                      style={{ backgroundColor: categoryColor.bg }}
                     >
-                      {tag.trim()}
-                    </span>
-                  ))}
+                      <ExternalLink className="w-4 h-4" />
+                      访问作品
+                    </a>
+                  )}
                 </div>
               </motion.div>
             </div>
           </motion.div>
         </AnimatePresence>
 
-        <button 
+        <motion.button 
           onClick={prevSlide}
-          className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-sm z-20"
+          whileHover={{ scale: 1.1, x: -5 }}
+          whileTap={{ scale: 0.95 }}
+          className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-md z-20 border border-white/10"
         >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
+          <ChevronLeft className="w-7 h-7" />
+        </motion.button>
 
-        <button 
+        <motion.button 
           onClick={nextSlide}
-          className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-sm z-20"
+          whileHover={{ scale: 1.1, x: 5 }}
+          whileTap={{ scale: 0.95 }}
+          className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-md z-20 border border-white/10"
         >
-          <ChevronRight className="w-6 h-6" />
-        </button>
+          <ChevronRight className="w-7 h-7" />
+        </motion.button>
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
           {portfolios.map((_, index) => (
-            <button 
+            <motion.button 
               key={index}
               onClick={() => goToSlide(index)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
+              whileHover={{ scale: 1.3 }}
+              className={`rounded-full transition-all duration-300 ${
                 currentIndex === index 
-                  ? 'w-8 bg-white' 
-                  : 'w-1.5 bg-white/30 hover:bg-white/50'
+                  ? 'w-8 h-2 bg-white shadow-lg' 
+                  : 'w-2 h-2 bg-white/30 hover:bg-white/50'
               }`}
             />
           ))}
         </div>
 
         <div className="absolute top-6 right-6 flex items-center gap-3 z-20">
-          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 border border-white/10">
             <button
               onClick={() => setAutoPlayInterval(prev => prev > 2000 ? prev - 1000 : prev)}
-              className="text-white/60 hover:text-white text-xs"
+              className="text-white/60 hover:text-white text-sm w-6 h-6 flex items-center justify-center"
             >
               -
             </button>
-            <span className="text-white/80 text-xs font-mono">{autoPlayInterval / 1000}s</span>
+            <span className="text-white/80 text-xs font-mono w-8 text-center">{autoPlayInterval / 1000}s</span>
             <button
-              onClick={() => setAutoPlayInterval(prev => prev < 10000 ? prev + 1000 : prev)}
-              className="text-white/60 hover:text-white text-xs"
+              onClick={() => setAutoPlayInterval(prev => prev < 15000 ? prev + 1000 : prev)}
+              className="text-white/60 hover:text-white text-sm w-6 h-6 flex items-center justify-center"
             >
               +
             </button>
           </div>
 
-          <button
+          <motion.button
             onClick={toggleAutoPlay}
-            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-sm"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-md border border-white/10"
           >
             {isAutoPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             onClick={toggleFullscreen}
-            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-sm"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all backdrop-blur-md border border-white/10"
           >
             <Maximize2 className="w-5 h-5" />
-          </button>
+          </motion.button>
         </div>
 
         <div className="absolute bottom-6 left-6 z-20">
-          <div className="text-white/30 text-sm font-mono">
+          <div className="text-white/30 text-sm font-mono tracking-wider">
             {String(currentIndex + 1).padStart(2, '0')} / {String(portfolios.length).padStart(2, '0')}
+          </div>
+        </div>
+
+        <div className="absolute top-6 left-6 z-20">
+          <div className="text-white/50 text-xs">
+            左右滑动或按方向键切换作品
           </div>
         </div>
       </div>
@@ -331,6 +459,20 @@ export default function PortfolioPage() {
       <style jsx global>{`
         body {
           overflow: hidden !important;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255,255,255,0.05);
+          border-radius: 2px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.2);
+          border-radius: 2px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255,255,255,0.3);
         }
       `}</style>
     </div>
