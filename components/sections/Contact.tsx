@@ -124,9 +124,9 @@ export default function Contact() {
                 <motion.div 
                   whileHover={{ scale: 1.05, rotate: 2 }}
                   transition={{ duration: 0.2 }}
-                  className="w-24 h-24 bg-slate-200 rounded-lg flex items-center justify-center mx-auto"
+                  className="w-48 h-48 bg-white rounded-lg flex items-center justify-center mx-auto shadow-md"
                 >
-                  <p className="text-slate-400 text-xs">二维码占位</p>
+                  <img src="/images/erweima.png" alt="微信二维码" className="w-full h-full object-contain p-2" />
                 </motion.div>
               </motion.div>
             </div>

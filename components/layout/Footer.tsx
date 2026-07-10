@@ -209,14 +209,6 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-
-            {/* 二维码 */}
-            <div className="mt-8 lg:mt-0">
-              <h3 className="text-lg font-semibold mb-4">扫码关注</h3>
-              <div className="w-48 h-48 bg-white rounded-lg p-2 shadow-lg">
-                <img src="/images/erweima.png" alt="微信二维码" className="w-full h-full object-contain" />
-              </div>
-            </div>
           </div>
 
           <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
