@@ -1,15 +1,55 @@
 import { NextResponse } from 'next/server'
+import settings from '../../../setting.json'
 
 const BASE_TOKEN = 'D2S1bhTGTaorSCsJLiOc0QZvnPc'
 const TABLE_ID = 'tblfYNMFjqvkNzod'
 
+let cachedToken = ''
+let tokenExpiryTime = 0
+
+async function getTenantAccessToken(): Promise<string> {
+  const now = Date.now()
+  
+  if (cachedToken && now < tokenExpiryTime) {
+    return cachedToken
+  }
+  
+  try {
+    const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        app_id: settings.data.app_id,
+        app_secret: settings.data.app_secret,
+      }),
+    })
+    
+    const data = await response.json()
+    
+    if (data.code === 0 && data.tenant_access_token) {
+      cachedToken = data.tenant_access_token
+      tokenExpiryTime = now + (data.expire - 60) * 1000
+      console.log('Got new tenant_access_token for portfolios')
+      return cachedToken
+    }
+    
+    console.error('Failed to get tenant_access_token:', data)
+    throw new Error(data.msg || 'Failed to get access token')
+  } catch (error) {
+    console.error('Error getting tenant_access_token:', error)
+    throw error
+  }
+}
+
 export async function GET() {
   try {
+    const accessToken = await getTenantAccessToken()
+    
     const response = await fetch(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLE_ID}/records?page_size=100`,
       {
         headers: {
-          'Authorization': `Bearer ${process.env.FEISHU_USER_ACCESS_TOKEN || ''}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
         cache: 'no-store',
@@ -26,9 +66,9 @@ export async function GET() {
 
     if (!result.data?.items) {
       return NextResponse.json({
-        success: false,
-        message: 'Failed to fetch records',
-        data: []
+        success: true,
+        data: [],
+        message: 'No records found'
       })
     }
 
