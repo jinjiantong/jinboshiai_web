@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Menu, X, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [showPortfolioDropdown, setShowPortfolioDropdown] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,8 +19,17 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowPortfolioDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const navItems = [
-    { name: '作品展示', href: '#portfolio' },
     { name: '往期活动', href: '#portfolio' },
     { name: '课程体系', href: '#courses' },
     { name: '联系我们', href: '#join' },
@@ -46,6 +57,52 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
+            <div ref={dropdownRef} className="relative">
+              <motion.button
+                onMouseEnter={() => setShowPortfolioDropdown(true)}
+                onClick={() => setShowPortfolioDropdown(!showPortfolioDropdown)}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="text-slate-600 hover:text-primary transition-colors font-medium flex items-center gap-1"
+              >
+                作品展示
+                <motion.div
+                  animate={{ rotate: showPortfolioDropdown ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </motion.div>
+              </motion.button>
+              
+              <AnimatePresence>
+                {showPortfolioDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    onMouseLeave={() => setShowPortfolioDropdown(false)}
+                    className="absolute top-full left-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-50"
+                  >
+                    <Link
+                      href="/portfolio"
+                      className="block px-4 py-3 text-sm text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors font-medium"
+                      onClick={() => setShowPortfolioDropdown(false)}
+                    >
+                      作品展示台
+                    </Link>
+                    <Link
+                      href="#portfolio"
+                      className="block px-4 py-3 text-sm text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors font-medium"
+                      onClick={() => setShowPortfolioDropdown(false)}
+                    >
+                      往期活动
+                    </Link>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             {navItems.map((item) => (
               <motion.a
                 key={item.name}
@@ -76,6 +133,20 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden bg-white rounded-2xl shadow-xl mt-2 py-4 border border-slate-100">
             <div className="flex flex-col space-y-2 px-4">
+              <Link
+                href="/portfolio"
+                className="text-slate-600 hover:text-primary transition-colors py-3 px-4 rounded-lg hover:bg-slate-50 font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                作品展示台
+              </Link>
+              <Link
+                href="#portfolio"
+                className="text-slate-600 hover:text-primary transition-colors py-3 px-4 rounded-lg hover:bg-slate-50 font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                往期活动
+              </Link>
               {navItems.map((item) => (
                 <Link
                   key={item.name}
