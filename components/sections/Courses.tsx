@@ -151,7 +151,8 @@ export default function Courses() {
               <BookOpen className="w-4 h-4 text-white" />
             </div>
             <div>
-              <div className="text-xs text-primary font-medium uppercase tracking-wider">课程内容</div>
+              <div className="text-lg text-primary font-bold uppercase tracking-wider">以下是线下课程内容</div>
+              <div className="text-base text-slate-500 font-medium mt-1">线上课程尽情期待...</div>
             </div>
           </div>
           
