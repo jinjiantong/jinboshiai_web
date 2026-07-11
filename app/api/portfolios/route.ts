@@ -73,7 +73,10 @@ export async function GET() {
     const records = result.data.items
       .filter((record: any) => {
         const 是否展示 = record.fields.是否展示
-        return 是否展示 === true || 是否展示 === 'true'
+        const 作品展示平台 = record.fields.作品展示平台 || ''
+        const platforms = Array.isArray(作品展示平台) ? 作品展示平台 : [作品展示平台]
+        const has展示台 = platforms.some((p: string) => p && p.includes('展示台'))
+        return (是否展示 === true || 是否展示 === 'true') && has展示台
       })
       .map((record: any) => {
         const attachments = record.fields.作品附件?.map((f: any) => ({
@@ -124,6 +127,7 @@ export async function GET() {
             作品分类: 作品分类,
             作品附件类型: 作品附件类型,
             是否展示: record.fields.是否展示 || false,
+            作品展示平台: record.fields.作品展示平台 || '',
             作品附件: attachments,
             演示视频: videos,
             架构图: architecture,

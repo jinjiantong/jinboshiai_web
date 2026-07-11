@@ -50,6 +50,7 @@ export async function GET(
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
+        redirect: 'follow',
       }
     )
 
@@ -58,7 +59,7 @@ export async function GET(
     }
 
     const imageBuffer = await response.arrayBuffer()
-    const contentType = response.headers.get('content-type') || 'image/png'
+    const contentType = response.headers.get('content-type') || 'image/jpeg'
 
     return new NextResponse(imageBuffer, {
       headers: {
