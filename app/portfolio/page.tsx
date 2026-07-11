@@ -352,6 +352,27 @@ export default function PortfolioPage() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      {/* 右上角标题 */}
+      <div 
+        className="fixed top-8 right-8 z-50"
+        style={{ pointerEvents: 'none' }}
+      >
+        <div 
+          className="px-6 py-3 rounded-2xl backdrop-blur-md"
+          style={{ 
+            background: `${theme.accent}15`,
+            border: `1px solid ${theme.accent}30`
+          }}
+        >
+          <div className="text-lg font-bold" style={{ color: theme.accent }}>
+            作品展示台
+          </div>
+          <div className="text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            所有的作品通过AI独立完成
+          </div>
+        </div>
+      </div>
+
       {/* 背景 - 主题色氛围 */}
       <div className="absolute inset-0 transition-all duration-700" style={{ background: '#0a0a0a' }} />
       <div className="absolute inset-0 transition-all duration-700" style={{ background: theme.overlay }} />
@@ -444,8 +465,28 @@ export default function PortfolioPage() {
               {currentPortfolio.fields.作品简介}
             </p>
 
-            {/* AI工具 & 应用场景 模块 */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
+            {/* AI工具 & 应用场景 & 开发者 模块 */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {currentPortfolio.fields.开发者 && (
+                <div 
+                  className="p-3 rounded-lg"
+                  style={{ 
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)'
+                  }}
+                >
+                  <div 
+                    className="text-xs uppercase tracking-wider mb-1"
+                    style={{ color: '#ffffff' }}
+                  >
+                    开发者
+                  </div>
+                  <div className="text-sm font-medium" style={{ color: theme.accent }}>
+                    {currentPortfolio.fields.开发者}
+                  </div>
+                </div>
+              )}
+
               {currentPortfolio.fields.AI工具 && (
                 <div 
                   className="p-3 rounded-lg"
