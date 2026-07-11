@@ -84,7 +84,31 @@ export async function GET() {
           download_url: `/api/portfolios/image/${f.file_token}`
         })) || []
 
-        const coverImage = attachments.length > 0 ? attachments[0].download_url : null
+        const videos = record.fields.演示视频?.map((f: any) => ({
+          name: f.name,
+          size: f.size,
+          file_token: f.file_token,
+          type: f.type,
+          download_url: `/api/portfolios/image/${f.file_token}`
+        })) || []
+
+        const architecture = record.fields.架构图?.map((f: any) => ({
+          name: f.name,
+          size: f.size,
+          file_token: f.file_token,
+          type: f.type,
+          download_url: `/api/portfolios/image/${f.file_token}`
+        })) || []
+
+        const coverImage = videos.length > 0 ? videos[0].download_url : (attachments.length > 0 ? attachments[0].download_url : null)
+
+        const 作品分类 = Array.isArray(record.fields.作品分类) 
+          ? record.fields.作品分类[0] 
+          : record.fields.作品分类 || 'AI应用'
+
+        const 作品附件类型 = Array.isArray(record.fields.作品附件类型) 
+          ? record.fields.作品附件类型[0] 
+          : record.fields.作品附件类型 || '图片'
 
         return {
           record_id: record.record_id,
@@ -94,14 +118,15 @@ export async function GET() {
             应用场景: record.fields.应用场景 || '',
             功能特性: record.fields.功能特性 || '',
             技术方案: record.fields.技术方案 || '',
+            AI工具: record.fields.AI工具 || '',
             开发者: record.fields.开发者 || '',
-            作品跳转链接: record.fields.作品跳转链接?.link || record.fields.作品跳转链接 || '',
-            作品分类: Array.isArray(record.fields.作品分类) ? record.fields.作品分类[0] : record.fields.作品分类 || '',
-            作品展示平台: Array.isArray(record.fields.作品展示平台) ? record.fields.作品展示平台 : [record.fields.作品展示平台],
-            作品附件类型: record.fields.作品附件类型 || '',
+            作品跳转链接: record.fields.作品跳转链接 || '',
+            作品分类: 作品分类,
+            作品附件类型: 作品附件类型,
             是否展示: record.fields.是否展示 || false,
             作品附件: attachments,
-            架构图: record.fields.架构图 || [],
+            演示视频: videos,
+            架构图: architecture,
             创建日期: record.fields.创建日期 || null,
             cover_image: coverImage,
             access_token: accessToken
