@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, Brain, Sparkles, Zap, Code } from 'lucide-react'
+import { ArrowRight, Brain, Sparkles, Zap, Code, Award, Users, TrendingUp } from 'lucide-react'
 
 export default function Hero() {
   const features = [
@@ -10,6 +10,21 @@ export default function Hero() {
     { icon: Sparkles, title: '实战项目', description: '真实项目驱动，边学边做' },
     { icon: Zap, title: '效率提升', description: '10分钟完成以往1小时工作' },
     { icon: Code, title: '应用开发', description: '从工具到应用的完整链路' },
+  ]
+
+  const stats = [
+    { value: '500+', label: '学员培训', icon: Users },
+    { value: '30+', label: '企业培训', icon: TrendingUp },
+    { value: '95%', label: '满意度', icon: Award },
+  ]
+
+  const services = [
+    '北京顺义AI培训',
+    'AI编程培训',
+    '企业AI内训',
+    '企业AI咨询',
+    'AI落地指导',
+    'AI应用培训',
   ]
 
   return (
@@ -24,14 +39,30 @@ export default function Hero() {
             className="text-center lg:text-left"
           >
             <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-              🔥 2026全新AI培训课程
+              🔥 2026全新AI培训课程 | 北京顺义AI培训专家
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               零基础<span className="text-primary">AI人工智能</span>培训
             </h1>
-            <p className="text-lg text-slate-600 mb-8 max-w-lg mx-auto lg:mx-0">
+            <p className="text-lg text-slate-600 mb-4 max-w-lg mx-auto lg:mx-0">
               金博士AI实战训练营，手把手教你掌握人工智能核心技能，从零基础到项目实战，开启AI时代的职业新篇章。
             </p>
+            <p className="text-base text-slate-500 mb-6 max-w-lg mx-auto lg:mx-0">
+              专注<span className="font-semibold text-slate-700">AI编程培训、企业AI培训、企业AI咨询、AI应用培训</span>，提供从培训到落地的全流程服务。
+            </p>
+            
+            {/* 服务标签 */}
+            <div className="flex flex-wrap gap-2 mb-8 justify-center lg:justify-start">
+              {services.map((service) => (
+                <span 
+                  key={service}
+                  className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-full text-sm"
+                >
+                  {service}
+                </span>
+              ))}
+            </div>
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link 
                 href="#courses"
@@ -47,6 +78,16 @@ export default function Hero() {
                 查看作品
                 <ArrowRight className="w-5 h-5" />
               </Link>
+            </div>
+
+            {/* 数据统计 */}
+            <div className="grid grid-cols-3 gap-4 mt-10 pt-6 border-t border-slate-200">
+              {stats.map(({ value, label, icon: Icon }) => (
+                <div key={label} className="text-center lg:text-left">
+                  <div className="text-2xl font-bold text-primary">{value}</div>
+                  <div className="text-sm text-slate-500">{label}</div>
+                </div>
+              ))}
             </div>
           </motion.div>
 
@@ -78,9 +119,9 @@ export default function Hero() {
       </div>
 
       {/* 背景装饰 */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-60 h-60 bg-secondary/10 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
       </div>
     </section>
   )

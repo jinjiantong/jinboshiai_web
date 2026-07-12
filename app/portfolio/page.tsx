@@ -201,7 +201,7 @@ export default function PortfolioPage() {
   const fetchPortfolios = useCallback(async () => {
     try {
       const timestamp = new Date().getTime()
-      const response = await fetch(`/api/portfolios?t=${timestamp}`, {
+      const response = await fetch(`/api/portfolios?type=showcase&t=${timestamp}`, {
         cache: 'no-store',
         headers: { 'Cache-Control': 'no-cache' },
       })
@@ -360,14 +360,14 @@ export default function PortfolioPage() {
         <div 
           className="px-6 py-3 rounded-2xl backdrop-blur-md"
           style={{ 
-            background: currentTheme === 'orange' ? 'rgba(139, 92, 246, 0.08)' : `${theme.accent}15`,
-            border: currentTheme === 'orange' ? '1px solid rgba(139, 92, 246, 0.15)' : `1px solid ${theme.accent}30`
+            background: `${theme.accent}15`,
+            border: `1px solid ${theme.accent}30`
           }}
         >
-          <div className="text-lg font-bold" style={{ color: currentTheme === 'orange' ? '#1E1B4B' : theme.accent }}>
+          <div className="text-lg font-bold" style={{ color: theme.accent }}>
             作品展示台
           </div>
-          <div className="text-xs" style={{ color: currentTheme === 'orange' ? '#64748B' : 'rgba(255,255,255,0.6)' }}>
+          <div className="text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>
             所有的作品通过AI独立完成
           </div>
         </div>
@@ -376,7 +376,7 @@ export default function PortfolioPage() {
       {/* 背景 - 主题色氛围 */}
       <div 
         className="absolute inset-0 transition-all duration-700"
-        style={{ background: currentTheme === 'orange' ? '#F1F5F9' : '#0a0a0a' }} 
+        style={{ background: '#0a0a0a' }} 
       />
       <div className="absolute inset-0 transition-all duration-700" style={{ background: theme.overlay }} />
 
@@ -864,11 +864,11 @@ export default function PortfolioPage() {
             exit={{ opacity: 0, y: 20 }}
             className="absolute bottom-28 right-16 z-50 p-5 rounded-2xl backdrop-blur-xl"
             style={{ 
-              background: currentTheme === 'orange' ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.8)',
-              border: currentTheme === 'orange' ? '1px solid rgba(139, 92, 246, 0.2)' : '1px solid rgba(255, 255, 255, 0.1)'
+              background: 'rgba(0, 0, 0, 0.8)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
             }}
           >
-            <div className="text-xs font-semibold mb-3" style={{ color: currentTheme === 'orange' ? '#64748B' : 'rgba(255,255,255,0.6)' }}>选择主题</div>
+            <div className="text-xs font-semibold mb-3" style={{ color: 'rgba(255,255,255,0.6)' }}>选择主题</div>
             <div className="space-y-2">
               {(Object.keys(themes) as ThemeType[]).map((key) => (
                 <button
@@ -885,7 +885,7 @@ export default function PortfolioPage() {
                       background: `linear-gradient(135deg, ${themes[key].primary}, ${themes[key].secondary})`
                     }}
                   />
-                  <span className="text-base font-medium" style={{ color: currentTheme === 'orange' ? '#1E1B4B' : '#ffffff' }}>{themes[key].name}</span>
+                  <span className="text-base font-medium" style={{ color: '#ffffff' }}>{themes[key].name}</span>
                   {currentTheme === key && (
                     <div className="ml-auto w-2 h-2 rounded-full" style={{ backgroundColor: themes[key].accent }} />
                   )}

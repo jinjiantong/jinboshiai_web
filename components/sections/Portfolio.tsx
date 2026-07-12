@@ -67,7 +67,7 @@ export default function Portfolio() {
     const fetchPortfolios = async () => {
       try {
         const timestamp = new Date().getTime()
-        const response = await fetch(`/api/portfolios?t=${timestamp}`, {
+        const response = await fetch(`/api/portfolios?type=home&t=${timestamp}`, {
           cache: 'no-store',
           headers: { 'Cache-Control': 'no-cache' },
         })

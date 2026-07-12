@@ -27,7 +27,7 @@ async function getTenantAccessToken(): Promise<string> {
     const data = await response.json()
     
     if (data.code === 0 && data.tenant_access_token) {
-      cachedToken = data.tenant_access_token
+      cachedToken = data.tenant_access_token as string
       tokenExpiryTime = now + (data.expire - 60) * 1000
       return cachedToken
     }
@@ -39,8 +39,11 @@ async function getTenantAccessToken(): Promise<string> {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const type = searchParams.get('type') || 'showcase'
+    
     const accessToken = await getTenantAccessToken()
     
     const response = await fetch(
@@ -75,8 +78,15 @@ export async function GET() {
         const 是否展示 = record.fields.是否展示
         const 作品展示平台 = record.fields.作品展示平台 || ''
         const platforms = Array.isArray(作品展示平台) ? 作品展示平台 : [作品展示平台]
-        const has展示台 = platforms.some((p: string) => p && p.includes('展示台'))
-        return (是否展示 === true || 是否展示 === 'true') && has展示台
+        
+        let hasMatch = false
+        if (type === 'home') {
+          hasMatch = platforms.some((p: string) => p && p.includes('官网'))
+        } else {
+          hasMatch = platforms.some((p: string) => p && p.includes('展示台'))
+        }
+        
+        return (是否展示 === true || 是否展示 === 'true') && hasMatch
       })
       .map((record: any) => {
         const attachments = record.fields.作品附件?.map((f: any) => ({
