@@ -7,9 +7,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const forceRefresh = searchParams.get('force_refresh') === 'true'
 
-    const cacheKey = 'works_cache'
-    const cachedData = forceRefresh ? null : (await import('next/dist/server/web/streams/readable').then(() => null))
-
     const url = `https://open.feishu.cn/open-apis/bitable/v1/app-tables/${WORKS_TABLE_ID}/records`
     const headers = {
       'Authorization': `Bearer ${process.env.FEISHU_ADMIN_TOKEN}`,
