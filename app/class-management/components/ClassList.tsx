@@ -8,7 +8,7 @@ interface ClassItem {
   time_slot: string;
   teacher_name: string;
   student_count: number;
-  status: 'ongoing' | 'finished';
+  status: 'ongoing' | 'finished' | 'upcoming';
 }
 
 interface ClassListProps {

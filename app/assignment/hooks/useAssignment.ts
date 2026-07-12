@@ -16,6 +16,9 @@ export interface Assignment {
     '作业分数'?: number;
     '作业反馈'?: string;
     '是否优秀'?: boolean;
+    '是否优秀作品'?: boolean;
+    '提交状态'?: string;
+    [key: string]: any;
   };
 }
 
@@ -30,6 +33,7 @@ export interface UserInfo {
   user_id: string;
   name: string;
   role: 'admin' | 'teacher' | 'student';
+  type?: string;
 }
 
 export interface Student {

@@ -464,7 +464,7 @@ export default function StudentManagement() {
                       
                       <div className="flex items-center justify-between pt-3 border-t">
                         <div className="flex items-center gap-3 text-sm text-gray-500">
-                          {item.fields['点赞数'] > 0 && (
+                          {(item.fields['点赞数'] || 0) > 0 && (
                             <span className="flex items-center gap-1">
                               <Star className="w-4 h-4" />
                               {item.fields['点赞数']}

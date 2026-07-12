@@ -13,7 +13,7 @@ interface AssignmentModalProps {
     user_id: string;
     name: string;
     role: string;
-  };
+  } | null;
   students: Student[];
 }
 
@@ -31,6 +31,8 @@ interface Student {
   record_id: string;
   fields: {
     '姓名'?: string;
+    '报名班级'?: any;
+    [key: string]: any;
   };
 }
 
@@ -90,10 +92,6 @@ export function AssignmentModal({
       
       const studentsData = await studentsRes.json();
       const coursesData = await coursesRes.json();
-      
-      if (studentsData.code === 0) {
-        setStudents(studentsData.data || []);
-      }
       
       if (coursesData.code === 0) {
         setCourses(coursesData.data || []);

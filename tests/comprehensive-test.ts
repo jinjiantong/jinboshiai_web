@@ -772,7 +772,7 @@ class ComprehensiveTester {
     console.log(`通过率: ${((passed / total) * 100).toFixed(2)}%`);
     
     console.log('\n📋 各模块测试结果:');
-    const modules = [...new Set(this.results.map(r => r.module))];
+    const modules = Array.from(new Set(this.results.map(r => r.module)));
     modules.forEach(module => {
       const moduleResults = this.results.filter(r => r.module === module);
       const modulePassed = moduleResults.filter(r => r.status === 'passed').length;
@@ -825,7 +825,7 @@ class ComprehensiveTester {
       ''
     ];
     
-    const modules = [...new Set(this.results.map(r => r.module))];
+    const modules = Array.from(new Set(this.results.map(r => r.module)));
     modules.forEach(module => {
       lines.push(`### ${module}`);
       lines.push('');

@@ -132,7 +132,7 @@ function getStudentNameFromField(fieldValue: any, students: Student[]): string {
   
   if (names.length === 0) return ''
   
-  const result = [...new Set(names)].join(', ')
+  const result = Array.from(new Set(names)).join(', ')
   return result || '-'
 }
 
@@ -171,12 +171,13 @@ function getClassNameFromField(fieldValue: any, courses: Course[]): string {
     return id
   })
   
-  const result = [...new Set(names)].join(', ')
+  const result = Array.from(new Set(names)).join(', ')
   return result || '-'
 }
 
 interface Attachment {
   token?: string
+  file_token?: string
   name?: string
   size?: number
   type?: string

@@ -121,4 +121,4 @@ export const vectorDB = new QdrantClient(
   parseInt(process.env.QDRANT_PORT || '6333')
 )
 
-export { VectorItem, SearchResult }
+export type { VectorItem, SearchResult }

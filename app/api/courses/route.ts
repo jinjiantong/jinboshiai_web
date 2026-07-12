@@ -98,7 +98,7 @@ function parseAllCoursesFromBlocks(blocks: any[]): Course[] {
   const courses: Course[] = []
 
   let currentChapter: number | null = null
-  let currentModule: Module | null = null
+  let currentModule: Module | null = null as Module | null
   let pendingDescription: string[] = []
 
   const courseConfig: { [key: number]: any } = {
@@ -241,7 +241,7 @@ function parseAllCoursesFromBlocks(blocks: any[]): Course[] {
         title: moduleTitle,
         description: '',
         tags: tags.length > 0 ? tags : undefined
-      }
+      } as Module
       pendingDescription = []
     }
 

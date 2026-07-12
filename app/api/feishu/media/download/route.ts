@@ -19,7 +19,7 @@ async function getAccessToken(): Promise<string> {
   });
 
   if (response.data.code === 0) {
-    accessToken = response.data.tenant_access_token;
+    accessToken = response.data.tenant_access_token as string;
     tokenExpiry = now + (response.data.expire - 60) * 1000;
     return accessToken!;
   } else {
