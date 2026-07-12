@@ -25,7 +25,7 @@ async function getAccessToken(): Promise<string> {
     if (response.data.code === 0) {
       accessToken = response.data.tenant_access_token;
       tokenExpiry = now + (response.data.expire - 60) * 1000;
-      return accessToken;
+      return accessToken as string;
     } else {
       throw new Error(`Failed to get access token: ${response.data.msg}`);
     }
