@@ -1,5 +1,13 @@
 import './globals.css'
+import { ZCOOL_XiaoWei } from 'next/font/google'
 import Chatbot from '@/components/Chatbot'
+
+const zcoolFont = ZCOOL_XiaoWei({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-zcool',
+})
 
 export const metadata = {
   metadataBase: new URL('https://jinboshiai.com'),
@@ -92,15 +100,12 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>
+      <body className={zcoolFont.variable}>
         {children}
         <Chatbot />
       </body>

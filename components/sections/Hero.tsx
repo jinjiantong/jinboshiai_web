@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { ArrowRight, Brain, Sparkles, Zap, Code, Award, Users, TrendingUp } from 'lucide-react'
 
 export default function Hero() {
@@ -12,9 +11,9 @@ export default function Hero() {
   ]
 
   const stats = [
-    { value: '500+', label: '学员培训', icon: Users },
-    { value: '30+', label: '企业培训', icon: TrendingUp },
-    { value: '95%', label: '满意度', icon: Award },
+    { value: '500+', label: '学员培训' },
+    { value: '30+', label: '企业培训' },
+    { value: '95%', label: '满意度' },
   ]
 
   const services = [
@@ -30,12 +29,7 @@ export default function Hero() {
     <section className="relative h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center lg:text-left"
-          >
+          <div className="text-center lg:text-left hero-content">
             <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
               🔥 2026全新AI培训课程 | 北京顺义AI培训专家
             </div>
@@ -48,10 +42,10 @@ export default function Hero() {
             <p className="text-base text-slate-500 mb-6 max-w-lg mx-auto lg:mx-0">
               专注<span className="font-semibold text-slate-700">AI编程培训、企业AI培训、企业AI咨询、AI应用培训</span>，提供从培训到落地的全流程服务。
             </p>
-            
+
             <div className="flex flex-wrap gap-2 mb-8 justify-center lg:justify-start">
               {services.map((service) => (
-                <span 
+                <span
                   key={service}
                   className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-full text-sm"
                 >
@@ -59,16 +53,16 @@ export default function Hero() {
                 </span>
               ))}
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <a 
+              <a
                 href="#courses"
                 className="bg-primary text-white px-8 py-4 rounded-full font-medium hover:bg-primary-dark transition-all flex items-center justify-center gap-2 text-center no-underline"
               >
                 开始学习
                 <ArrowRight className="w-5 h-5" />
               </a>
-              <a 
+              <a
                 href="#activities"
                 className="border border-slate-300 text-slate-700 px-8 py-4 rounded-full font-medium hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-center no-underline"
               >
@@ -78,38 +72,29 @@ export default function Hero() {
             </div>
 
             <div className="grid grid-cols-3 gap-4 mt-10 pt-6 border-t border-slate-200">
-              {stats.map(({ value, label, icon: Icon }) => (
+              {stats.map(({ value, label }) => (
                 <div key={label} className="text-center lg:text-left">
                   <div className="text-2xl font-bold text-primary">{value}</div>
                   <div className="text-sm text-slate-500">{label}</div>
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <div className="grid grid-cols-2 gap-6">
-              {features.map(({ icon: Icon, title, description }, index) => (
-                <motion.div 
-                  key={title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                  className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-slate-100"
-                >
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{title}</h3>
-                  <p className="text-slate-600 text-sm">{description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+          <div className="grid grid-cols-2 gap-6 hero-features">
+            {features.map(({ icon: Icon, title, description }) => (
+              <div
+                key={title}
+                className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-slate-100"
+              >
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">{title}</h3>
+                <p className="text-slate-600 text-sm">{description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
