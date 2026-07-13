@@ -1,16 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import settings from '../../../../../setting.json'
 
-let cachedToken = ''
-let tokenExpiryTime = 0
-
 async function getTenantAccessToken(): Promise<string> {
-  const now = Date.now()
-  
-  if (cachedToken && now < tokenExpiryTime) {
-    return cachedToken
-  }
-  
   try {
     const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
       method: 'POST',
@@ -24,9 +15,7 @@ async function getTenantAccessToken(): Promise<string> {
     const data = await response.json()
     
     if (data.code === 0 && data.tenant_access_token) {
-      cachedToken = data.tenant_access_token
-      tokenExpiryTime = now + (data.expire - 60) * 1000
-      return cachedToken
+      return data.tenant_access_token as string
     }
     
     throw new Error(data.msg || 'Failed to get access token')

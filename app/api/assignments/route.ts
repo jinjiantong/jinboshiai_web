@@ -5,37 +5,10 @@ import {
   successResponse,
   listCache
 } from '../student-management/utils/dataProcessor';
+import { getFeishuToken } from '@/lib/feishuToken';
 
 const ASSIGNMENTS_TABLE_ID = 'tblEUJfrNGtkUJLR';
 const APP_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
-
-let accessToken: string | null = null;
-let tokenExpiry: number = 0;
-
-async function getAccessToken(): Promise<string> {
-  const now = Date.now();
-  if (accessToken && now < tokenExpiry) {
-    return accessToken;
-  }
-
-  try {
-    const response = await axios.post('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      app_id: 'cli_a96bb944bef89bcb',
-      app_secret: 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp',
-    });
-
-    if (response.data.code === 0) {
-      accessToken = response.data.tenant_access_token as string;
-      tokenExpiry = now + (response.data.expire - 60) * 1000;
-      return accessToken!;
-    } else {
-      throw new Error(`获取访问令牌失败: ${response.data.msg}`);
-    }
-  } catch (error: any) {
-    console.error('获取访问令牌错误:', error);
-    throw new Error('获取访问令牌失败');
-  }
-}
 
 export async function GET(request: Request) {
   try {
@@ -64,7 +37,6 @@ export async function GET(request: Request) {
                 return studentIds.includes(s);
               }
               if (typeof s === 'object') {
-                // 同时检查 record_ids 和 text
                 if (s.record_ids && Array.isArray(s.record_ids)) {
                   if (s.record_ids.some((id: string) => studentIds.includes(id))) {
                     return true;
@@ -136,7 +108,7 @@ export async function GET(request: Request) {
       });
     }
     
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     
     const response = await axios.get(`https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${ASSIGNMENTS_TABLE_ID}/records`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -169,7 +141,6 @@ export async function GET(request: Request) {
                 return studentIds.includes(s);
               }
               if (typeof s === 'object') {
-                // 同时检查 record_ids 和 text
                 if (s.record_ids && Array.isArray(s.record_ids)) {
                   if (s.record_ids.some((id: string) => studentIds.includes(id))) {
                     return true;
@@ -250,7 +221,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
     
     console.log('=== POST /api/assignments ===');

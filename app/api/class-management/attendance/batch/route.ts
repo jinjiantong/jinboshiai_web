@@ -1,42 +1,13 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
+import { getFeishuToken } from '@/lib/feishuToken';
 
-const APP_ID = 'cli_a96bb944bef89bcb';
-const APP_SECRET = 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp';
 const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const COURSE_HOURS_TABLE_ID = 'tblYolOuKVjujV9J';
 const ATTENDANCE_TABLE_ID = 'tbl28gcD5cNjhYg8';
 
-let accessToken: string | null = null;
-let tokenExpiry: number = 0;
-
-async function getAccessToken(): Promise<string> {
-  const now = Date.now();
-  if (accessToken && now < tokenExpiry) {
-    return accessToken;
-  }
-
-  try {
-    const response = await axios.post('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      app_id: APP_ID,
-      app_secret: APP_SECRET,
-    });
-
-    if (response.data.code === 0) {
-      accessToken = response.data.tenant_access_token as string;
-      tokenExpiry = now + (response.data.expire - 60) * 1000;
-      return accessToken as string;
-    } else {
-      throw new Error(`Failed to get access token: ${response.data.msg}`);
-    }
-  } catch (error: any) {
-    console.error('Error getting access token:', error);
-    throw new Error('Failed to get access token');
-  }
-}
-
 async function getRecords(tableId: string): Promise<any[]> {
-  const token = await getAccessToken();
+  const token = await getFeishuToken();
   try {
     const response = await axios.get(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${tableId}/records?page_size=500`,
@@ -55,7 +26,7 @@ async function getRecords(tableId: string): Promise<any[]> {
 }
 
 async function createRecord(tableId: string, fields: any): Promise<{ success: boolean; error?: any }> {
-  const token = await getAccessToken();
+  const token = await getFeishuToken();
   try {
     const response = await axios.post(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${tableId}/records`,
@@ -73,7 +44,7 @@ async function createRecord(tableId: string, fields: any): Promise<{ success: bo
 }
 
 async function updateRecord(tableId: string, recordId: string, fields: any): Promise<boolean> {
-  const token = await getAccessToken();
+  const token = await getFeishuToken();
   const url = `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${tableId}/records/${recordId}`;
   console.log(`updateRecord 请求 - URL: ${url}, recordId: ${recordId}, fields:`, JSON.stringify(fields));
   try {
@@ -85,7 +56,6 @@ async function updateRecord(tableId: string, recordId: string, fields: any): Pro
       }
     );
     console.log(`updateRecord 响应 - status: ${response.status}, data:`, JSON.stringify(response.data));
-    // 飞书 API 返回格式: { code: 0, msg: "success", data: {...} }
     const isSuccess = response.data?.code === 0;
     console.log(`updateRecord 判断结果: ${isSuccess}`);
     return isSuccess;
@@ -119,14 +89,11 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    // 获取所有课时记录
     const courseHoursRecords = await getRecords(COURSE_HOURS_TABLE_ID);
     console.log('课时记录数量:', courseHoursRecords.length);
     
-    // 构建学员ID到课时记录的映射，同时记录学员的实际record_id
     const studentCourseHoursMap: Record<string, { record_id: string; remaining: number; student_record_id?: string }> = {};
     
-    // 只打印第一条课时记录的关联学员字段作为参考
     if (courseHoursRecords.length > 0) {
       console.log('第一条课时记录的关联学员字段:', JSON.stringify(courseHoursRecords[0].fields?.['关联学员']));
       console.log('第一条课时记录的record_id:', courseHoursRecords[0].record_id);
@@ -137,18 +104,15 @@ export async function POST(request: Request) {
       const studentField = record.fields?.['关联学员'];
       if (Array.isArray(studentField)) {
         studentField.forEach((s: any) => {
-          // 支持 id 和 record_ids 两种格式
           const ids = s?.record_ids || (s?.id ? [s.id] : []);
-          // 同时获取text字段作为学员的实际record_id
           const textValue = s?.text;
           ids.forEach((sid: string) => {
             const remaining = parseFloat(String(record.fields?.['剩余课时'] || 0)) || 0;
-            // 只记录还有剩余课时的记录
             if (remaining > 0) {
               studentCourseHoursMap[sid] = { 
                 record_id: record.record_id, 
                 remaining,
-                student_record_id: textValue || sid  // 优先使用text字段作为学员record_id
+                student_record_id: textValue || sid
               };
             }
           });
@@ -160,20 +124,18 @@ export async function POST(request: Request) {
     console.log('尝试匹配的student_ids:', student_ids);
 
     const today = new Date();
-    const todayTimestamp = Math.floor(today.getTime() / 1000); // 转换为Unix时间戳
+    const todayTimestamp = Math.floor(today.getTime() / 1000);
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime() / 1000;
-    const todayEnd = todayStart + 86400; // 当天结束时间戳
+    const todayEnd = todayStart + 86400;
     let successCount = 0;
     let failCount = 0;
     let alreadyAttendedCount = 0;
 
-    // 获取当天的考勤记录，检查哪些学员当天已经上课
     const attendanceRecords = await getRecords(ATTENDANCE_TABLE_ID);
     const todayAttendedStudents = new Set<string>();
     attendanceRecords.forEach((record: any) => {
       const attendanceDate = record.fields?.['上课日期'];
       if (attendanceDate && typeof attendanceDate === 'number') {
-        // 检查是否在今天
         if (attendanceDate >= todayStart && attendanceDate < todayEnd) {
           const studentField = record.fields?.['关联学员'];
           if (Array.isArray(studentField)) {
@@ -189,11 +151,9 @@ export async function POST(request: Request) {
     });
     console.log(`当天已上课的学员:`, Array.from(todayAttendedStudents));
 
-    // 遍历每个选中的学生
     for (const studentId of student_ids) {
       console.log('处理学员ID:', studentId);
       
-      // 检查该学员当天是否已经上课
       if (todayAttendedStudents.has(studentId)) {
         console.log(`学员 ${studentId} 当天已上过课，跳过`);
         alreadyAttendedCount++;
@@ -208,7 +168,6 @@ export async function POST(request: Request) {
         continue;
       }
 
-      // 1. 扣除1课时，更新剩余课时
       const newRemaining = courseHours.remaining - 1;
       console.log(`更新课时记录 ${courseHours.record_id}: 剩余课时 ${courseHours.remaining} -> ${newRemaining}`);
       const updated = await updateRecord(COURSE_HOURS_TABLE_ID, courseHours.record_id, {
@@ -221,10 +180,9 @@ export async function POST(request: Request) {
         continue;
       }
 
-      // 2. 在考勤记录表添加一条考勤记录（如果失败不影响主流程）
       console.log(`创建考勤记录: 学员ID=${studentId}`);
       const attendanceResult = await createRecord(ATTENDANCE_TABLE_ID, {
-        '关联学员': [studentId],  // 字符串数组格式
+        '关联学员': [studentId],
         '关联班级': [class_id],
         '上课日期': todayTimestamp,
         '签到状态': '已上课',

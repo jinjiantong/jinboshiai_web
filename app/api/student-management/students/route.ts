@@ -8,36 +8,9 @@ import {
   recordCache,
   listCache
 } from '../utils/dataProcessor';
+import { getFeishuToken } from '@/lib/feishuToken';
 
 const STUDENTS_TABLE_ID = TABLE_CONFIGS.students.tableId;
-
-let accessToken: string | null = null;
-let tokenExpiry: number = 0;
-
-async function getAccessToken(): Promise<string> {
-  const now = Date.now();
-  if (accessToken && now < tokenExpiry) {
-    return accessToken;
-  }
-
-  try {
-    const response = await axios.post('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      app_id: 'cli_a96bb944bef89bcb',
-      app_secret: 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp',
-    });
-
-    if (response.data.code === 0) {
-      accessToken = response.data.tenant_access_token;
-      tokenExpiry = now + (response.data.expire - 60) * 1000;
-      return accessToken!;
-    } else {
-      throw new Error(`获取访问令牌失败: ${response.data.msg}`);
-    }
-  } catch (error: any) {
-    console.error('获取访问令牌错误:', error);
-    throw new Error('获取访问令牌失败');
-  }
-}
 
 export async function GET(request: Request) {
   try {
@@ -50,7 +23,7 @@ export async function GET(request: Request) {
       return successResponse(cachedData);
     }
     
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     
     const response = await axios.get(`https://open.feishu.cn/open-apis/bitable/v1/apps/LrzibrgRsaviAQsiywBcpZQ4nwc/tables/${STUDENTS_TABLE_ID}/records`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -72,7 +45,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
     
     const inputFields = body.fields || body;

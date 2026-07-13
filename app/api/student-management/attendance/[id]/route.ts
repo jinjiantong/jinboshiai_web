@@ -1,36 +1,9 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { TABLE_CONFIGS, validateAndConvertFields, errorResponse, successResponse } from './utils/dataProcessor';
-
-let accessToken: string | null = null;
-let accessTokenExpiry: number = 0;
+import { getFeishuToken } from '@/lib/feishuToken';
 
 const ATTENDANCE_CONFIG = TABLE_CONFIGS.attendance;
-
-async function getAccessToken(): Promise<string> {
-  const now = Date.now();
-  if (accessToken && now < accessTokenExpiry) {
-    return accessToken;
-  }
-
-  try {
-    const response = await axios.post('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      app_id: 'cli_a96bb944bef89bcb',
-      app_secret: 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp',
-    });
-
-    if (response.data.code === 0) {
-      accessToken = response.data.tenant_access_token as string;
-      accessTokenExpiry = now + (response.data.expire - 60) * 1000;
-      return accessToken!;
-    } else {
-      throw new Error(`Failed to get access token: ${response.data.msg}`);
-    }
-  } catch (error: any) {
-    console.error('Error getting access token:', error);
-    throw new Error('Failed to get access token');
-  }
-}
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
@@ -66,7 +39,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const recordId = params.id;
     
     const response = await axios.delete(

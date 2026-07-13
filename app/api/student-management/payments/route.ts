@@ -8,37 +8,10 @@ import {
   TABLE_CONFIGS,
   validateAndConvertFields,
 } from '../utils/dataProcessor';
+import { getFeishuToken } from '@/lib/feishuToken';
 
 const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const PAYMENTS_TABLE_ID = TABLE_CONFIGS.payments.tableId;
-
-let accessToken: string | null = null;
-let tokenExpiry: number = 0;
-
-async function getAccessToken(): Promise<string> {
-  const now = Date.now();
-  if (accessToken && now < tokenExpiry) {
-    return accessToken;
-  }
-
-  try {
-    const response = await axios.post('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      app_id: 'cli_a96bb944bef89bcb',
-      app_secret: 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp',
-    });
-
-    if (response.data.code === 0) {
-      accessToken = response.data.tenant_access_token as string;
-      tokenExpiry = now + (response.data.expire - 60) * 1000;
-      return accessToken!;
-    } else {
-      throw new Error(`Failed to get access token: ${response.data.msg}`);
-    }
-  } catch (error: any) {
-    console.error('Error getting access token:', error);
-    throw new Error('Failed to get access token');
-  }
-}
 
 async function fetchFromLarkApi<T>(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: any): Promise<T> {
   const token = await getAccessToken();

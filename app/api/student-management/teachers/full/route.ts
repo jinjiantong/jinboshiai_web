@@ -1,45 +1,18 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
+import { getFeishuToken } from '@/lib/feishuToken';
 
-const APP_ID = 'cli_a96bb944bef89bcb';
-const APP_SECRET = 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp';
 const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const TEACHERS_TABLE_ID = 'tblxN3e1fyhOMTSt';
 const CLASSES_TABLE_ID = 'tblDDKeft6iLlGAx';
 
-let accessToken: string | null = null;
-let tokenExpiry: number = 0;
-
-async function getAccessToken(): Promise<string> {
-  const now = Date.now();
-  if (accessToken && now < tokenExpiry) {
-    return accessToken;
-  }
-
-  try {
-    const response = await axios.post(
-      'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',
-      { app_id: APP_ID, app_secret: APP_SECRET }
-    );
-
-    if (response.data.code === 0) {
-      accessToken = response.data.tenant_access_token;
-      tokenExpiry = now + (response.data.expire - 60) * 1000;
-      return accessToken!;
-    }
-    throw new Error(`Failed to get access token`);
-  } catch (error) {
-    console.error('Error getting access token:', error);
-    throw error;
-  }
-}
-
 async function getClassInfo(recordId: string, token: string): Promise<any> {
   try {
+    const classToken = await getFeishuToken();
     const response = await axios.get(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${CLASSES_TABLE_ID}/records/${recordId}`,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${classToken}` },
         timeout: 5000
       }
     );
@@ -56,7 +29,7 @@ async function getClassInfo(recordId: string, token: string): Promise<any> {
 
 export async function GET() {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     
     const response = await axios.get(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TEACHERS_TABLE_ID}/records`,

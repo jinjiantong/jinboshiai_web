@@ -5,37 +5,10 @@ import {
   successResponse,
   listCache
 } from '@/app/api/student-management/utils/dataProcessor';
+import { getFeishuToken } from '@/lib/feishuToken';
 
 const ASSIGNMENTS_TABLE_ID = 'tblEUJfrNGtkUJLR';
 const APP_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
-
-let accessToken: string | null = null;
-let tokenExpiry: number = 0;
-
-async function getAccessToken(): Promise<string> {
-  const now = Date.now();
-  if (accessToken && now < tokenExpiry) {
-    return accessToken;
-  }
-
-  try {
-    const response = await axios.post('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      app_id: 'cli_a96bb944bef89bcb',
-      app_secret: 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp',
-    });
-
-    if (response.data.code === 0) {
-      accessToken = response.data.tenant_access_token as string;
-      tokenExpiry = now + (response.data.expire - 60) * 1000;
-      return accessToken!;
-    } else {
-      throw new Error(`获取访问令牌失败: ${response.data.msg}`);
-    }
-  } catch (error: any) {
-    console.error('获取访问令牌错误:', error);
-    throw new Error('获取访问令牌失败');
-  }
-}
 
 export async function GET(
   request: Request,
@@ -43,7 +16,7 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
 
     const response = await axios.get(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${ASSIGNMENTS_TABLE_ID}/records/${id}`,
@@ -69,7 +42,7 @@ export async function PUT(
 ) {
   try {
     const { id } = params;
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
 
     console.log('=== PUT /api/assignments/[id] ===');
@@ -160,7 +133,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = params;
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
 
     const response = await axios.delete(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${ASSIGNMENTS_TABLE_ID}/records/${id}`,

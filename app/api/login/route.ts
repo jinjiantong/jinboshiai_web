@@ -6,16 +6,7 @@ const STUDENT_TABLE_ID = 'tblhnKUAyBJbpoDo'
 const CLASS_TABLE_ID = 'tblDDKeft6iLlGAx'
 const APP_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc'
 
-let cachedToken = ''
-let tokenExpiryTime = 0
-
 async function getTenantAccessToken(): Promise<string> {
-  const now = Date.now()
-  
-  if (cachedToken && now < tokenExpiryTime) {
-    return cachedToken
-  }
-  
   try {
     const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
       method: 'POST',
@@ -29,10 +20,7 @@ async function getTenantAccessToken(): Promise<string> {
     const data = await response.json()
     
     if (data.code === 0 && data.tenant_access_token) {
-      cachedToken = data.tenant_access_token
-      tokenExpiryTime = now + (data.expire - 60) * 1000
-      console.log('Got new tenant_access_token')
-      return cachedToken
+      return data.tenant_access_token as string
     }
     
     console.error('Failed to get tenant_access_token:', data)
