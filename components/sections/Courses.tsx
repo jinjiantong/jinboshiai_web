@@ -143,6 +143,13 @@ type ActiveTab = 'ai' | 'vibe'
 
 export default function Courses() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('ai')
+  const [direction, setDirection] = useState(0)
+
+  const handleTabChange = (key: ActiveTab) => {
+    if (key === activeTab) return
+    setDirection(key === 'vibe' ? 1 : -1)
+    setActiveTab(key)
+  }
 
   return (
     <section id="courses" className="pt-24 pb-20 lg:pt-32 lg:pb-32 bg-white relative overflow-hidden">
@@ -177,7 +184,7 @@ export default function Courses() {
             ].map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key as ActiveTab)}
+                onClick={() => handleTabChange(tab.key as ActiveTab)}
                 className={`px-5 py-3 rounded-full text-sm transition-all flex flex-col items-center gap-0.5 ${
                   activeTab === tab.key
                     ? 'bg-white text-slate-900 shadow-sm'
@@ -197,9 +204,9 @@ export default function Courses() {
           {activeTab === 'ai' && (
             <motion.div
               key="ai"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, x: direction > 0 ? 300 : -300 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction > 0 ? -300 : 300 }}
               transition={{ duration: 0.3 }}
             >
               <div className="space-y-6">
@@ -306,9 +313,9 @@ export default function Courses() {
           {activeTab === 'vibe' && (
             <motion.div
               key="vibe"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, x: direction > 0 ? 300 : -300 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction > 0 ? -300 : 300 }}
               transition={{ duration: 0.3 }}
             >
               <motion.div
