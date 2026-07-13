@@ -85,33 +85,43 @@ const aiCourse = {
   gradient: 'from-blue-600 via-blue-500 to-cyan-500',
   sections: [
     {
-      title: 'AI知识体系构建与实战',
+      title: '01 AI知识体系构建与实战',
+      subtitle: '打牢AI基础，掌握核心概念与工具',
       content: [
         '龙虾、Skill、Agent、Token、MCP，大模型等 AI 基础讲解',
         '借助豆包搭建专属提示词',
         '巧用 AI 工具撰写儿童故事，花草识别、智能客服等各类场景提示词',
         '借助大模型深度研讨创业思路与项目规划',
         '五分钟快速搭建全网比价实用技能',
+        '搭建销售线索获取工作流',
+        '搭建自媒体智能体，自动化创作故事、情感短视频',
       ],
     },
     {
-      title: 'AI办公自动化实战',
+      title: '02 AI企业级解决方案',
+      subtitle: '企业级AI落地，从数据中台到智能应用',
       content: [
-        'Python基础与AI助手协同工作流',
-        'Excel数据处理自动化，AI批量处理报表',
-        'Word文档智能写作与格式处理',
-        'PPT一键生成，从大纲到成品',
-        '企业知识库搭建与智能问答系统',
+        '通过飞书多维表格，知识库、扣子知识库搭建 AI 数据中台',
+        '涵盖结构化数据表、标签化字段、AI字段，工作流、旧数据清洗迁移等核心功能实战',
+        '融合飞书、龙虾、扣子搭建智能客服智能体',
+        '客服数据采集、仪表盘展示、紧急问题监控处理工作流',
+        '技术架构总结，通用方案案例说明',
+        '搭建销量预测智能体',
+        '每日晚报、库存巡检、现场巡检、会员生日提醒，销售统计，统一话术等企业智能体',
+        '企业产品官网开发部署',
+        '企业营销小游戏开发发布',
       ],
     },
     {
-      title: 'AI与行业解决方案',
+      title: '03 AI实验室项目',
+      subtitle: '学员主导完成真实企业级项目',
       content: [
-        'AI客服系统搭建与多平台接入',
-        '私域流量运营与用户画像分析',
-        '新媒体内容创作与自动化发布',
-        '数据可视化与商业智能报表',
-        'AI时代企业转型与效率提升方法论',
+        '项目规划：项目分析、流程分析、盘点资产、技术方案',
+        '搭建数据：数据中台、数据迁移、数据治理，知识库',
+        '搭建应用：龙虾、扣子、Trae应用',
+        '跑通流程',
+        '沉淀技能',
+        '项目发布说明会',
       ],
     },
   ],
@@ -207,12 +217,15 @@ export default function Courses() {
                   <div className="space-y-6">
                     {aiCourse.sections.map((section, sectionIndex) => (
                       <div key={sectionIndex} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-                        <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <h4 className="text-lg font-semibold mb-1 flex items-center gap-2">
                           <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">
                             {sectionIndex + 1}
                           </span>
                           {section.title}
                         </h4>
+                        {section.subtitle && (
+                          <p className="text-white/60 text-sm mb-4 ml-10">{section.subtitle}</p>
+                        )}
                         <ul className="space-y-2">
                           {section.content.map((item, itemIndex) => (
                             <li key={itemIndex} className="flex items-start gap-3 text-white/90">
