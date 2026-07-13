@@ -162,19 +162,22 @@ export default function Courses() {
         <div className="flex justify-center mb-12">
           <div className="inline-flex bg-slate-100 rounded-full p-1 gap-1">
             {[
-              { key: 'ai', label: 'AI应用落地实战课' },
-              { key: 'vibe', label: 'Vibe Coding实战课' },
+              { key: 'ai', label: 'AI应用落地实战课', tag: '职场人 · 创业者 · 大学生' },
+              { key: 'vibe', label: 'Vibe Coding实战课', tag: '学生 · AI爱好者' },
             ].map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as ActiveTab)}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
+                className={`px-5 py-3 rounded-full text-sm transition-all flex flex-col items-center gap-0.5 ${
                   activeTab === tab.key
                     ? 'bg-white text-slate-900 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
-                {tab.label}
+                <span className="font-medium">{tab.label}</span>
+                <span className="text-xs text-slate-400">
+                  适用人群：{tab.tag}
+                </span>
               </button>
             ))}
           </div>
