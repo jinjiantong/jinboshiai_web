@@ -1,82 +1,38 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Users, Rocket, Clock, Calendar, Award, Sparkles } from 'lucide-react'
 
 const vibeCodingCourse = {
   gradient: 'from-indigo-600 via-purple-600 to-pink-500',
-  color: '#7c3aed',
   tagline: '2026 用说话的方式搞定AI编程！',
   subtitle: '青少年 Vibe Coding（氛围编程）3日创造营',
- 门槛: '我们唯一的门槛：会打字 · 会上网',
+  门槛: '我们唯一的门槛：会打字 · 会上网',
   courseResult: {
     badge: '课程成果',
     highlight: '3天，带走',
     items: ['属于自己的 网站', '小程序游戏', '手机App'],
   },
   eraCompare: {
-    title: '时代对比',
-    old: {
-      era: '互联网时代',
-      content: '老板 + 产品 + 开发 + 设计 + 后台 + 运营 + 数据，\n一个月上线',
-    },
-    new: {
-      era: 'AI时代',
-      content: '1个人 + AI工具，\n3天上线',
-    },
+    old: { era: '互联网时代', content: '老板 + 产品 + 开发 + 设计 + 后台 + 运营 + 数据，\n一个月上线' },
+    new: { era: 'AI时代', content: '1个人 + AI工具，\n3天上线' },
   },
   philosophy: {
     title: '核心理念',
     text: 'AI无限放大你的能力。过去我们学知识，现在我们学如何用别人的知识。',
   },
   curriculum: [
-    {
-      day: 'Day 1',
-      items: [
-        '企业级产品开发流程介绍',
-        'AI编程工具介绍',
-        '创意讨论',
-        '产品文档撰写',
-        '产品设计稿制作',
-        '技术设计方案撰写',
-      ],
-    },
-    {
-      day: 'Day 2',
-      items: ['产品开发（含服务端开发）', '调试', '测试'],
-    },
-    {
-      day: 'Day 3',
-      items: ['产品部署', '数据分析', '增长运营'],
-    },
+    { day: 'Day 1', items: ['企业级产品开发流程介绍', 'AI编程工具介绍', '创意讨论', '产品文档撰写', '产品设计稿制作', '技术设计方案撰写'] },
+    { day: 'Day 2', items: ['产品开发（含服务端开发）', '调试', '测试'] },
+    { day: 'Day 3', items: ['产品部署', '数据分析', '增长运营'] },
   ],
   whyUs: [
-    {
-      icon: Users,
-      tag: '真·小班',
-      desc: '不超过8人，确保老师看见每个创意',
-    },
-    {
-      icon: Rocket,
-      tag: '真产品',
-      desc: '可带走的网站、游戏、App，不是Demo，是能上线能用的真东西',
-    },
-    {
-      icon: Award,
-      tag: '真交付',
-      desc: 'Vibe Coding降低创造门槛，我们补上部署、服务端、运营的硬核闭环',
-    },
-    {
-      icon: Sparkles,
-      tag: '硬核老师',
-      desc: '老师深耕AI多领域，课堂中穿插前沿视野拓展。不止教做产品，更帮孩子看见AI的全貌。',
-    },
+    { icon: Users, tag: '真·小班', desc: '不超过8人，确保老师看见每个创意' },
+    { icon: Rocket, tag: '真产品', desc: '可带走的网站、游戏、App，不是Demo，是能上线能用的真东西' },
+    { icon: Award, tag: '真交付', desc: 'Vibe Coding降低创造门槛，我们补上部署、服务端、运营的硬核闭环' },
+    { icon: Sparkles, tag: '硬核老师', desc: '老师深耕AI多领域，课堂中穿插前沿视野拓展。不止教做产品，更帮孩子看见AI的全貌。' },
   ],
-  schedule: {
-    badge: '限前8席',
-    time: '每周一、三、五 下午 1:30～4:00',
-  },
+  schedule: { badge: '限前8席', time: '每周一、三、五 下午 1:30～4:00' },
 }
 
 const aiCourse = {
@@ -153,20 +109,15 @@ export default function Courses() {
 
   return (
     <section id="courses" className="pt-24 pb-20 lg:pt-32 lg:pb-32 bg-white relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-px bg-[#387EF5]"></div>
+            <div className="w-8 h-px bg-[#387EF5]" />
             <span className="text-sm font-medium text-[#387EF5] tracking-wider uppercase">Curriculum</span>
-            <div className="w-8 h-px bg-[#387EF5]"></div>
+            <div className="w-8 h-px bg-[#387EF5]" />
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
             零基础，也能打造企业级解决方案
@@ -174,7 +125,7 @@ export default function Courses() {
           <p className="text-lg text-slate-500 max-w-xl mx-auto">
             从入门到实战，循序渐进掌握AI核心技能，开启智能办公新时代
           </p>
-        </motion.div>
+        </div>
 
         <div className="flex justify-center mb-12">
           <div className="inline-flex bg-slate-100 rounded-full p-1 gap-1">
@@ -200,27 +151,15 @@ export default function Courses() {
           </div>
         </div>
 
-        <AnimatePresence mode="popLayout">
+        <div className={`course-tab-content ${direction > 0 ? 'slide-from-right' : 'slide-from-left'}`} key={activeTab}>
           {activeTab === 'ai' && (
-            <motion.div
-              key="ai"
-              initial={{ opacity: 0, x: direction > 0 ? 60 : -60, scale: 0.98 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: direction > 0 ? -60 : 60, scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-            >
+            <div>
               <div className="space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className={`bg-gradient-to-br ${aiCourse.gradient} rounded-3xl p-8 lg:p-10 text-white`}
-                >
+                <div className={`bg-gradient-to-br ${aiCourse.gradient} rounded-3xl p-8 lg:p-10 text-white`}>
                   <div className="mb-6">
                     <h3 className="text-2xl lg:text-3xl font-bold mb-2">{aiCourse.title}</h3>
                     <p className="text-white/80 text-lg">{aiCourse.subtitle}</p>
                   </div>
-
                   <div className="space-y-6">
                     {aiCourse.sections.map((section, sectionIndex) => (
                       <div key={sectionIndex} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
@@ -244,18 +183,12 @@ export default function Courses() {
                       </div>
                     ))}
                   </div>
-                </motion.div>
+                </div>
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="mt-12"
-              >
+              <div className="mt-12">
                 <div className="bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-3xl p-8 lg:p-12 border border-slate-200">
                   <h3 className="text-2xl font-bold text-slate-900 mb-8 text-center">上课安排</h3>
-
                   <div className="grid md:grid-cols-2 gap-6 mb-8">
                     <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl">
                       <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center">
@@ -276,7 +209,6 @@ export default function Courses() {
                       </div>
                     </div>
                   </div>
-
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     <div className="text-center p-4 bg-slate-50 rounded-xl">
                       <div className="text-3xl font-bold text-[#387EF5]">{aiCourse.schedule.总课时}</div>
@@ -291,7 +223,6 @@ export default function Courses() {
                       <div className="text-sm text-slate-500">人小班</div>
                     </div>
                   </div>
-
                   <div className="border-t border-slate-200 pt-8">
                     <h4 className="text-lg font-semibold text-slate-900 mb-6 text-center">专属护航服务</h4>
                     <div className="grid md:grid-cols-3 gap-4">
@@ -306,23 +237,13 @@ export default function Courses() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           )}
 
           {activeTab === 'vibe' && (
-            <motion.div
-              key="vibe"
-              initial={{ opacity: 0, x: direction > 0 ? 60 : -60, scale: 0.98 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: direction > 0 ? -60 : 60, scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`bg-gradient-to-br ${vibeCodingCourse.gradient} rounded-3xl p-8 lg:p-10 text-white mb-8`}
-              >
+            <div>
+              <div className={`bg-gradient-to-br ${vibeCodingCourse.gradient} rounded-3xl p-8 lg:p-10 text-white mb-8`}>
                 <div className="text-center mb-6">
                   <span className="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm font-medium mb-4">
                     🔥 {vibeCodingCourse.tagline}
@@ -337,42 +258,27 @@ export default function Courses() {
                     <div className="text-xl font-bold mb-1">{vibeCodingCourse.courseResult.highlight}</div>
                     <div className="text-sm text-white/80">
                       {vibeCodingCourse.courseResult.items.map((item, i) => (
-                        <span key={i}>
-                          {i > 0 && ' · '}
-                          {item}
-                        </span>
+                        <span key={i}>{i > 0 && ' · '}{item}</span>
                       ))}
                     </div>
                   </div>
                   <div className="text-center p-4 bg-white/10 rounded-2xl md:col-span-2">
                     <div className="grid grid-cols-2 gap-6 text-center">
                       <div>
-                        <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
-                          {vibeCodingCourse.eraCompare.old.era}
-                        </div>
-                        <div className="text-sm text-white/90 whitespace-pre-line">
-                          {vibeCodingCourse.eraCompare.old.content}
-                        </div>
+                        <div className="text-white/60 text-xs uppercase tracking-wider mb-1">{vibeCodingCourse.eraCompare.old.era}</div>
+                        <div className="text-sm text-white/90 whitespace-pre-line">{vibeCodingCourse.eraCompare.old.content}</div>
                       </div>
                       <div>
-                        <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
-                          {vibeCodingCourse.eraCompare.new.era}
-                        </div>
-                        <div className="text-sm text-white/90 whitespace-pre-line">
-                          {vibeCodingCourse.eraCompare.new.content}
-                        </div>
+                        <div className="text-white/60 text-xs uppercase tracking-wider mb-1">{vibeCodingCourse.eraCompare.new.era}</div>
+                        <div className="text-sm text-white/90 whitespace-pre-line">{vibeCodingCourse.eraCompare.new.content}</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6">
-                  <div className="text-sm text-white/60 uppercase tracking-wider mb-2">
-                    {vibeCodingCourse.philosophy.title}
-                  </div>
-                  <p className="text-white/90 text-base">
-                    {vibeCodingCourse.philosophy.text}
-                  </p>
+                  <div className="text-sm text-white/60 uppercase tracking-wider mb-2">{vibeCodingCourse.philosophy.title}</div>
+                  <p className="text-white/90 text-base">{vibeCodingCourse.philosophy.text}</p>
                 </div>
 
                 <div className="text-center">
@@ -393,14 +299,9 @@ export default function Courses() {
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="mb-8"
-              >
+              <div className="mb-8">
                 <div className="text-center mb-6">
                   <span className="text-sm text-slate-500 uppercase tracking-wider">选择理由</span>
                   <h3 className="text-2xl font-bold text-slate-900 mt-2">为什么选择我们</h3>
@@ -416,14 +317,9 @@ export default function Courses() {
                     </div>
                   ))}
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-6 text-center"
-              >
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-6 text-center">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-orange-500" />
@@ -435,10 +331,10 @@ export default function Courses() {
                     <span className="text-slate-700">{vibeCodingCourse.schedule.time}</span>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
       </div>
     </section>
   )
