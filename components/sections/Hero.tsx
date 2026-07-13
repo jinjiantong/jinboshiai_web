@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 import { ArrowRight, Brain, Sparkles, Zap, Code, Award, Users, TrendingUp } from 'lucide-react'
 
 export default function Hero() {
@@ -31,7 +30,6 @@ export default function Hero() {
     <section className="relative h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* 左侧文本 */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -51,7 +49,6 @@ export default function Hero() {
               专注<span className="font-semibold text-slate-700">AI编程培训、企业AI培训、企业AI咨询、AI应用培训</span>，提供从培训到落地的全流程服务。
             </p>
             
-            {/* 服务标签 */}
             <div className="flex flex-wrap gap-2 mb-8 justify-center lg:justify-start">
               {services.map((service) => (
                 <span 
@@ -64,23 +61,22 @@ export default function Hero() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link 
+              <a 
                 href="#courses"
-                className="bg-primary text-white px-8 py-4 rounded-full font-medium hover:bg-primary-dark transition-all flex items-center justify-center gap-2"
+                className="bg-primary text-white px-8 py-4 rounded-full font-medium hover:bg-primary-dark transition-all flex items-center justify-center gap-2 text-center no-underline"
               >
                 开始学习
                 <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link 
-                href="#portfolio"
-                className="border border-slate-300 text-slate-700 px-8 py-4 rounded-full font-medium hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+              </a>
+              <a 
+                href="#activities"
+                className="border border-slate-300 text-slate-700 px-8 py-4 rounded-full font-medium hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-center no-underline"
               >
-                查看作品
+                往期活动
                 <ArrowRight className="w-5 h-5" />
-              </Link>
+              </a>
             </div>
 
-            {/* 数据统计 */}
             <div className="grid grid-cols-3 gap-4 mt-10 pt-6 border-t border-slate-200">
               {stats.map(({ value, label, icon: Icon }) => (
                 <div key={label} className="text-center lg:text-left">
@@ -91,7 +87,6 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* 右侧特性 */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -118,7 +113,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* 背景装饰 */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />

@@ -37,7 +37,7 @@ export default function Navbar() {
   }
 
   const navItems = [
-    { name: '往期活动', href: '#portfolio' },
+    { name: '往期活动', href: '#activities' },
     { name: '课程体系', href: '#courses' },
     { name: '联系我们', href: '#join' },
   ]
