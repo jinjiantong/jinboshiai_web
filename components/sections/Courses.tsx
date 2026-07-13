@@ -200,14 +200,14 @@ export default function Courses() {
           </div>
         </div>
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           {activeTab === 'ai' && (
             <motion.div
               key="ai"
-              initial={{ opacity: 0, x: direction > 0 ? 300 : -300 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction > 0 ? -300 : 300 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: direction > 0 ? 60 : -60, scale: 0.98 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: direction > 0 ? -60 : 60, scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
             >
               <div className="space-y-6">
                 <motion.div
@@ -313,10 +313,10 @@ export default function Courses() {
           {activeTab === 'vibe' && (
             <motion.div
               key="vibe"
-              initial={{ opacity: 0, x: direction > 0 ? 300 : -300 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction > 0 ? -300 : 300 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: direction > 0 ? 60 : -60, scale: 0.98 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: direction > 0 ? -60 : 60, scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 30 }}
             >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
