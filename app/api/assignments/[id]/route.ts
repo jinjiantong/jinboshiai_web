@@ -4,7 +4,7 @@ import {
   errorResponse,
   successResponse,
   listCache
-} from '../../student-management/utils/dataProcessor';
+} from '@/app/api/student-management/utils/dataProcessor';
 
 const ASSIGNMENTS_TABLE_ID = 'tblEUJfrNGtkUJLR';
 const APP_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';

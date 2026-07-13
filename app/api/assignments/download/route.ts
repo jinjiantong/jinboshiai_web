@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
-import { errorResponse, successResponse } from '../../student-management/utils/dataProcessor';
+import { errorResponse, successResponse } from '@/app/api/student-management/utils/dataProcessor';
 
 let accessToken: string | null = null;
 let tokenExpiry: number = 0;

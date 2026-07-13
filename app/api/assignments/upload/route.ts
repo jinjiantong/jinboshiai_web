@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
-import { errorResponse, successResponse } from '../../student-management/utils/dataProcessor';
+import { errorResponse, successResponse } from '@/app/api/student-management/utils/dataProcessor';
 
 const APP_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const ASSIGNMENTS_TABLE_ID = 'tblEUJfrNGtkUJLR';
