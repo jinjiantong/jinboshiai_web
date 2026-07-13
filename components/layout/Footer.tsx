@@ -175,15 +175,7 @@ export default function Footer() {
                   </li>
                 ))}
                 <li>
-                  <Link
-                    href="/dashboard"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-white transition-colors flex items-center gap-2"
-                  >
-                    <Building2 className="w-4 h-4" />
-                    后台管理
-                  </Link>
+
                 </li>
               </ul>
             </div>
