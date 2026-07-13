@@ -4,16 +4,7 @@ import settings from '../../../setting.json'
 const BASE_TOKEN = 'D2S1bhTGTaorSCsJLiOc0QZvnPc'
 const TABLE_ID = 'tblfYNMFjqvkNzod'
 
-let cachedToken = ''
-let tokenExpiryTime = 0
-
 async function getTenantAccessToken(): Promise<string> {
-  const now = Date.now()
-  
-  if (cachedToken && now < tokenExpiryTime) {
-    return cachedToken
-  }
-  
   try {
     const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
       method: 'POST',
@@ -27,9 +18,7 @@ async function getTenantAccessToken(): Promise<string> {
     const data = await response.json()
     
     if (data.code === 0 && data.tenant_access_token) {
-      cachedToken = data.tenant_access_token as string
-      tokenExpiryTime = now + (data.expire - 60) * 1000
-      return cachedToken
+      return data.tenant_access_token as string
     }
     
     throw new Error(data.msg || 'Failed to get access token')
@@ -58,9 +47,9 @@ export async function GET(request: Request) {
     )
 
     if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Feishu API error:', errorData)
-      throw new Error(`Feishu API error! status: ${response.status}`)
+      const errorText = await response.text()
+      console.error('Feishu API error:', response.status, errorText)
+      throw new Error(`Feishu API error! status: ${response.status} - ${errorText}`)
     }
 
     const result = await response.json()
