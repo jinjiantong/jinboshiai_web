@@ -99,7 +99,6 @@ type ActiveTab = 'ai' | 'vibe'
 
 export default function Courses() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('ai')
-
   const slideOffset = activeTab === 'ai' ? 0 : -100
 
   return (
@@ -147,20 +146,17 @@ export default function Courses() {
         </div>
 
         <div className="course-track">
-          <div
-            className="course-slides"
-            style={{ transform: `translateX(${slideOffset}%)` }}
-          >
+          <div className="course-slides" style={{ transform: `translateX(${slideOffset}%)` }}>
             <div className="course-slide">
               <div className="space-y-6">
-                <div className={`bg-gradient-to-br ${aiCourse.gradient} rounded-3xl p-8 lg:p-10 text-white`}>
+                <div className={`bg-gradient-to-br ${aiCourse.gradient} p-8 lg:p-10 text-white`}>
                   <div className="mb-6">
                     <h3 className="text-2xl lg:text-3xl font-bold mb-2">{aiCourse.title}</h3>
                     <p className="text-white/80 text-lg">{aiCourse.subtitle}</p>
                   </div>
                   <div className="space-y-6">
                     {aiCourse.sections.map((section, sectionIndex) => (
-                      <div key={sectionIndex} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                      <div key={sectionIndex} className="bg-white/10 backdrop-blur-sm p-6">
                         <h4 className="text-lg font-semibold mb-1 flex items-center gap-2">
                           <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">
                             {sectionIndex + 1}
@@ -185,21 +181,21 @@ export default function Courses() {
               </div>
 
               <div className="mt-12">
-                <div className="bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-3xl p-8 lg:p-12 border border-slate-200">
+                <div className="bg-gradient-to-r from-slate-50 via-white to-slate-50 p-8 lg:p-12 border border-slate-200">
                   <h3 className="text-2xl font-bold text-slate-900 mb-8 text-center">上课安排</h3>
                   <div className="grid md:grid-cols-2 gap-6 mb-8">
-                    <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl">
-                      <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-white" />
+                    <div className="flex items-center gap-4 p-4 bg-blue-50">
+                      <div className="w-12 h-12 flex items-center justify-center">
+                        <Calendar className="w-6 h-6 text-blue-500" />
                       </div>
                       <div>
                         <div className="text-sm text-slate-500">A班</div>
                         <div className="font-semibold text-slate-900">{aiCourse.schedule.A班}</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 p-4 bg-purple-50 rounded-xl">
-                      <div className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-white" />
+                    <div className="flex items-center gap-4 p-4 bg-purple-50">
+                      <div className="w-12 h-12 flex items-center justify-center">
+                        <Calendar className="w-6 h-6 text-purple-500" />
                       </div>
                       <div>
                         <div className="text-sm text-slate-500">B班</div>
@@ -208,15 +204,15 @@ export default function Courses() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="text-center p-4 bg-slate-50 rounded-xl">
+                    <div className="text-center p-4 bg-slate-50">
                       <div className="text-3xl font-bold text-[#387EF5]">{aiCourse.schedule.总课时}</div>
                       <div className="text-sm text-slate-500">节</div>
                     </div>
-                    <div className="text-center p-4 bg-slate-50 rounded-xl md:col-span-2">
+                    <div className="text-center p-4 bg-slate-50 md:col-span-2">
                       <div className="text-sm text-slate-500 mb-1">上课模式</div>
                       <div className="font-semibold text-slate-900">{aiCourse.schedule.上课模式}</div>
                     </div>
-                    <div className="text-center p-4 bg-slate-50 rounded-xl">
+                    <div className="text-center p-4 bg-slate-50">
                       <div className="text-3xl font-bold text-[#387EF5]">{aiCourse.schedule.班级规模}</div>
                       <div className="text-sm text-slate-500">人小班</div>
                     </div>
@@ -225,7 +221,7 @@ export default function Courses() {
                     <h4 className="text-lg font-semibold text-slate-900 mb-6 text-center">专属护航服务</h4>
                     <div className="grid md:grid-cols-3 gap-4">
                       {aiCourse.services.map((service, index) => (
-                        <div key={index} className="flex items-start gap-3 p-4 bg-orange-50 rounded-xl">
+                        <div key={index} className="flex items-start gap-3 p-4 bg-orange-50">
                           {index === 0 && <Clock className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />}
                           {index === 1 && <Users className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />}
                           {index === 2 && <Award className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />}
@@ -239,9 +235,9 @@ export default function Courses() {
             </div>
 
             <div className="course-slide">
-              <div className={`bg-gradient-to-br ${vibeCodingCourse.gradient} rounded-3xl p-8 lg:p-10 text-white mb-8`}>
+              <div className={`bg-gradient-to-br ${vibeCodingCourse.gradient} p-8 lg:p-10 text-white mb-8`}>
                 <div className="text-center mb-6">
-                  <span className="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm font-medium mb-4">
+                  <span className="inline-block px-4 py-1.5 bg-white/20 text-sm font-medium mb-4">
                     🔥 {vibeCodingCourse.tagline}
                   </span>
                   <h3 className="text-2xl lg:text-3xl font-bold mb-2">{vibeCodingCourse.subtitle}</h3>
@@ -249,7 +245,7 @@ export default function Courses() {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-4 mb-8">
-                  <div className="text-center p-4 bg-white/10 rounded-2xl">
+                  <div className="text-center p-4 bg-white/10">
                     <div className="text-sm text-white/60 mb-2">{vibeCodingCourse.courseResult.badge}</div>
                     <div className="text-xl font-bold mb-1">{vibeCodingCourse.courseResult.highlight}</div>
                     <div className="text-sm text-white/80">
@@ -258,7 +254,7 @@ export default function Courses() {
                       ))}
                     </div>
                   </div>
-                  <div className="text-center p-4 bg-white/10 rounded-2xl md:col-span-2">
+                  <div className="text-center p-4 bg-white/10 md:col-span-2">
                     <div className="grid grid-cols-2 gap-6 text-center">
                       <div>
                         <div className="text-white/60 text-xs uppercase tracking-wider mb-1">{vibeCodingCourse.eraCompare.old.era}</div>
@@ -272,7 +268,7 @@ export default function Courses() {
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6">
+                <div className="bg-white/10 backdrop-blur-sm p-6 mb-6">
                   <div className="text-sm text-white/60 uppercase tracking-wider mb-2">{vibeCodingCourse.philosophy.title}</div>
                   <p className="text-white/90 text-base">{vibeCodingCourse.philosophy.text}</p>
                 </div>
@@ -281,7 +277,7 @@ export default function Courses() {
                   <div className="text-sm text-white/60 uppercase tracking-wider mb-4">3天课程大纲</div>
                   <div className="grid md:grid-cols-3 gap-4">
                     {vibeCodingCourse.curriculum.map((day, i) => (
-                      <div key={i} className="bg-white/10 backdrop-blur-sm rounded-2xl p-5">
+                      <div key={i} className="bg-white/10 backdrop-blur-sm p-5">
                         <div className="text-sm font-bold mb-3 text-white/90">{day.day}</div>
                         <ul className="space-y-1.5">
                           {day.items.map((item, j) => (
@@ -304,8 +300,8 @@ export default function Courses() {
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {vibeCodingCourse.whyUs.map((item, i) => (
-                    <div key={i} className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-5 border border-slate-100 hover:shadow-md transition-shadow">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center mb-3">
+                    <div key={i} className="bg-gradient-to-br from-slate-50 to-white p-5 border border-slate-100 hover:shadow-md transition-shadow">
+                      <div className="w-10 h-10 flex items-center justify-center mb-3">
                         <item.icon className="w-5 h-5 text-indigo-600" />
                       </div>
                       <div className="text-sm font-bold text-slate-900 mb-1">{item.tag}</div>
@@ -315,7 +311,7 @@ export default function Courses() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-6 text-center">
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 p-6 text-center">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-orange-500" />

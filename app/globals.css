@@ -130,15 +130,22 @@ html {
 /* Course horizontal slide — same pattern as Portfolio */
 .course-track {
   overflow: hidden;
+  border-radius: 0 !important;
 }
 
 .course-slides {
   display: flex;
   transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+  border-radius: 0 !important;
 }
 
 .course-slide {
   min-width: 100%;
+  border-radius: 0 !important;
+}
+
+.course-slide > * {
+  border-radius: 0 !important;
 }
 
 /* Hero section CSS animations — replaces framer-motion */
