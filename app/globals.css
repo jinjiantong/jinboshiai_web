@@ -127,26 +127,40 @@ html {
   }
 }
 
-/* Course tab content slide animations */
-.course-tab-content {
-  animation-duration: 0.5s;
-  animation-fill-mode: both;
-  animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
-  will-change: opacity;
+/* Course dual-panel sliding animations */
+.course-slider {
+  position: relative;
+  overflow: hidden;
 }
 
-.slide-from-right {
-  animation-name: slideInFromRight;
+.course-panel {
+  width: 100%;
 }
 
-.slide-from-left {
-  animation-name: slideInFromLeft;
+.course-panel.hidden {
+  display: none;
 }
 
-@keyframes slideInFromRight {
+.course-panel.visible {
+  display: block;
+}
+
+.course-panel.slide-in {
+  animation: slideIn 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+.course-panel.slide-out-left {
+  animation: slideOutLeft 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+.course-panel.slide-out-right {
+  animation: slideOutRight 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+@keyframes slideIn {
   0% {
     opacity: 0;
-    transform: translateX(8px);
+    transform: translateX(100%);
   }
   100% {
     opacity: 1;
@@ -154,14 +168,25 @@ html {
   }
 }
 
-@keyframes slideInFromLeft {
+@keyframes slideOutLeft {
   0% {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-  100% {
     opacity: 1;
     transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideOutRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }
 
