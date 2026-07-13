@@ -127,67 +127,18 @@ html {
   }
 }
 
-/* Course dual-panel sliding animations */
-.course-slider {
-  position: relative;
+/* Course horizontal slide — same pattern as Portfolio */
+.course-track {
   overflow: hidden;
 }
 
-.course-panel {
-  width: 100%;
+.course-slides {
+  display: flex;
+  transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-.course-panel.hidden {
-  display: none;
-}
-
-.course-panel.visible {
-  display: block;
-}
-
-.course-panel.slide-in {
-  animation: slideIn 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-.course-panel.slide-out-left {
-  animation: slideOutLeft 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-.course-panel.slide-out-right {
-  animation: slideOutRight 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-@keyframes slideIn {
-  0% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideOutLeft {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-}
-
-@keyframes slideOutRight {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
+.course-slide {
+  min-width: 100%;
 }
 
 /* Hero section CSS animations — replaces framer-motion */
