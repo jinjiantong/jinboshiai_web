@@ -1,36 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import settings from '../../../../../setting.json'
-
-async function getTenantAccessToken(): Promise<string> {
-  try {
-    const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        app_id: settings.data.app_id,
-        app_secret: settings.data.app_secret,
-      }),
-    })
-    
-    const data = await response.json()
-    
-    if (data.code === 0 && data.tenant_access_token) {
-      return data.tenant_access_token as string
-    }
-    
-    throw new Error(data.msg || 'Failed to get access token')
-  } catch (error) {
-    console.error('Error getting tenant_access_token:', error)
-    throw error
-  }
-}
+import { getFeishuToken } from '@/lib/feishuToken'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { token: string } }
 ) {
   try {
-    const accessToken = await getTenantAccessToken()
+    const accessToken = await getFeishuToken()
     const fileToken = params.token
 
     const response = await fetch(

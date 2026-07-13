@@ -9,7 +9,7 @@ const COURSE_HOURS_TABLE_ID = 'tblYolOuKVjujV9J';
 const ATTENDANCE_TABLE_ID = 'tbl28gcD5cNjhYg8';
 
 async function getRecords(tableId: string): Promise<any[]> {
-  const token = await getAccessToken();
+  const token = await getFeishuToken();
   try {
     const response = await axios.get(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${tableId}/records?page_size=500`,

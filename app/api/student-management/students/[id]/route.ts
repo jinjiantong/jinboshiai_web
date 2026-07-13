@@ -5,58 +5,32 @@ import {
   validateAndConvertFields,
   errorResponse,
   successResponse,
-  CacheManager,
 } from './utils/dataProcessor';
+import { getFeishuToken } from '@/lib/feishuToken';
 
 const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const TABLE_ID = TABLE_CONFIGS.students.tableId;
 
-const accessTokenCache = new CacheManager<string>(1500000);
-
-async function getAccessToken(): Promise<string> {
-  const cached = accessTokenCache.get('access_token');
-  if (cached) return cached;
-
-  const APP_ID = 'cli_a96bb944bef89bcb';
-  const APP_SECRET = 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp';
-
-  const response = await axios.post(
-    'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',
-    { app_id: APP_ID, app_secret: APP_SECRET }
-  );
-
-  if (response.data.code !== 0) {
-    throw new Error(`Failed to get access token: ${response.data.msg}`);
-  }
-
-  const token = response.data.tenant_access_token;
-  const expireMs = (response.data.expire - 60) * 1000;
-  accessTokenCache.set('access_token', token);
-  setTimeout(() => accessTokenCache.invalidate('access_token'), expireMs);
-
-  return token;
-}
-
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
-    
+
     console.log('=== PUT /api/student-management/students/[id] ===');
     console.log('recordId:', params.id);
     console.log('body.fields:', body.fields);
     console.log('body:', body);
-    
+
     const fields = validateAndConvertFields(body.fields || body, 'students');
-    
+
     console.log('转换后fields:', fields);
-    
+
     const response = await axios.put(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLE_ID}/records/${params.id}`,
       { fields },
       { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
     );
-    
+
     console.log('飞书API响应:', response.data);
 
     if (response.data.code !== 0) {
@@ -72,7 +46,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
 
     const response = await axios.delete(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLE_ID}/records/${params.id}`,

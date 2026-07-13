@@ -114,7 +114,7 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const { searchParams } = new URL(request.url);
     const recordId = searchParams.get('record_id');
     

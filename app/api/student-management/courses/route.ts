@@ -53,7 +53,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
 
     const fields = validateAndConvertFields(body.fields || body, 'courses');

@@ -7,7 +7,7 @@ const TABLE_ID = TABLE_CONFIGS.payments.tableId;
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
     const recordId = params.id;
     const fields = body.fields || body;

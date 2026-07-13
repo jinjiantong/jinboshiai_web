@@ -14,7 +14,7 @@ const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const PAYMENTS_TABLE_ID = TABLE_CONFIGS.payments.tableId;
 
 async function fetchFromLarkApi<T>(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: any): Promise<T> {
-  const token = await getAccessToken();
+  const token = await getFeishuToken();
   const response = await axios({
     url,
     method,

@@ -1,39 +1,14 @@
 import { NextResponse } from 'next/server'
-import settings from '../../../setting.json'
+import { getFeishuToken } from '@/lib/feishuToken'
 
 const TEACHER_TABLE_ID = 'tblxN3e1fyhOMTSt'
 const STUDENT_TABLE_ID = 'tblhnKUAyBJbpoDo'
 const CLASS_TABLE_ID = 'tblDDKeft6iLlGAx'
 const APP_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc'
 
-async function getTenantAccessToken(): Promise<string> {
-  try {
-    const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        app_id: settings.data.app_id,
-        app_secret: settings.data.app_secret,
-      }),
-    })
-    
-    const data = await response.json()
-    
-    if (data.code === 0 && data.tenant_access_token) {
-      return data.tenant_access_token as string
-    }
-    
-    console.error('Failed to get tenant_access_token:', data)
-    throw new Error(data.msg || 'Failed to get access token')
-  } catch (error) {
-    console.error('Error getting tenant_access_token:', error)
-    throw error
-  }
-}
-
 async function getRecords(tableId: string): Promise<any[]> {
-  const accessToken = await getTenantAccessToken()
-  
+  const accessToken = await getFeishuToken()
+
   try {
     const response = await fetch(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${APP_TOKEN}/tables/${tableId}/records?page_size=500`,
@@ -42,13 +17,13 @@ async function getRecords(tableId: string): Promise<any[]> {
         headers: { 'Authorization': `Bearer ${accessToken}` },
       }
     )
-    
+
     const data = await response.json()
-    
+
     if (data.code === 0 && data.data?.items) {
       return data.data.items
     }
-    
+
     console.error('API error:', data)
     return []
   } catch (error) {
@@ -68,18 +43,18 @@ export async function POST(request: Request) {
 
     if (type === 'teacher') {
       const records = await getRecords(TEACHER_TABLE_ID)
-      
+
       let foundTeacher = null
-      
+
       for (const record of records) {
         const name = record.fields?.['老师姓名'] || record.fields?.name || ''
-        
+
         if (name === username || name === `${username}老师`) {
           foundTeacher = record
           break
         }
       }
-      
+
       if (foundTeacher) {
         return NextResponse.json({
           success: true,
@@ -140,7 +115,7 @@ export async function POST(request: Request) {
           }
         }
 
-        const hasMatchingClass = studentClassIds.some(id => 
+        const hasMatchingClass = studentClassIds.some(id =>
           id === userSelectedClassId || classIdToName[id] === classId
         )
 
