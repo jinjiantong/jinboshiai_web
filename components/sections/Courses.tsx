@@ -175,7 +175,7 @@ export default function Courses() {
                 }`}
               >
                 <span className="font-medium">{tab.label}</span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs font-medium text-orange-500">
                   适用人群：{tab.tag}
                 </span>
               </button>
