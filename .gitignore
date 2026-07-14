@@ -27,6 +27,9 @@ dist-ssr
 .next/
 out/
 
+# Feishu token cache
+.feishu_token_cache.json
+
 # Build files
 *.tsbuildinfo
 next-env.d.ts

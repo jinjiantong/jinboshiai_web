@@ -1,30 +1,47 @@
 import { NextResponse } from 'next/server'
-import { getFeishuToken } from '@/lib/feishuToken'
+import { getFeishuToken, refreshFeishuToken, invalidateFeishuToken } from '@/lib/feishuToken'
 
 const BASE_TOKEN = 'D2S1bhTGTaorSCsJLiOc0QZvnPc'
 const TABLE_ID = 'tblfYNMFjqvkNzod'
+
+async function fetchRecords(accessToken: string) {
+  const response = await fetch(
+    `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLE_ID}/records?page_size=100`,
+    {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    }
+  )
+
+  return response
+}
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const type = searchParams.get('type') || 'showcase'
 
-    const accessToken = await getFeishuToken()
+    let accessToken = await getFeishuToken()
+    let response = await fetchRecords(accessToken)
 
-    const response = await fetch(
-      `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TABLE_ID}/records?page_size=100`,
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
+    if (response.status === 400) {
+      const errorText = await response.text()
+      const errorData = JSON.parse(errorText)
+
+      if (errorData.code === 99991663 || errorData.code === 99991671) {
+        console.log('[PortfoliosAPI] Token expired or invalid, refreshing...')
+        invalidateFeishuToken()
+        accessToken = await refreshFeishuToken()
+        response = await fetchRecords(accessToken)
       }
-    )
+    }
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Feishu API error:', response.status, errorText)
+      console.error('[PortfoliosAPI] Feishu API error:', response.status, errorText)
       throw new Error(`Feishu API error! status: ${response.status} - ${errorText}`)
     }
 
@@ -126,7 +143,7 @@ export async function GET(request: Request) {
       }
     )
   } catch (error) {
-    console.error('Portfolios API error:', error)
+    console.error('[PortfoliosAPI] Error:', error)
     return NextResponse.json(
       {
         success: false,
