@@ -123,10 +123,10 @@ export default function Portfolio() {
 
   if (loading) {
     return (
-      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center pt-20">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">加载作品中...</p>
+      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center pt-16 sm:pt-20">
+        <div className="text-center px-4">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4"></div>
+          <p className="text-slate-600 text-sm sm:text-base">加载作品中...</p>
         </div>
       </section>
     )
@@ -134,12 +134,12 @@ export default function Portfolio() {
 
   if (error || portfolios.length === 0) {
     return (
-      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center pt-20">
-        <div className="text-center">
-          <p className="text-slate-600 mb-4">{error || '暂无作品数据'}</p>
+      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center pt-16 sm:pt-20">
+        <div className="text-center px-4">
+          <p className="text-slate-600 text-sm sm:text-base mb-3 sm:mb-4">{error || '暂无作品数据'}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
+            className="px-4 sm:px-6 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors text-sm"
           >
             重新加载
           </button>
@@ -156,8 +156,7 @@ export default function Portfolio() {
 
   return (
     <>
-      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 pt-20">
-        {/* 全屏横向滚动容器 */}
+      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 pt-16 sm:pt-20">
         <div 
           className="flex h-full transition-transform duration-700 ease-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -174,176 +173,173 @@ export default function Portfolio() {
             return (
               <div 
                 key={portfolio.record_id}
-                className="min-w-full h-full flex items-center justify-center relative"
+                className="min-w-full h-full relative"
               >
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-                  {/* 左侧文本内容 - 4列 */}
-                  <div className="col-span-12 lg:col-span-4 text-slate-800">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6 }}
-                      viewport={{ once: true }}
-                      className={`inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 ${portfolioColors.lightBg} ${portfolioColors.text} rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6`}
-                    >
-                      <PortfolioIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-                      {portfolio.fields.作品分类}
-                    </motion.div>
-                    
-                    <motion.h2 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.1 }}
-                      viewport={{ once: true }}
-                      className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 sm:mb-6 text-slate-900 leading-tight"
-                    >
-                      {portfolio.fields.作品名称}
-                    </motion.h2>
-                    
-                    <motion.p 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      viewport={{ once: true }}
-                      className="text-base sm:text-lg lg:text-xl text-slate-600 mb-4 sm:mb-6 leading-relaxed"
-                    >
-                      {portfolio.fields.作品简介}
-                    </motion.p>
+                <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8 flex flex-col lg:flex-row lg:items-center lg:justify-center min-h-[calc(100vh-64px)]">
+                  <div className="w-full lg:w-full">
+                    <div className="grid lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
+                      <div className="col-span-12 lg:col-span-4 flex flex-col justify-center min-h-[300px] lg:min-h-0">
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.6 }}
+                          viewport={{ once: true }}
+                          className={`inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 ${portfolioColors.lightBg} ${portfolioColors.text} rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4 lg:mb-6`}
+                        >
+                          <PortfolioIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 mr-1.5" />
+                          {portfolio.fields.作品分类}
+                        </motion.div>
+                        
+                        <motion.h2 
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.6, delay: 0.1 }}
+                          viewport={{ once: true }}
+                          className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold mb-3 sm:mb-4 lg:mb-6 text-slate-900 leading-tight"
+                        >
+                          {portfolio.fields.作品名称}
+                        </motion.h2>
+                        
+                        <motion.p 
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.6, delay: 0.2 }}
+                          viewport={{ once: true }}
+                          className="text-sm sm:text-base lg:text-lg text-slate-600 mb-3 sm:mb-4 lg:mb-6 leading-relaxed"
+                        >
+                          {portfolio.fields.作品简介}
+                        </motion.p>
 
-                    {/* 开发者信息 */}
-                    {portfolio.fields.开发者 && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.25 }}
-                        viewport={{ once: true }}
-                        className="flex items-center gap-3 mb-4"
-                      >
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 ${portfolioColors.lightBg} rounded-full flex items-center justify-center`}>
-                          <span className={`text-lg sm:text-xl font-bold ${portfolioColors.text}`}>
-                            {portfolio.fields.开发者.charAt(0)}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="font-semibold text-lg text-slate-900">
-                            {portfolio.fields.开发者}
-                          </div>
-                          <div className="text-slate-500 text-sm">
-                            开发者
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
+                        {portfolio.fields.开发者 && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.25 }}
+                            viewport={{ once: true }}
+                            className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4"
+                          >
+                            <div className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 ${portfolioColors.lightBg} rounded-full flex items-center justify-center flex-shrink-0`}>
+                              <span className={`text-sm sm:text-lg lg:text-xl font-bold ${portfolioColors.text}`}>
+                                {portfolio.fields.开发者.charAt(0)}
+                              </span>
+                            </div>
+                            <div>
+                              <div className="font-semibold text-sm sm:text-base lg:text-lg text-slate-900">
+                                {portfolio.fields.开发者}
+                              </div>
+                              <div className="text-slate-500 text-xs sm:text-sm">
+                                开发者
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
 
-                    {/* AI工具 */}
-                    {portfolio.fields.AI工具 && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
-                        viewport={{ once: true }}
-                        className="mb-3"
-                      >
-                        <div className="text-xs text-slate-500 mb-2">AI工具</div>
-                        <div className="flex flex-wrap gap-2">
-                          {portfolio.fields.AI工具.split(/[,，]/).slice(0, 3).map((tool, index) => (
-                            <span 
-                              key={index}
-                              className={`px-3 py-1.5 ${portfolioColors.lightBg} ${portfolioColors.text} rounded-full text-xs font-medium`}
+                        {portfolio.fields.AI工具 && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.3 }}
+                            viewport={{ once: true }}
+                            className="mb-2 sm:mb-3"
+                          >
+                            <div className="text-xs text-slate-500 mb-1.5">AI工具</div>
+                            <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                              {portfolio.fields.AI工具.split(/[,，]/).slice(0, 3).map((tool, index) => (
+                                <span 
+                                  key={index}
+                                  className={`px-2 py-1 sm:px-2.5 sm:py-1.5 ${portfolioColors.lightBg} ${portfolioColors.text} rounded-full text-xs font-medium`}
+                                >
+                                  {tool.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+
+                        {portfolio.fields.功能特性 && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.35 }}
+                            viewport={{ once: true }}
+                            className="mb-3 sm:mb-4"
+                          >
+                            <div className="text-xs text-slate-500 mb-1.5">核心功能</div>
+                            <div 
+                              className="text-xs sm:text-sm text-slate-700 leading-relaxed"
+                              style={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 3,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}
                             >
-                              {tool.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
+                              {portfolio.fields.功能特性.split(/[,，]/).slice(0, 4).join('、')}
+                            </div>
+                          </motion.div>
+                        )}
 
-                    {/* 核心功能 */}
-                    {portfolio.fields.功能特性 && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.35 }}
-                        viewport={{ once: true }}
-                        className="mb-4"
-                      >
-                        <div className="text-xs text-slate-500 mb-2">核心功能</div>
-                        <div 
-                          className="text-sm text-slate-700 leading-relaxed"
-                          style={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: 4,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.6, delay: 0.4 }}
+                          viewport={{ once: true }}
+                          className="flex flex-wrap gap-2 sm:gap-3"
                         >
-                          {portfolio.fields.功能特性.split(/[,，]/).slice(0, 5).join('、')}
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {/* 操作按钮 */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.4 }}
-                      viewport={{ once: true }}
-                      className="flex flex-wrap gap-3"
-                    >
-                      {portfolio.fields.作品跳转链接 && (
-                        <a 
-                          href={portfolio.fields.作品跳转链接}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`inline-flex items-center px-5 py-2.5 ${portfolioColors.bg} text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity`}
-                        >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          访问作品
-                        </a>
-                      )}
-                    </motion.div>
-                  </div>
-                  
-                  {/* 右侧媒体展示 - 8列 */}
-                  <div className="col-span-12 lg:col-span-8 flex items-center justify-center">
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.8 }}
-                      viewport={{ once: true }}
-                      className={`w-full h-[300px] sm:h-[400px] lg:h-[500px] xl:h-[550px] bg-gradient-to-br ${portfolioColors.gradient} rounded-3xl flex items-center justify-center border border-slate-200 relative overflow-hidden shadow-xl`}
-                    >
-                      {coverImage ? (
-                        <img 
-                          src={coverImage} 
-                          alt={portfolio.fields.作品名称}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="text-center p-8">
-                          <PortfolioIcon className={`w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 ${portfolioColors.text} mx-auto mb-4`} />
-                          <p className="text-slate-500 text-sm">暂无预览图</p>
-                        </div>
-                      )}
+                          {portfolio.fields.作品跳转链接 && (
+                            <a 
+                              href={portfolio.fields.作品跳转链接}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`inline-flex items-center px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 ${portfolioColors.bg} text-white rounded-full text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity`}
+                            >
+                              <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" />
+                              访问作品
+                            </a>
+                          )}
+                        </motion.div>
+                      </div>
                       
-                      {/* 视频播放按钮 */}
-                      {portfolioIsVideo && portfolioHasVideo && (
-                        <div 
-                          className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer group"
-                          onClick={() => {
-                            const url = portfolio.fields.演示视频?.[0]?.download_url || ''
-                            if (url) {
-                              window.open(url, '_blank')
-                            }
-                          }}
+                      <div className="col-span-12 lg:col-span-8 flex items-center justify-center">
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.8 }}
+                          viewport={{ once: true }}
+                          className={`w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/3] max-h-[400px] sm:max-h-[450px] lg:max-h-[500px] xl:max-h-[550px] bg-gradient-to-br ${portfolioColors.gradient} flex items-center justify-center border border-slate-200 relative overflow-hidden shadow-xl`}
                         >
-                          <div className={`w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 ${portfolioColors.bg} rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                            <Play className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white ml-1" />
-                          </div>
-                        </div>
-                      )}
-                    </motion.div>
+                          {coverImage ? (
+                            <img 
+                              src={coverImage} 
+                              alt={portfolio.fields.作品名称}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="text-center p-4 sm:p-6 lg:p-8">
+                              <PortfolioIcon className={`w-12 h-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 ${portfolioColors.text} mx-auto mb-2 sm:mb-3`} />
+                              <p className="text-slate-500 text-xs sm:text-sm">暂无预览图</p>
+                            </div>
+                          )}
+                          
+                          {portfolioIsVideo && portfolioHasVideo && (
+                            <div 
+                              className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer group"
+                              onClick={() => {
+                                const url = portfolio.fields.演示视频?.[0]?.download_url || ''
+                                if (url) {
+                                  window.open(url, '_blank')
+                                }
+                              }}
+                            >
+                              <div className={`w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 ${portfolioColors.bg} rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                                <Play className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white ml-0.5 sm:ml-1" />
+                              </div>
+                            </div>
+                          )}
+                        </motion.div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -351,56 +347,52 @@ export default function Portfolio() {
           })}
         </div>
 
-        {/* 左右切换按钮 */}
         <button 
           onClick={() => setCurrentSlide((prev) => prev === 0 ? portfolios.length - 1 : prev - 1)}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-700 hover:text-slate-900 transition-all z-20"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-700 hover:text-slate-900 transition-all z-20 active:scale-95"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
         <button 
           onClick={() => setCurrentSlide((prev) => prev === portfolios.length - 1 ? 0 : prev + 1)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/80 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-700 hover:text-slate-900 transition-all z-20"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-slate-700 hover:text-slate-900 transition-all z-20 active:scale-95"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
-        {/* 底部指示器 */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-20">
           {portfolios.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentSlide ? 'w-8 bg-orange-500' : 'bg-slate-300 hover:bg-slate-400'
+              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all ${
+                index === currentSlide ? 'w-6 sm:w-8 bg-orange-500' : 'bg-slate-300 hover:bg-slate-400'
               }`}
             />
           ))}
         </div>
 
-        {/* 当前作品信息 */}
-        <div className="absolute bottom-8 left-8 z-20 hidden lg:block">
-          <div className="text-sm text-slate-500">
+        <div className="absolute bottom-4 sm:bottom-6 left-3 sm:left-8 z-20 hidden lg:block">
+          <div className="text-xs sm:text-sm text-slate-500">
             {currentSlide + 1} / {portfolios.length}
           </div>
         </div>
       </section>
 
-      {/* 视频弹窗 */}
       {videoModal.isOpen && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
           onClick={closeVideoModal}
         >
           <div 
-            className="relative max-w-4xl w-full mx-4 bg-black rounded-2xl overflow-hidden"
+            className="relative w-[90%] max-w-lg sm:max-w-2xl lg:max-w-4xl bg-black rounded-xl sm:rounded-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <button 
               onClick={closeVideoModal}
-              className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white z-10"
+              className="absolute top-3 sm:top-4 right-3 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white z-10"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
             <video 
               src={videoModal.url}
