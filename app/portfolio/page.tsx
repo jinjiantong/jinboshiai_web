@@ -381,7 +381,7 @@ export default function PortfolioPage() {
       <div className="absolute inset-0 transition-all duration-700" style={{ background: theme.overlay }} />
 
       {/* 主内容区 */}
-      <div className="absolute inset-0 flex items-center" style={{ paddingRight: '640px' }}>
+      <div className="absolute inset-0 flex items-center" style={{ paddingRight: 0 }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPortfolio.record_id}
@@ -390,13 +390,14 @@ export default function PortfolioPage() {
             exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1], delay: 0.3 }}
             className="max-w-5xl w-full rounded-3xl"
-            style={{ 
+            style={{
               background: theme.cardBg,
               backdropFilter: 'blur(20px)',
               borderRadius: '24px',
               border: `1px solid ${theme.border}`,
               padding: '48px 64px',
-              marginLeft: '5%',
+              marginRight: '520px',
+              marginLeft: '32px',
               transition: 'background 0.5s ease, border-color 0.5s ease'
             }}
           >
@@ -419,7 +420,7 @@ export default function PortfolioPage() {
               className="mb-3"
               style={{ 
                 fontFamily: "'Noto Serif SC', serif",
-                fontSize: 'clamp(48px, 6vw, 64px)',
+                fontSize: 'clamp(44px, 6vw, 60px)',
                 fontWeight: 900,
                 lineHeight: 1.1,
                 color: theme.textPrimary,
@@ -433,7 +434,7 @@ export default function PortfolioPage() {
             <div className="flex items-center gap-3 mb-3">
               <button 
                 onClick={() => openLightbox(isVideoType ? 'video' : 'image', currentPortfolio.fields.cover_image || '')}
-                className="inline-block px-4 py-2 rounded-full text-base font-semibold transition-all hover:-translate-y-0.5 hover:shadow-2xl"
+                className="inline-block px-4 py-2 rounded-full text-sm font-semibold transition-all hover:-translate-y-0.5 hover:shadow-2xl"
                 style={{ 
                   background: `linear-gradient(135deg, ${theme.accent}, ${theme.accentLight})`,
                   color: '#000'
@@ -462,7 +463,7 @@ export default function PortfolioPage() {
 
             {/* 描述 */}
             <p 
-              className="text-lg leading-relaxed mb-4"
+              className="text-base leading-relaxed mb-4"
               style={{ color: 'rgba(255, 255, 255, 0.9)' }}
             >
               {currentPortfolio.fields.作品简介}
@@ -602,7 +603,7 @@ export default function PortfolioPage() {
       {/* 右侧缩略图 - 3D垂直轮播 */}
       <div 
         className="fixed top-0 bottom-0 z-40 flex items-center justify-center"
-        style={{ right: '28px', width: '520px', pointerEvents: 'none', perspective: '1600px' }}
+        style={{ right: 0, width: '520px', pointerEvents: 'none', perspective: '1600px' }}
       >
         <div 
           className="relative"
@@ -672,7 +673,6 @@ export default function PortfolioPage() {
               >
                 {item.fields.演示视频 && item.fields.演示视频.length > 0 ? (
                   <video
-                    key={item.record_id}
                     src={item.fields.演示视频[0].download_url}
                     autoPlay={absOffset <= 1}
                     muted
