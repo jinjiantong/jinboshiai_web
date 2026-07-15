@@ -671,18 +671,20 @@ export default function PortfolioPage() {
                 }}
               >
                 {item.fields.演示视频 && item.fields.演示视频.length > 0 ? (
-                  <video 
+                  <video
+                    key={item.record_id}
                     src={item.fields.演示视频[0].download_url}
                     autoPlay={absOffset <= 1}
                     muted
                     loop
                     playsInline
+                    preload="auto"
                     className="w-full h-full object-contain"
                     style={{ backgroundColor: '#0a0a0a' }}
                   />
                 ) : item.fields.cover_image ? (
-                  <img 
-                    src={item.fields.cover_image} 
+                  <img
+                    src={item.fields.cover_image}
                     alt={item.fields.作品名称}
                     className="w-full h-full object-contain"
                     style={{ backgroundColor: '#0a0a0a' }}
@@ -935,15 +937,15 @@ export default function PortfolioPage() {
 
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700;900&display=swap');
-        
+
         * {
           margin: 0;
           padding: 0;
           box-sizing: border-box;
         }
-        
-        body { 
-          overflow: hidden !important; 
+
+        body {
+          overflow: hidden !important;
         }
       `}</style>
     </div>
