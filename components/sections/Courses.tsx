@@ -1,333 +1,413 @@
 'use client'
 
 import { useState } from 'react'
-import { Users, Rocket, Clock, Calendar, Award, Sparkles } from 'lucide-react'
 
-const vibeCodingCourse = {
-  gradient: 'from-indigo-600 via-purple-600 to-pink-500',
-  tagline: '2026 用说话的方式搞定AI编程！',
-  subtitle: '青少年 Vibe Coding（氛围编程）3日创造营',
-  门槛: '我们唯一的门槛：会打字 · 会上网',
-  courseResult: {
-    badge: '课程成果',
-    highlight: '3天，带走',
-    items: ['属于自己的 网站', '小程序游戏', '手机App'],
-  },
-  eraCompare: {
-    old: { era: '互联网时代', content: '老板 + 产品 + 开发 + 设计 + 后台 + 运营 + 数据，\n一个月上线' },
-    new: { era: 'AI时代', content: '1个人 + AI工具，\n3天上线' },
-  },
-  philosophy: {
-    title: '核心理念',
-    text: 'AI无限放大你的能力。过去我们学知识，现在我们学如何用别人的知识。',
-  },
-  curriculum: [
-    { day: 'Day 1', items: ['企业级产品开发流程介绍', 'AI编程工具介绍', '创意讨论', '产品文档撰写', '产品设计稿制作', '技术设计方案撰写'] },
-    { day: 'Day 2', items: ['产品开发（含服务端开发）', '调试', '测试'] },
-    { day: 'Day 3', items: ['产品部署', '数据分析', '增长运营'] },
-  ],
-  whyUs: [
-    { icon: Users, tag: '真·小班', desc: '不超过8人，确保老师看见每个创意' },
-    { icon: Rocket, tag: '真产品', desc: '可带走的网站、游戏、App，不是Demo，是能上线能用的真东西' },
-    { icon: Award, tag: '真交付', desc: 'Vibe Coding降低创造门槛，我们补上部署、服务端、运营的硬核闭环' },
-    { icon: Sparkles, tag: '硬核老师', desc: '老师深耕AI多领域，课堂中穿插前沿视野拓展。不止教做产品，更帮孩子看见AI的全貌。' },
-  ],
-  schedule: { badge: '限前8席', time: '每周一、三、五 下午 1:30～4:00' },
-}
-
-const aiCourse = {
-  title: 'AI应用落地实战课',
-  subtitle: '零基础入门，打造企业级AI解决方案',
-  gradient: 'from-blue-600 via-blue-500 to-cyan-500',
-  sections: [
-    {
-      title: '01 AI知识体系构建与实战',
-      subtitle: '打牢AI基础，掌握核心概念与工具',
-      content: [
-        '龙虾、Skill、Agent、Token、MCP，大模型等 AI 基础讲解',
-        '借助豆包搭建专属提示词',
-        '巧用 AI 工具撰写儿童故事，花草识别、智能客服等各类场景提示词',
-        '借助大模型深度研讨创业思路与项目规划',
-        '五分钟快速搭建全网比价实用技能',
-        '搭建销售线索获取工作流',
-        '搭建自媒体智能体，自动化创作故事、情感短视频',
-      ],
-    },
-    {
-      title: '02 AI企业级解决方案',
-      subtitle: '企业级AI落地，从数据中台到智能应用',
-      content: [
-        '通过飞书多维表格，知识库、扣子知识库搭建 AI 数据中台',
-        '涵盖结构化数据表、标签化字段、AI字段，工作流、旧数据清洗迁移等核心功能实战',
-        '融合飞书、龙虾、扣子搭建智能客服智能体',
-        '客服数据采集、仪表盘展示、紧急问题监控处理工作流',
-        '技术架构总结，通用方案案例说明',
-        '搭建销量预测智能体',
-        '每日晚报、库存巡检、现场巡检、会员生日提醒，销售统计，统一话术等企业智能体',
-        '企业产品官网开发部署',
-        '企业营销小游戏开发发布',
-      ],
-    },
-    {
-      title: '03 AI实验室项目',
-      subtitle: '学员主导完成真实企业级项目',
-      content: [
-        '项目规划：项目分析、流程分析、盘点资产、技术方案',
-        '搭建数据：数据中台、数据迁移、数据治理，知识库',
-        '搭建应用：龙虾、扣子、Trae应用',
-        '跑通流程',
-        '沉淀技能',
-        '项目发布说明会',
-      ],
-    },
-  ],
-  schedule: {
-    A班: '周一、三、五 晚上 7:00～9:00',
-    B班: '周六、日 下午 2:00～5:00',
-    总课时: '8节',
-    上课模式: '线上直播 + 录播回放',
-    班级规模: '8人小班',
-  },
-  services: [
-    '专属学习群，老师实时答疑',
-    '配套源码与数据集，实战无忧',
-    '结课后90天技术咨询支持',
-  ],
-}
-
-type ActiveTab = 'ai' | 'vibe'
+type TabType = 'vibe' | 'agent' | 'company' | 'system'
 
 export default function Courses() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('ai')
-  const slideOffset = activeTab === 'ai' ? 0 : -100
+  const [activeTab, setActiveTab] = useState<TabType>('vibe')
+
+  const tabs = [
+    { key: 'vibe' as const, label: 'Vibe Coding 实战课' },
+    { key: 'agent' as const, label: '智能体实战课' },
+    { key: 'company' as const, label: '中小公司AI落地课' },
+    { key: 'system' as const, label: 'AI启蒙体系课' },
+  ]
 
   return (
-    <section id="courses" className="pt-24 pb-20 lg:pt-32 lg:pb-32 bg-white relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-px bg-[#387EF5]" />
-            <span className="text-sm font-medium text-[#387EF5] tracking-wider uppercase">Curriculum</span>
-            <div className="w-8 h-px bg-[#387EF5]" />
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
-            零基础，也能打造企业级解决方案
-          </h2>
-          <p className="text-lg text-slate-500 max-w-xl mx-auto">
-            从入门到实战，循序渐进掌握AI核心技能，开启智能办公新时代
-          </p>
+    <section id="courses" className="pt-24 pb-20 lg:pt-32 lg:pb-32 bg-[#FAFAFA] relative">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl lg:text-4xl font-bold text-[#1a1a1a]">金博士AI实验室所有课程</h2>
+      </div>
+      <div className="max-w-[1080px] mx-auto bg-white shadow-[0_8px_40px_rgba(0,0,0,0.08)] rounded-lg overflow-hidden">
+        <div className="flex bg-[#FF6B35]">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex-1 px-5 py-4 text-sm font-semibold cursor-pointer transition-all ${
+                activeTab === tab.key
+                  ? 'bg-white/15 text-white font-bold'
+                  : 'bg-transparent text-white/70 hover:bg-white/10 hover:text-white'
+              }`}
+              style={{ fontFamily: '"Noto Sans SC", sans-serif' }}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-slate-100 rounded-full p-1 gap-1">
-            {[
-              { key: 'ai', label: 'AI应用落地实战课', tag: '职场人 · 创业者 · 大学生' },
-              { key: 'vibe', label: 'Vibe Coding实战课', tag: '学生 · AI爱好者' },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key as ActiveTab)}
-                className={`px-5 py-3 rounded-full text-sm transition-all flex flex-col items-center gap-0.5 ${
-                  activeTab === tab.key
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                <span className="font-medium">{tab.label}</span>
-                <span className="text-xs font-medium text-orange-500">
-                  适用人群：{tab.tag}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+        {activeTab === 'vibe' && <VibeTab />}
+        {activeTab === 'agent' && <AgentTab />}
+        {activeTab === 'company' && <CompanyTab />}
+        {activeTab === 'system' && <SystemTab />}
+      </div>
+    </section>
+  )
+}
 
-        <div className="course-track">
-          <div className="course-slides" style={{ transform: `translateX(${slideOffset}%)` }}>
-            <div className="course-slide">
-              <div className="space-y-6">
-                <div className={`bg-gradient-to-br ${aiCourse.gradient} p-8 lg:p-10 text-white`}>
-                  <div className="mb-6">
-                    <h3 className="text-2xl lg:text-3xl font-bold mb-2">{aiCourse.title}</h3>
-                    <p className="text-white/80 text-lg">{aiCourse.subtitle}</p>
-                  </div>
-                  <div className="space-y-6">
-                    {aiCourse.sections.map((section, sectionIndex) => (
-                      <div key={sectionIndex} className="bg-white/10 backdrop-blur-sm p-6">
-                        <h4 className="text-lg font-semibold mb-1 flex items-center gap-2">
-                          <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">
-                            {sectionIndex + 1}
-                          </span>
-                          {section.title}
-                        </h4>
-                        {section.subtitle && (
-                          <p className="text-white/60 text-sm mb-4 ml-10">{section.subtitle}</p>
-                        )}
-                        <ul className="space-y-2">
-                          {section.content.map((item, itemIndex) => (
-                            <li key={itemIndex} className="flex items-start gap-3 text-white/90">
-                              <span className="text-white/60 mt-1">•</span>
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-12">
-                <div className="bg-gradient-to-r from-slate-50 via-white to-slate-50 p-8 lg:p-12 border border-slate-200">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-8 text-center">上课安排</h3>
-                  <div className="grid md:grid-cols-2 gap-6 mb-8">
-                    <div className="flex items-center gap-4 p-4 bg-blue-50">
-                      <div className="w-12 h-12 flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-blue-500" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-slate-500">A班</div>
-                        <div className="font-semibold text-slate-900">{aiCourse.schedule.A班}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 p-4 bg-purple-50">
-                      <div className="w-12 h-12 flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-purple-500" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-slate-500">B班</div>
-                        <div className="font-semibold text-slate-900">{aiCourse.schedule.B班}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="text-center p-4 bg-slate-50">
-                      <div className="text-3xl font-bold text-[#387EF5]">{aiCourse.schedule.总课时}</div>
-                      <div className="text-sm text-slate-500">节</div>
-                    </div>
-                    <div className="text-center p-4 bg-slate-50 md:col-span-2">
-                      <div className="text-sm text-slate-500 mb-1">上课模式</div>
-                      <div className="font-semibold text-slate-900">{aiCourse.schedule.上课模式}</div>
-                    </div>
-                    <div className="text-center p-4 bg-slate-50">
-                      <div className="text-3xl font-bold text-[#387EF5]">{aiCourse.schedule.班级规模}</div>
-                      <div className="text-sm text-slate-500">人小班</div>
-                    </div>
-                  </div>
-                  <div className="border-t border-slate-200 pt-8">
-                    <h4 className="text-lg font-semibold text-slate-900 mb-6 text-center">专属护航服务</h4>
-                    <div className="grid md:grid-cols-3 gap-4">
-                      {aiCourse.services.map((service, index) => (
-                        <div key={index} className="flex items-start gap-3 p-4 bg-orange-50">
-                          {index === 0 && <Clock className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />}
-                          {index === 1 && <Users className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />}
-                          {index === 2 && <Award className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />}
-                          <span className="text-sm text-slate-700">{service}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+function VibeTab() {
+  return (
+    <div className="bg-[#fffbf5]">
+      <div className="p-10">
+        <div className="bg-[#f5f5f5] p-5 mb-6 border-l-4 border-[#FF6B35]">
+          <div className="text-xs text-[#FF6B35] font-mono tracking-widest uppercase mb-4">课程成果</div>
+          <div className="flex items-start gap-5">
+            <div className="text-xl font-bold text-[#1a1a1a] min-w-[100px]">3天，带走</div>
+            <div className="text-lg text-[#737373]">
+              属于自己的 <span className="font-bold text-[#FF6B35]">网站 · 小程序游戏 · 手机App</span>
             </div>
+          </div>
+        </div>
 
-            <div className="course-slide">
-              <div className={`bg-gradient-to-br ${vibeCodingCourse.gradient} p-8 lg:p-10 text-white mb-8`}>
-                <div className="text-center mb-6">
-                  <span className="inline-block px-4 py-1.5 bg-white/20 text-sm font-medium mb-4">
-                    🔥 {vibeCodingCourse.tagline}
-                  </span>
-                  <h3 className="text-2xl lg:text-3xl font-bold mb-2">{vibeCodingCourse.subtitle}</h3>
-                  <p className="text-white/80 text-lg">{vibeCodingCourse.门槛}</p>
-                </div>
+        <div className="bg-[#f5f5f5] p-5 mb-6 border-l-4 border-[#FF6B35]">
+          <div className="text-xs text-[#FF6B35] font-mono tracking-widest uppercase mb-4">时代对比</div>
+          <div className="flex items-start gap-5 mb-4">
+            <div className="text-xl font-bold text-[#1a1a1a] min-w-[100px]">互联网时代</div>
+            <div className="text-base text-[#737373]">老板 + 产品 + 开发 + 设计 + 后台 + 运营 + 数据，<span className="font-bold text-[#FF6B35]">一个月上线</span></div>
+          </div>
+          <div className="flex items-start gap-5 mb-4">
+            <div className="text-xl font-bold text-[#1a1a1a] min-w-[100px]">AI时代</div>
+            <div className="text-base text-[#737373]"><span className="font-bold text-[#FF6B35]">1个人 + AI工具，3天上线</span></div>
+          </div>
+          <div className="flex items-start gap-5">
+            <div className="text-xl font-bold text-[#1a1a1a] min-w-[100px]">核心理念</div>
+            <div className="text-base text-[#737373]">AI无限放大你的能力。过去我们学知识，现在我们学如何用别人的知识。</div>
+          </div>
+        </div>
 
-                <div className="grid md:grid-cols-3 gap-4 mb-8">
-                  <div className="text-center p-4 bg-white/10">
-                    <div className="text-sm text-white/60 mb-2">{vibeCodingCourse.courseResult.badge}</div>
-                    <div className="text-xl font-bold mb-1">{vibeCodingCourse.courseResult.highlight}</div>
-                    <div className="text-sm text-white/80">
-                      {vibeCodingCourse.courseResult.items.map((item, i) => (
-                        <span key={i}>{i > 0 && ' · '}{item}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="text-center p-4 bg-white/10 md:col-span-2">
-                    <div className="grid grid-cols-2 gap-6 text-center">
-                      <div>
-                        <div className="text-white/60 text-xs uppercase tracking-wider mb-1">{vibeCodingCourse.eraCompare.old.era}</div>
-                        <div className="text-sm text-white/90 whitespace-pre-line">{vibeCodingCourse.eraCompare.old.content}</div>
-                      </div>
-                      <div>
-                        <div className="text-white/60 text-xs uppercase tracking-wider mb-1">{vibeCodingCourse.eraCompare.new.era}</div>
-                        <div className="text-sm text-white/90 whitespace-pre-line">{vibeCodingCourse.eraCompare.new.content}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          {[
+            { day: 'Day 1', content: '企业级产品开发流程介绍\nAI编程工具介绍\n创意讨论\n产品文档撰写\n产品设计稿制作\n技术设计方案撰写' },
+            { day: 'Day 2', content: '产品开发（含服务端开发）\n调试\n测试' },
+            { day: 'Day 3', content: '产品部署\n数据分析\n增长运营' },
+          ].map((item, i) => (
+            <div key={i} className="bg-[#fffbf5] border border-[#e0e0e0] p-4 relative">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#FF6B35]" />
+              <div className="text-xs text-[#FF6B35] font-mono font-semibold mb-2">{item.day}</div>
+              <div className="text-sm text-[#1a1a1a] leading-relaxed whitespace-pre-line">{item.content}</div>
+            </div>
+          ))}
+        </div>
 
-                <div className="bg-white/10 backdrop-blur-sm p-6 mb-6">
-                  <div className="text-sm text-white/60 uppercase tracking-wider mb-2">{vibeCodingCourse.philosophy.title}</div>
-                  <p className="text-white/90 text-base">{vibeCodingCourse.philosophy.text}</p>
-                </div>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          {[
+            { title: '真·小班', desc: '不超过8人，确保老师看见每个创意' },
+            { title: '真产品', desc: '可带走的网站、游戏、App，不是Demo，是能上线能用的真东西' },
+            { title: '真交付', desc: 'Vibe Coding降低创造门槛，我们补上部署、服务端、运营的硬核闭环' },
+            { title: '硬核老师', desc: '老师深耕AI多领域，课堂中穿插前沿视野拓展。不止教做产品，更帮孩子看见AI的全貌。' },
+          ].map((item, i) => (
+            <div key={i} className="bg-[#f5f5f5] p-4 border-l-3 border-[#FF6B35]" style={{ borderLeftWidth: '3px' }}>
+              <div className="text-base font-bold text-[#1a1a1a] mb-1">{item.title}</div>
+              <div className="text-sm text-[#737373] leading-relaxed">{item.desc}</div>
+            </div>
+          ))}
+        </div>
 
-                <div className="text-center">
-                  <div className="text-sm text-white/60 uppercase tracking-wider mb-4">3天课程大纲</div>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    {vibeCodingCourse.curriculum.map((day, i) => (
-                      <div key={i} className="bg-white/10 backdrop-blur-sm p-5">
-                        <div className="text-sm font-bold mb-3 text-white/90">{day.day}</div>
-                        <ul className="space-y-1.5">
-                          {day.items.map((item, j) => (
-                            <li key={j} className="flex items-start gap-2 text-sm text-white/80">
-                              <span className="text-white/50 mt-0.5">•</span>
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+        <div className="bg-[#FF6B35] p-4 mb-6 flex gap-10">
+          <div className="flex-1">
+            <div className="text-sm text-white/80 mb-1">常规价</div>
+            <div className="text-3xl font-bold text-white">3980元</div>
+          </div>
+          <div className="flex-1">
+            <div className="text-sm text-white/80 mb-1">早鸟价</div>
+            <div className="text-3xl font-bold text-white">2980元</div>
+            <div className="text-sm text-white/70 mt-1">限前8席</div>
+          </div>
+        </div>
 
-              <div className="mb-8">
-                <div className="text-center mb-6">
-                  <span className="text-sm text-slate-500 uppercase tracking-wider">选择理由</span>
-                  <h3 className="text-2xl font-bold text-slate-900 mt-2">为什么选择我们</h3>
+        <div className="bg-[#FF6B35] p-3 mb-3 flex items-center gap-4">
+          <span className="text-xs text-white/80 font-mono tracking-widest uppercase">上课时间</span>
+          <span className="text-base text-white font-semibold">每周一，三、五 下午 1:30～4:00</span>
+        </div>
+      </div>
+
+      <div className="p-5 bg-[#fffbf5] border-t-2 border-[#FF6B35]">
+        <div className="text-xs text-[#FF6B35] font-mono tracking-widest uppercase mb-4">联系我们</div>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { icon: '📞', text: '13051202991' },
+            { icon: '📞', text: '15811055744' },
+            { icon: '🌐', text: 'jinboshiai.com' },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-[#FF6B35] flex items-center justify-center text-white text-sm">{item.icon}</div>
+              <span className="text-sm text-[#1a1a1a]">{item.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="p-6 flex justify-between items-center border-t border-[#e0e0e0] bg-[#fffbf5]">
+        <div className="flex flex-col items-end gap-2">
+          <div className="text-base font-semibold text-[#1a1a1a] tracking-wider">金博士 AI 实验室</div>
+          <div className="text-xs text-[#737373]">青少年 Vibe Coding 3日创造营</div>
+        </div>
+        <div className="w-[120px] h-[120px] overflow-hidden rounded-lg">
+          <img src="/images/erweima.png" alt="二维码" className="w-full h-full object-contain" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AgentTab() {
+  return (
+    <div>
+      <div className="bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] p-14 text-white relative overflow-hidden">
+        <div className="absolute right-[-80px] top-[-80px] w-[400px] h-[400px] border-[60px] border-white/6 rounded-full" />
+        <div className="absolute right-[100px] bottom-[-100px] w-[280px] h-[280px] border-[40px] border-white/5 rounded-full" />
+        <div className="relative z-10">
+          <div className="text-sm font-medium tracking-widest text-white/80 mb-4">金博士 AI 实验室</div>
+          <div className="text-3xl lg:text-4xl font-black mb-4 leading-tight">
+            2026 · <span className="text-[#FFE566]">不在卷自己</span><br/>学会压榨AI
+          </div>
+          <div className="text-lg text-white/95 mt-4">
+            <span className="bg-white/20 px-3 py-1 rounded mr-2">智能体实战课</span>3天实战训练营 · 带走你的AI数字员工
+          </div>
+        </div>
+      </div>
+
+      <div className="px-16">
+        <div className="py-12 border-b border-[#f0f0f0] relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <div className="pl-6">
+            <div className="p-9 bg-gradient-to-br from-[#FF6B35] to-[#FF8F66] rounded-xl text-lg text-white text-center leading-relaxed shadow-[0_8px_32px_rgba(255,107,53,0.25)]">
+              3天时间 · 从0到1搭建 · 带走<strong className="text-[#FFE566]">专属你的AI数字员工</strong><br/>
+              <span className="text-base opacity-90">以后别卷自己了，咱们学会"压榨"AI员工！</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="py-12 border-b border-[#f0f0f0] relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <h2 className="text-2xl font-bold text-[#1a1a1a] mb-7 pl-6">3天课程安排</h2>
+          <div className="space-y-6 pl-6">
+            {[
+              { day: 'Day 1', title: '认识你的AI新同事', topics: ['主流智能体工具全景介绍', '创建第一个专属技能', '玩转第三方技能库'] },
+              { day: 'Day 2', title: '搭建AI数字员工架构', topics: ['拆解业务流程与任务', '设计智能体架构', '实现你的AI数字员工'] },
+              { day: 'Day 3', title: '让AI员工正式上岗', topics: ['全面实现数字员工功能', '测试与调试智能体', '让AI员工开始为你工作'] },
+            ].map((item, i) => (
+              <div key={i} className="p-8 bg-white rounded-xl border-2 border-[#FFF4F0] relative shadow-[0_4px_20px_rgba(255,107,53,0.06)]">
+                <div className="absolute top-0 left-9 right-9 h-1 bg-gradient-to-r from-[#FF6B35] to-[#FFF4F0] rounded" />
+                <div className="flex items-center gap-5 mb-5">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] text-white font-bold text-base flex items-center justify-center rounded-lg shadow-[0_4px_16px_rgba(255,107,53,0.3)]">{item.day}</div>
+                  <div className="text-xl font-bold text-[#1a1a1a]">{item.title}</div>
                 </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {vibeCodingCourse.whyUs.map((item, i) => (
-                    <div key={i} className="bg-gradient-to-br from-slate-50 to-white p-5 border border-slate-100 hover:shadow-md transition-shadow">
-                      <div className="w-10 h-10 flex items-center justify-center mb-3">
-                        <item.icon className="w-5 h-5 text-indigo-600" />
-                      </div>
-                      <div className="text-sm font-bold text-slate-900 mb-1">{item.tag}</div>
-                      <div className="text-xs text-slate-500 leading-relaxed">{item.desc}</div>
+                <div className="pl-19 space-y-4">
+                  {item.topics.map((topic, j) => (
+                    <div key={j} className="text-base text-[#1a1a1a] leading-relaxed relative pl-7">
+                      <span className="absolute left-0 top-2.5 w-2.5 h-2.5 bg-[#FF6B35] rounded-full shadow-[0_2px_8px_rgba(255,107,53,0.3)]" />
+                      {topic}
                     </div>
                   ))}
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
 
-              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 p-6 text-center">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-orange-500" />
-                    <span className="text-orange-600 font-bold">{vibeCodingCourse.schedule.badge}</span>
-                  </div>
-                  <span className="hidden sm:block text-slate-300">|</span>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-orange-500" />
-                    <span className="text-slate-700">{vibeCodingCourse.schedule.time}</span>
-                  </div>
-                </div>
-              </div>
+        <div className="py-12 relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <h2 className="text-2xl font-bold text-[#1a1a1a] mb-7 pl-6">限时报名</h2>
+          <div className="grid grid-cols-2 gap-8">
+            <div className="p-9 bg-white rounded-3xl text-center border-2 border-[#f0f0f0]">
+              <div className="text-lg text-[#666] mb-4">常规价</div>
+              <div className="text-5xl font-black text-[#1a1a1a]">2980<span className="text-xl font-normal">元</span></div>
+            </div>
+            <div className="p-9 bg-white rounded-3xl text-center border-2 border-[#FF6B35] relative shadow-[0_12px_40px_rgba(255,107,53,0.25)] scale-[1.02]">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] text-white px-4 py-1.5 rounded-full text-sm font-bold tracking-wider shadow-[0_4px_16px_rgba(255,107,53,0.3)]">早鸟价</div>
+              <div className="text-lg text-[#666] mb-4">早鸟价</div>
+              <div className="text-5xl font-black text-[#FF6B35]">1680<span className="text-xl font-normal">元</span></div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+
+      <div className="px-16 py-10 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] flex justify-between items-center gap-16">
+        <div className="flex-1">
+          <div className="text-xl font-bold text-[#FF6B35] mb-2 tracking-wider">金博士 AI 实验室</div>
+          <div className="text-sm text-white/70 leading-loose">
+            手机/微信：13051202991 ｜ 15811055744<br/>
+            地址：北京市顺义区临空经济核心区安庆大街7号良基科技广场A座316室<br/>
+            jinboshiai.com
+          </div>
+        </div>
+        <div className="w-[110px] h-[110px] bg-white p-2 rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
+          <img src="/images/erweima.png" alt="二维码" className="w-full h-full object-contain" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CompanyTab() {
+  return (
+    <div>
+      <div className="bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] p-14 text-white relative overflow-hidden">
+        <div className="absolute right-[-80px] top-[-80px] w-[400px] h-[400px] border-[60px] border-white/6 rounded-full" />
+        <div className="absolute right-[100px] bottom-[-100px] w-[280px] h-[280px] border-[40px] border-white/5 rounded-full" />
+        <div className="relative z-10">
+          <div className="text-sm font-medium tracking-widest text-white/80 mb-4">金博士 AI 实验室</div>
+          <div className="text-3xl lg:text-4xl font-black mb-4 leading-tight">
+            2026 · 小公司也需要<br/><span className="text-[#FFE566]">科学精细化运营</span>
+          </div>
+          <div className="text-lg text-white/95 mt-4">
+            <span className="bg-white/20 px-3 py-1 rounded mr-2">中小公司AI落地课</span>3天学会搭建小公司最佳AI落地方案
+          </div>
+        </div>
+      </div>
+
+      <div className="px-16">
+        <div className="py-12 border-b border-[#f0f0f0] relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <div className="pl-6">
+            <div className="p-9 bg-gradient-to-br from-[#FF6B35] to-[#FF8F66] rounded-xl text-lg text-white text-center leading-relaxed shadow-[0_8px_32px_rgba(255,107,53,0.25)]">
+              3天实战 · 从0到1 · 带走<strong className="text-[#FFE566]">小公司AI落地最佳方案</strong><br/>
+              <span className="text-base opacity-90">让AI真正落地到你的公司，少走弯路！</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="py-12 border-b border-[#f0f0f0] relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <h2 className="text-2xl font-bold text-[#1a1a1a] mb-7 pl-6">3天课程安排</h2>
+          <div className="space-y-6 pl-6">
+            {[
+              { day: 'Day 1', title: 'AI落地技术方案', topics: ['公司AI落地技术方案', '相关工具全面介绍', '相关解决案例讲解'] },
+              { day: 'Day 2', title: '搭建落地架构', topics: ['拆解公司业务流程', '搭建AI落地架构'] },
+              { day: 'Day 3', title: '全面实现落地', topics: ['全面跑通业务流程', '实现AI真正落地', '搭建可监控可衡量的闭环系统'] },
+            ].map((item, i) => (
+              <div key={i} className="p-8 bg-white rounded-xl border-2 border-[#FFF4F0] relative shadow-[0_4px_20px_rgba(255,107,53,0.06)]">
+                <div className="absolute top-0 left-9 right-9 h-1 bg-gradient-to-r from-[#FF6B35] to-[#FFF4F0] rounded" />
+                <div className="flex items-center gap-5 mb-5">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] text-white font-bold text-base flex items-center justify-center rounded-lg shadow-[0_4px_16px_rgba(255,107,53,0.3)]">{item.day}</div>
+                  <div className="text-xl font-bold text-[#1a1a1a]">{item.title}</div>
+                </div>
+                <div className="pl-19 space-y-4">
+                  {item.topics.map((topic, j) => (
+                    <div key={j} className="text-base text-[#1a1a1a] leading-relaxed relative pl-7">
+                      <span className="absolute left-0 top-2.5 w-2.5 h-2.5 bg-[#FF6B35] rounded-full shadow-[0_2px_8px_rgba(255,107,53,0.3)]" />
+                      {topic}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="py-12 relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <h2 className="text-2xl font-bold text-[#1a1a1a] mb-7 pl-6">限时报名</h2>
+          <div className="grid grid-cols-2 gap-8">
+            <div className="p-9 bg-white rounded-3xl text-center border-2 border-[#f0f0f0]">
+              <div className="text-lg text-[#666] mb-4">常规价</div>
+              <div className="text-5xl font-black text-[#1a1a1a]">3680<span className="text-xl font-normal">元</span></div>
+            </div>
+            <div className="p-9 bg-white rounded-3xl text-center border-2 border-[#FF6B35] relative shadow-[0_12px_40px_rgba(255,107,53,0.25)] scale-[1.02]">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] text-white px-4 py-1.5 rounded-full text-sm font-bold tracking-wider shadow-[0_4px_16px_rgba(255,107,53,0.3)]">早鸟价</div>
+              <div className="text-lg text-[#666] mb-4">早鸟价</div>
+              <div className="text-5xl font-black text-[#FF6B35]">1980<span className="text-xl font-normal">元</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-16 py-10 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] flex justify-between items-center gap-16">
+        <div className="flex-1">
+          <div className="text-xl font-bold text-[#FF6B35] mb-2 tracking-wider">金博士 AI 实验室</div>
+          <div className="text-sm text-white/70 leading-loose">
+            手机/微信：13051202991 ｜ 15811055744<br/>
+            地址：北京市顺义区临空经济核心区安庆大街7号良基科技广场A座316室<br/>
+            jinboshiai.com
+          </div>
+        </div>
+        <div className="w-[110px] h-[110px] bg-white p-2 rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
+          <img src="/images/erweima.png" alt="二维码" className="w-full h-full object-contain" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SystemTab() {
+  return (
+    <div>
+      <div className="bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] p-14 text-white relative overflow-hidden">
+        <div className="absolute right-[-80px] top-[-80px] w-[400px] h-[400px] border-[60px] border-white/6 rounded-full" />
+        <div className="absolute right-[100px] bottom-[-100px] w-[280px] h-[280px] border-[40px] border-white/5 rounded-full" />
+        <div className="relative z-10">
+          <div className="text-sm font-medium tracking-widest text-white/80 mb-4">金博士 AI 实验室</div>
+          <div className="text-3xl lg:text-4xl font-black mb-4 leading-tight">
+            2026 · 学AI要学<br/><span className="text-[#FFE566]">系统的学</span>
+          </div>
+          <div className="text-lg text-white/95 mt-4">
+            <span className="bg-white/20 px-3 py-1 rounded mr-2">AI启蒙体系课</span>3天搞定所有AI知识体系 · 全部都是实战
+          </div>
+        </div>
+      </div>
+
+      <div className="px-16">
+        <div className="py-12 border-b border-[#f0f0f0] relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <div className="pl-6">
+            <div className="p-9 bg-gradient-to-br from-[#FF6B35] to-[#FF8F66] rounded-xl text-lg text-white text-center leading-relaxed shadow-[0_8px_32px_rgba(255,107,53,0.25)]">
+              3天实战 · 系统学习 · <strong className="text-[#FFE566]">掌握AI核心能力</strong><br/>
+              <span className="text-base opacity-90">从提示词到工作流，从智能体到编程，一次打通！</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="py-12 border-b border-[#f0f0f0] relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <h2 className="text-2xl font-bold text-[#1a1a1a] mb-7 pl-6">3天课程安排</h2>
+          <div className="space-y-6 pl-6">
+            {[
+              { day: 'Day 1', title: 'AI基础与提示词', topics: ['AI知识体系全面讲解', '提示词工程实战', '技能实战训练'] },
+              { day: 'Day 2', title: 'AI进阶技能', topics: ['工作流实战', '智能体实战'] },
+              { day: 'Day 3', title: 'AI综合实战', topics: ['AI办公实战', 'AI编程实战'] },
+            ].map((item, i) => (
+              <div key={i} className="p-8 bg-white rounded-xl border-2 border-[#FFF4F0] relative shadow-[0_4px_20px_rgba(255,107,53,0.06)]">
+                <div className="absolute top-0 left-9 right-9 h-1 bg-gradient-to-r from-[#FF6B35] to-[#FFF4F0] rounded" />
+                <div className="flex items-center gap-5 mb-5">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] text-white font-bold text-base flex items-center justify-center rounded-lg shadow-[0_4px_16px_rgba(255,107,53,0.3)]">{item.day}</div>
+                  <div className="text-xl font-bold text-[#1a1a1a]">{item.title}</div>
+                </div>
+                <div className="pl-19 space-y-4">
+                  {item.topics.map((topic, j) => (
+                    <div key={j} className="text-base text-[#1a1a1a] leading-relaxed relative pl-7">
+                      <span className="absolute left-0 top-2.5 w-2.5 h-2.5 bg-[#FF6B35] rounded-full shadow-[0_2px_8px_rgba(255,107,53,0.3)]" />
+                      {topic}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="py-12 relative before:absolute before:left-[-40px] before:top-12 before:w-1.5 before:h-12 before:bg-gradient-to-b from-[#FF6B35] to-[#FFF4F0] before:rounded">
+          <h2 className="text-2xl font-bold text-[#1a1a1a] mb-7 pl-6">限时报名</h2>
+          <div className="grid grid-cols-2 gap-8">
+            <div className="p-9 bg-white rounded-3xl text-center border-2 border-[#f0f0f0]">
+              <div className="text-lg text-[#666] mb-4">常规价</div>
+              <div className="text-5xl font-black text-[#1a1a1a]">3480<span className="text-xl font-normal">元</span></div>
+            </div>
+            <div className="p-9 bg-white rounded-3xl text-center border-2 border-[#FF6B35] relative shadow-[0_12px_40px_rgba(255,107,53,0.25)] scale-[1.02]">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-br from-[#FF6B35] to-[#E55A2B] text-white px-4 py-1.5 rounded-full text-sm font-bold tracking-wider shadow-[0_4px_16px_rgba(255,107,53,0.3)]">早鸟价</div>
+              <div className="text-lg text-[#666] mb-4">早鸟价</div>
+              <div className="text-5xl font-black text-[#FF6B35]">1680<span className="text-xl font-normal">元</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-16 py-10 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] flex justify-between items-center gap-16">
+        <div className="flex-1">
+          <div className="text-xl font-bold text-[#FF6B35] mb-2 tracking-wider">金博士 AI 实验室</div>
+          <div className="text-sm text-white/70 leading-loose">
+            手机/微信：13051202991 ｜ 15811055744<br/>
+            地址：北京市顺义区临空经济核心区安庆大街7号良基科技广场A座316室<br/>
+            jinboshiai.com
+          </div>
+        </div>
+        <div className="w-[110px] h-[110px] bg-white p-2 rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
+          <img src="/images/erweima.png" alt="二维码" className="w-full h-full object-contain" />
+        </div>
+      </div>
+    </div>
   )
 }
