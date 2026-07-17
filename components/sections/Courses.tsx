@@ -173,7 +173,7 @@ function AgentTab() {
           <div className="pl-6">
             <div className="p-9 bg-gradient-to-br from-[#FF6B35] to-[#FF8F66] rounded-xl text-lg text-white text-center leading-relaxed shadow-[0_8px_32px_rgba(255,107,53,0.25)]">
               3天时间 · 从0到1搭建 · 带走<strong className="text-[#FFE566]">专属你的AI数字员工</strong><br/>
-              <span className="text-base opacity-90">以后别卷自己了，咱们学会"压榨"AI员工！</span>
+              <span className="text-base opacity-90">以后别卷自己了，咱们学会「压榨」AI员工！</span>
             </div>
           </div>
         </div>
