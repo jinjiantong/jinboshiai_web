@@ -41,23 +41,24 @@ export default function Activities() {
   }
 
   return (
-    <section id="activities" className="pt-24 pb-16 lg:pt-32 lg:pb-20" style={{ background: '#fafaf8' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="activities" className="pt-24 pb-16 lg:pt-32 lg:pb-24 bg-white">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-10"
+          className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-8 h-px" style={{ background: '#FF6B35' }}></div>
-            <span className="text-xs font-medium tracking-widest uppercase" style={{ color: '#FF6B35' }}>Activities</span>
-            <div className="w-8 h-px" style={{ background: '#FF6B35' }}></div>
+          <div className="section-badge justify-center">
+            <span>Activities</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3" style={{ color: '#0a0a0a' }}>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3 text-slate-900">
             往期精彩活动
           </h2>
-          <p className="text-sm max-w-lg mx-auto" style={{ color: '#737373' }}>
+          <p className="text-base text-blue-600 font-semibold mb-2">
+            每一次学习，都是成长的见证
+          </p>
+          <p className="text-sm text-slate-500 max-w-lg mx-auto leading-relaxed">
             记录每一次学习的精彩瞬间，见证每一位学员的成长足迹
           </p>
         </motion.div>
@@ -75,34 +76,34 @@ export default function Activities() {
               viewport={{ once: true }}
               className="flex-shrink-0 w-80 snap-start"
             >
-              <div className="relative rounded-xl overflow-hidden h-full min-h-[360px] flex flex-col p-6" style={{ background: '#fafaf8' }}>
-                <div className="absolute top-0 right-0 w-32 h-32 rounded-full border" style={{ borderColor: 'rgba(255,107,53,0.15)', transform: 'translate(30%, -30%)' }}></div>
-                <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full border" style={{ borderColor: 'rgba(255,107,53,0.15)', transform: 'translate(-30%, 30%)' }}></div>
+              <div className="relative rounded-xl overflow-hidden h-full min-h-[360px] flex flex-col p-6 bg-white border border-slate-200 card-hover">
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full border border-blue-100" style={{ transform: 'translate(30%, -30%)' }}></div>
+                <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full border border-blue-100" style={{ transform: 'translate(-30%, 30%)' }}></div>
                 
                 <div className="relative z-10">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ background: 'rgba(255,107,53,0.1)' }}>
-                    <Sparkles className="w-5 h-5" style={{ color: '#FF6B35' }} />
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mb-4">
+                    <Sparkles className="w-5 h-5 text-blue-600" />
                   </div>
                   
-                  <h3 className="text-xl font-light mb-3 leading-snug" style={{ color: '#0a0a0a' }}>
-                    <span className="font-bold" style={{ color: '#FF6B35' }}>学生怕没工作</span>
+                  <h3 className="text-xl font-light mb-3 leading-snug text-slate-800">
+                    <span className="font-bold text-blue-600">学生怕没工作</span>
                     <br />
-                    <span className="font-bold" style={{ color: '#FF6B35' }}>职场人怕被裁</span>
+                    <span className="font-bold text-blue-600">职场人怕被裁</span>
                     <br />
-                    <span className="font-bold" style={{ color: '#FF6B35' }}>老板怕被颠覆</span>
+                    <span className="font-bold text-blue-600">老板怕被颠覆</span>
                   </h3>
                   
-                  <p className="text-base font-light mb-4" style={{ color: '#737373' }}>
+                  <p className="text-base font-light mb-4 text-slate-500">
                     AI 落地的真问题，我们坐下来聊聊
                   </p>
                   
-                  <div className="w-16 h-0.5 mb-4" style={{ background: '#FF6B35' }}></div>
+                  <div className="w-16 h-0.5 mb-4 bg-gradient-to-r from-blue-600 to-blue-400"></div>
                   
-                  <div className="mt-auto pt-4 border-t" style={{ borderColor: '#e0e0e0' }}>
-                    <div className="text-xs mb-3 font-mono" style={{ color: '#737373', letterSpacing: '0.05em' }}>
+                  <div className="mt-auto pt-4 border-t border-slate-100">
+                    <div className="text-xs mb-3 font-mono text-slate-400 tracking-wider">
                       7月20号开始分享 · jinboshiai.com
                     </div>
-                    <a href="#join" className="inline-block px-5 py-2 text-xs font-semibold rounded cursor-pointer" style={{ background: '#FF6B35', color: 'white', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    <a href="#join" className="inline-block px-5 py-2 text-xs font-semibold rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm">
                       立即报名
                     </a>
                   </div>
@@ -115,9 +116,9 @@ export default function Activities() {
             <button 
               onClick={() => scroll('left')}
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-10 h-10 bg-white rounded-full flex items-center justify-center transition-all shadow-md z-10"
-              style={{ border: '1px solid #e0e0e0' }}
+              style={{ border: '1px solid #E2E8F0' }}
             >
-              <ChevronLeft className="w-5 h-5" style={{ color: '#737373' }} />
+              <ChevronLeft className="w-5 h-5" style={{ color: '#64748B' }} />
             </button>
           )}
           
@@ -125,9 +126,9 @@ export default function Activities() {
             <button 
               onClick={() => scroll('right')}
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-10 h-10 bg-white rounded-full flex items-center justify-center transition-all shadow-md z-10"
-              style={{ border: '1px solid #e0e0e0' }}
+              style={{ border: '1px solid #E2E8F0' }}
             >
-              <ChevronRight className="w-5 h-5" style={{ color: '#737373' }} />
+              <ChevronRight className="w-5 h-5" style={{ color: '#64748B' }} />
             </button>
           )}
         </div>

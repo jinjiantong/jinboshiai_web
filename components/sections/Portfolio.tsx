@@ -156,7 +156,7 @@ export default function Portfolio() {
 
   return (
     <>
-      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 pt-20">
+      <section id="portfolio" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 pt-10">
         {/* 全屏横向滚动容器 */}
         <div 
           className="flex h-full transition-transform duration-700 ease-out"
