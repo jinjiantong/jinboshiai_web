@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
 import {
   Play, Target, Briefcase, ListChecks, BookOpenCheck, CalendarDays, LayoutDashboard, Sparkles,
   Mic, Lightbulb, Activity, RefreshCcw, ListTodo, TriangleAlert, TrendingUp,
@@ -105,18 +104,10 @@ const aiSkills = [
   },
 ]
 
+// 本地视频直链：改为 /videos/xxx.mp4（放 public/videos/）或任意公网 mp4/webm 链接；留空则显示「待接入」占位
+const VIDEO_URL = ''
+
 export default function CrmProblem() {
-  const [videoUrl, setVideoUrl] = useState('')
-
-  useEffect(() => {
-    fetch('/api/site-config')
-      .then((r) => r.json())
-      .then((res) => {
-        if (res && res.ok && res.data && res.data.videoUrl) setVideoUrl(res.data.videoUrl)
-      })
-      .catch(() => {})
-  }, [])
-
   return (
     <section id="problem" className="py-24 lg:py-32 bg-astro-bgAlt">
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
@@ -139,10 +130,10 @@ export default function CrmProblem() {
 
           {/* 视频容器 - 满宽 16:9 */}
           <div className="relative rounded-[2rem] overflow-hidden bg-white border border-astro-line shadow-softLg">
-            {videoUrl ? (
+            {VIDEO_URL ? (
               <div className="relative aspect-video bg-black">
                 <video
-                  src={videoUrl}
+                  src={VIDEO_URL}
                   controls
                   playsInline
                   className="absolute inset-0 w-full h-full object-contain"

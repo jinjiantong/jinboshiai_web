@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Check, Crown, ShieldCheck, Gift, Users, Sparkles, CalendarClock, Brain } from 'lucide-react'
 
 const DEFAULT_PRICING = { month: 98, quarter: 258, year: 828 }
@@ -57,23 +57,8 @@ const notes = [
 ]
 
 export default function CrmPricing() {
-  const [pricing, setPricing] = useState<{ month: number; quarter: number; year: number }>(DEFAULT_PRICING)
+  const [pricing] = useState<{ month: number; quarter: number; year: number }>(DEFAULT_PRICING)
   const plans = buildPlans(pricing)
-
-  useEffect(() => {
-    fetch('/api/site-config')
-      .then((r) => r.json())
-      .then((res) => {
-        if (res && res.ok && res.data && res.data.pricing) {
-          setPricing({
-            month: Number(res.data.pricing.month) || DEFAULT_PRICING.month,
-            quarter: Number(res.data.pricing.quarter) || DEFAULT_PRICING.quarter,
-            year: Number(res.data.pricing.year) || DEFAULT_PRICING.year,
-          })
-        }
-      })
-      .catch(() => {}) // 失败保持默认值
-  }, [])
 
   return (
     <section id="pricing" className="py-24 lg:py-32 bg-astro-bgAlt">
