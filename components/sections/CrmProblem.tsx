@@ -105,7 +105,7 @@ const aiSkills = [
 ]
 
 // 本地视频直链：改为 /videos/xxx.mp4（放 public/videos/）或任意公网 mp4/webm 链接；留空则显示「待接入」占位
-const VIDEO_URL = ''
+const VIDEO_URL = '/videos/demo.mp4'
 
 export default function CrmProblem() {
   return (
