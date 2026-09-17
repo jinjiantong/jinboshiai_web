@@ -1,0 +1,21 @@
+{
+  "name": "amumu-admin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "node server/index.js",
+    "seed": "node scripts/seed.js",
+    "refresh": "bash scripts/refresh-credentials.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cloudbase/node-sdk": "^3.18.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "multer": "^2.4.0"
+  }
+}

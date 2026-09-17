@@ -1,136 +1,93 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ChevronDown } from 'lucide-react'
-import Link from 'next/link'
+import { Menu, X, BookOpen, Files } from 'lucide-react'
+import AmumuBot from '@/components/AmumuBot'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [showPortfolioDropdown, setShowPortfolioDropdown] = useState(false)
-  const [showAlert, setShowAlert] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
+    const handleScroll = () => setScrolled(window.scrollY > 30)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowPortfolioDropdown(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  const handleStudentWorks = () => {
-    setShowPortfolioDropdown(false)
-    setShowAlert(true)
-    setTimeout(() => setShowAlert(false), 3000)
-  }
-
   const navItems = [
-    { name: '往期活动', href: '#activities' },
-    { name: '课程体系', href: '#courses' },
-    { name: '联系我们', href: '#join' },
+    { name: '核心模块', href: '#problem' },
+    { name: '价格', href: '#pricing' },
+    { name: '常见问题', href: '#faq' },
   ]
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
+      initial={{ y: -80 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border-b border-slate-100 py-2.5' : 'bg-transparent py-4'}`}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-astro-line py-2.5' : 'bg-transparent py-5'
+      }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-3 group">
-              <img src="/newlogo_blue.png" alt="金博士AI Logo" className="h-16 w-auto animate-logo-bounce" />
-              <div className="flex flex-col leading-tight">
-                <span className="text-slate-400 text-[10px] font-semibold tracking-[0.25em] uppercase">Jin Dr. AI</span>
-                <span className="text-slate-800 text-lg font-bold tracking-wide group-hover:text-blue-600 transition-colors">金博士AI实验室</span>
-              </div>
-            </Link>
-          </div>
+          <a href="#hero" className="flex items-center gap-2.5 group">
+            <AmumuBot size={42} />
+            <div className="flex flex-col leading-tight">
+              <span className="text-astro-ink text-lg font-bold tracking-tight group-hover:text-astro-orange transition-colors">
+                阿木木AI外挂
+              </span>
+              <span className="text-astro-muted text-[10px] font-medium tracking-[0.22em] uppercase">
+                AI Sales Teacher
+              </span>
+            </div>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            <a
-              href="#enterprise-ai"
-              className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 rounded-lg transition-all"
-            >
-              企业AI落地
-            </a>
-            <div ref={dropdownRef} className="relative">
-              <button
-                onMouseEnter={() => setShowPortfolioDropdown(true)}
-                onClick={() => setShowPortfolioDropdown(!showPortfolioDropdown)}
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 rounded-lg transition-all flex items-center gap-1"
-              >
-                作品展示
-                <motion.div
-                  animate={{ rotate: showPortfolioDropdown ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronDown className="w-3.5 h-3.5" />
-                </motion.div>
-              </button>
-              
-              <AnimatePresence>
-                {showPortfolioDropdown && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                    transition={{ duration: 0.15 }}
-                    onMouseLeave={() => setShowPortfolioDropdown(false)}
-                    className="absolute top-full left-0 mt-1.5 w-40 bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-50 ring-1 ring-black/5"
-                  >
-                    <Link
-                      href="/portfolio"
-                      className="block px-4 py-2.5 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors font-medium"
-                      onClick={() => setShowPortfolioDropdown(false)}
-                    >
-                      作品展示台
-                    </Link>
-                    <button
-                      onClick={handleStudentWorks}
-                      className="w-full text-left px-4 py-2.5 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors font-medium"
-                    >
-                      学员作品
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
             {navItems.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 rounded-lg transition-all"
+                className="px-4 py-2 text-sm font-medium text-astro-inkSoft hover:text-astro-orange rounded-full transition-colors"
               >
                 {item.name}
               </a>
             ))}
+            <a
+              href="/guide"
+              className="ml-1 inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-astro-orange/40 text-astro-orange text-sm font-semibold hover:bg-astro-orange hover:text-white transition-colors"
+            >
+              <BookOpen className="w-4 h-4" />
+              使用说明
+            </a>
+            <a
+              href="/reports"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-1 inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-astro-line text-astro-inkSoft text-sm font-semibold hover:border-astro-orange/40 hover:text-astro-orange transition-colors"
+            >
+              <Files className="w-4 h-4" />
+              报告预览
+            </a>
+            <a
+              href="#contact"
+              className="ml-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-astro-orange hover:bg-astro-orangeDark text-white text-sm font-semibold transition-colors shadow-brand"
+            >
+              预约免费演示
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-slate-700 hover:text-blue-600 focus:outline-none p-2 transition-colors"
+              className="text-astro-ink hover:text-astro-orange focus:outline-none p-2 transition-colors"
+              aria-label="菜单"
             >
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -145,52 +102,49 @@ export default function Navbar() {
               transition={{ duration: 0.2 }}
               className="md:hidden overflow-hidden"
             >
-              <div className="bg-white rounded-2xl shadow-lg mt-2 py-3 border border-slate-100">
+              <div className="bg-white border border-astro-line rounded-2xl shadow-soft mt-2 py-3">
                 <div className="flex flex-col px-2">
-                  {[
-                    { name: '企业AI落地', href: '#enterprise-ai' },
-                    { name: '作品展示台', href: '/portfolio' },
-                    ...navItems,
-                  ].map((item) => (
-                    <Link
+                  {navItems.map((item) => (
+                    <a
                       key={item.name}
                       href={item.href}
-                      className="text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors py-2.5 px-3 rounded-lg font-medium text-sm"
+                      className="text-astro-inkSoft hover:text-astro-orange hover:bg-astro-bgAlt transition-colors py-2.5 px-3 rounded-xl font-medium text-sm"
                       onClick={() => setIsOpen(false)}
                     >
                       {item.name}
-                    </Link>
+                    </a>
                   ))}
-                  <button
-                    onClick={() => {
-                      setIsOpen(false)
-                      setShowAlert(true)
-                      setTimeout(() => setShowAlert(false), 3000)
-                    }}
-                    className="w-full text-left text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors py-2.5 px-3 rounded-lg font-medium text-sm"
+                  <a
+                    href="/guide"
+                    className="text-astro-orange hover:bg-astro-orange/10 transition-colors py-2.5 px-3 rounded-xl font-semibold text-sm inline-flex items-center gap-1.5"
+                    onClick={() => setIsOpen(false)}
                   >
-                    学员作品
-                  </button>
+                    <BookOpen className="w-4 h-4" />
+                    使用说明
+                  </a>
+                  <a
+                    href="/reports"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-astro-inkSoft hover:text-astro-orange hover:bg-astro-bgAlt transition-colors py-2.5 px-3 rounded-xl font-semibold text-sm inline-flex items-center gap-1.5"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Files className="w-4 h-4" />
+                    报告预览
+                  </a>
+                  <a
+                    href="#contact"
+                    className="mt-2 mx-3 mb-1 inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-astro-orange hover:bg-astro-orangeDark text-white text-sm font-semibold transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    预约免费演示
+                  </a>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-
-      {/* Alert Toast */}
-      <AnimatePresence>
-        {showAlert && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-xl"
-          >
-            <p className="text-sm font-medium">正在制作中，尽情期待...</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.nav>
   )
 }

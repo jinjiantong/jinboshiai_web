@@ -2,24 +2,30 @@
 
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import EnterpriseAI from '@/components/sections/EnterpriseAI'
-import Portfolio from '@/components/sections/Portfolio'
-import Activities from '@/components/sections/Activities'
-import Courses from '@/components/sections/Courses'
-import About from '@/components/sections/About'
-import Contact from '@/components/sections/Contact'
+import CrmHero from '@/components/sections/CrmHero'
+import CrmProblem from '@/components/sections/CrmProblem'
+import CrmCases from '@/components/sections/CrmCases'
+import CrmIndustries from '@/components/sections/CrmIndustries'
+import CrmPricing from '@/components/sections/CrmPricing'
+import CrmModulesDetail from '@/components/sections/CrmModulesDetail'
+import CrmFaq from '@/components/sections/CrmFaq'
+import CrmTechArchitecture from '@/components/sections/CrmTechArchitecture'
+import CrmCta from '@/components/sections/CrmCta'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-astro-ink antialiased">
       <Navbar />
       <main>
-        <EnterpriseAI />
-        {/* 作品展示区域暂时隐藏，需要展示时取消下面注释即可 */}
-        {/* <Portfolio /> */}
-        <Activities />
-        <Courses />
-        <Contact />
+        <CrmHero />
+        <CrmProblem />
+        <CrmCases />
+        <CrmIndustries />
+        <CrmPricing />
+        <CrmModulesDetail />
+        <CrmFaq />
+        <CrmTechArchitecture />
+        <CrmCta />
       </main>
       <Footer />
     </div>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>阿木木AI CRM · 站点配置后台</title>
+<style>
+  :root{
+    --orange:#FF6B35; --orangeDark:#E85A2B; --ink:#0F172A; --muted:#64748B;
+    --line:#E2E8F0; --bg:#F8FAFC; --green:#16A34A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:linear-gradient(135deg,var(--orange),var(--orangeDark));color:#fff;padding:22px 32px}
+  header h1{font-size:20px;font-weight:700}
+  header p{font-size:13px;opacity:.9;margin-top:4px}
+  .wrap{max-width:720px;margin:28px auto;padding:0 20px}
+  .tabs{display:flex;gap:8px;border-bottom:2px solid var(--line);margin-bottom:20px}
+  .tab{padding:10px 18px;cursor:pointer;font-size:15px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s}
+  .tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+  .panel{display:none;background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px}
+  .panel.active{display:block}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+  .field .hint{font-size:12px;color:var(--muted);margin-top:4px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  input[type=text],input[type=number]{width:100%;padding:9px 12px;font-size:15px;border:1px solid var(--line);border-radius:8px;outline:none}
+  input:focus{border-color:var(--orange)}
+  .btn{background:var(--orange);color:#fff;border:none;padding:11px 26px;font-size:15px;font-weight:600;border-radius:8px;cursor:pointer;transition:.2s}
+  .btn:hover{background:var(--orangeDark)}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .status{margin-top:14px;font-size:13px;min-height:20px}
+  .status.ok{color:var(--green)}
+  .status.err{color:#dc2626}
+  .video-preview{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;display:none}
+  .video-preview video{width:100%;display:block}
+  footer{max-width:720px;margin:10px auto;padding:0 20px 30px;font-size:12px;color:var(--muted);text-align:center}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:12px}
+</style>
+</head>
+<body>
+  <header>
+    <h1>阿木木AI CRM · 站点配置后台</h1>
+    <p id="envInfo">CloudBase 环境：加载中…</p>
+  </header>
+
+  <div class="wrap">
+    <div class="tabs">
+      <div class="tab active" data-tab="pricing">定价</div>
+      <div class="tab" data-tab="video">上传视频</div>
+    </div>
+
+    <!-- 定价 -->
+    <div class="panel active" id="panel-pricing">
+      <div class="grid3">
+        <div class="field">
+          <label>1 个月（¥ / 人）</label>
+          <input type="number" id="p_month" step="1" min="0" />
+        </div>
+        <div class="field">
+          <label>3 个月（¥ / 人）</label>
+          <input type="number" id="p_quarter" step="1" min="0" />
+        </div>
+        <div class="field">
+          <label>1 年（¥ / 人）</label>
+          <input type="number" id="p_year" step="1" min="0" />
+        </div>
+      </div>
+      <div class="field">
+        <div class="hint">改动会即时写入 CloudBase 云数据库 <code>app_config</code> 集合，首页价格区下次刷新即生效。</div>
+      </div>
+      <button class="btn" id="savePricing">保存定价</button>
+      <div class="status" id="statusPricing"></div>
+    </div>
+
+    <!-- 视频 -->
+    <div class="panel" id="panel-video">
+      <div class="field">
+        <label>上传演示视频</label>
+        <input type="file" id="v_file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" />
+        <div class="hint">支持 mp4 / webm / mov，最大 500MB。上传后保存到 CloudBase 云存储并自动生成链接下发给官网首页「真实场景视频演示」区。</div>
+      </div>
+      <div class="field">
+        <button class="btn" id="uploadVideo">上传视频</button>
+        <span class="status" id="statusVideo"></span>
+      </div>
+      <div class="video-preview" id="videoPreview"><video controls playsinline></video></div>
+    </div>
+  </div>
+
+  <footer>阿木木知晓AI CRM · 独立配置后台 · 数据存于你自己的 CloudBase（amumu）云数据库</footer>
+
+<script>
+let cfg = null;
+const $ = (id) => document.getElementById(id);
+
+async function api(path, method, body){
+  const opt = { method, headers:{'Content-Type':'application/json'} };
+  if(body) opt.body = JSON.stringify(body);
+  const r = await fetch(path, opt);
+  return r.json();
+}
+
+async function load(){
+  const res = await api('/api/config','GET');
+  if(res.ok){
+    cfg = res.data;
+    $('envInfo').textContent = 'CloudBase 环境：' + (res.env||'') + ' ｜ 已连接';
+    $('p_month').value = cfg.pricing?.month ?? '';
+    $('p_quarter').value = cfg.pricing?.quarter ?? '';
+    $('p_year').value = cfg.pricing?.year ?? '';
+    // 当前生效的视频地址由后台按 fileId 换新临时链接提供
+    fetch('/api/video/url').then(r=>r.json()).then(v=>{ if(v && v.ok) previewVideo(v.url); }).catch(()=>{});
+  } else {
+    $('envInfo').textContent = '加载失败：' + (res.error||'未知');
+  }
+}
+
+function previewVideo(url){
+  const box = $('videoPreview');
+  if(url){
+    box.style.display='block';
+    box.querySelector('video').src = url;
+  } else {
+    box.style.display='none';
+    box.querySelector('video').removeAttribute('src');
+  }
+}
+
+$('savePricing').onclick = async function(){
+  const btn=this; btn.disabled=true;
+  $('statusPricing').textContent='保存中…';
+  const res = await api('/api/config','PUT', {
+    pricing:{ month:Number($('p_month').value), quarter:Number($('p_quarter').value), year:Number($('p_year').value) }
+  });
+  btn.disabled=false;
+  if(res.ok){ $('statusPricing').className='status ok'; $('statusPricing').textContent='✓ 定价已保存并写入云数据库'; cfg=res.data; }
+  else { $('statusPricing').className='status err'; $('statusPricing').textContent='保存失败：'+res.error; }
+};
+
+$('uploadVideo').onclick = async function(){
+  const btn=this;
+  const file = $('v_file').files && $('v_file').files[0];
+  if(!file){ $('statusVideo').className='status err'; $('statusVideo').textContent='请先选择视频文件'; return; }
+  btn.disabled=true;
+  $('statusVideo').className='status'; $('statusVideo').textContent='上传中…（大文件需等待）';
+  const fd = new FormData();
+  fd.append('file', file);
+  let res;
+  try{
+    const raw = await fetch('/api/video', { method:'POST', body: fd });
+    const ct = raw.headers.get('content-type')||'';
+    res = (ct.includes('application/json')) ? await raw.json() : { ok:false, error:('服务器返回异常('+raw.status+')：'+(await raw.text()).slice(0,200)||raw.statusText) };
+  }catch(e){ res = { ok:false, error:String(e && e.message || e) }; }
+  btn.disabled=false;
+  if(res.ok){
+    $('statusVideo').className='status ok';
+    $('statusVideo').textContent='✓ 上传成功，已保存到 CloudBase 云存储并下发给官网';
+    previewVideo(res.url);
+    cfg = { ...cfg, videoFileId: res.fileId };
+  } else {
+    $('statusVideo').className='status err';
+    $('statusVideo').textContent='上传失败：' + (res.error||'未知');
+  }
+};
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    $('panel-'+t.dataset.tab).classList.add('active');
+  };
+});
+
+load();
+</script>
+</body>
+</html>

@@ -1,6 +1,5 @@
 import './globals.css'
 import { ZCOOL_XiaoWei } from 'next/font/google'
-import Chatbot from '@/components/Chatbot'
 
 const zcoolFont = ZCOOL_XiaoWei({
   weight: '400',
@@ -12,14 +11,28 @@ const zcoolFont = ZCOOL_XiaoWei({
 export const metadata = {
   metadataBase: new URL('https://jinboshiai.com'),
   title: {
-    default: '金博士AI - 零基础AI实战教育培训',
-    template: '%s | 金博士AI',
+    default: '阿木木知晓AI CRM —— 会管客户、会教销售、还会自己进化的 AI 销售老师',
+    template: '%s | 阿木木知晓AI CRM',
   },
-  description: '金博士AI，专注零基础AI技能实战教学，深耕AI办公、AI视觉设计、AI音视频创作、AI编程、AI工作流五大核心赛道。',
-  keywords: ['AI培训', 'AI教育', '人工智能培训', 'AI办公', 'AI视觉设计', 'AI音视频创作', 'AI编程', 'AI工作流', '零基础学AI', '金博士AI'],
-  authors: [{ name: '金博士AI' }],
-  creator: '金博士AI',
-  publisher: '金博士AI',
+  description:
+    '阿木木知晓AI CRM，七大模块覆盖销售全流程：线索获取、商机管理、跟进作战、话术SOP复盘、定时任务、自动汇报、老板驾驶舱。支持飞书、龙虾、WorkBuddy 等主流智能体，按人订阅，15 天试用 ¥0。',
+  keywords: [
+    '阿木木知晓AI CRM',
+    'AI CRM',
+    'AI销售',
+    '智能CRM',
+    '销售管理',
+    'CRM系统',
+    '飞书CRM',
+    'WorkBuddy',
+    'AI智能体',
+    'AI销售老师',
+    '智能话术',
+    '销售复盘',
+  ],
+  authors: [{ name: '阿木木知晓AI CRM' }],
+  creator: '阿木木知晓AI CRM',
+  publisher: '阿木木知晓AI CRM',
   robots: {
     index: true,
     follow: true,
@@ -35,22 +48,23 @@ export const metadata = {
     type: 'website',
     locale: 'zh_CN',
     url: 'https://jinboshiai.com',
-    siteName: '金博士AI',
-    title: '金博士AI - 零基础AI实战教育培训',
-    description: '金博士AI，专注零基础AI技能实战教学，深耕AI办公、AI视觉设计、AI音视频创作、AI编程、AI工作流五大核心赛道。',
+    siteName: '阿木木知晓AI CRM',
+    title: '阿木木知晓AI CRM —— 会管客户、会教销售、还会自己进化的 AI 销售老师',
+    description:
+      '阿木木知晓AI CRM，七大模块覆盖销售全流程：线索获取、商机管理、跟进作战、话术SOP复盘、定时任务、自动汇报、老板驾驶舱。支持飞书、龙虾、WorkBuddy 等主流智能体，按人订阅，15 天试用 ¥0。',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: '金博士AI',
+        alt: '阿木木知晓AI CRM',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '金博士AI - 零基础AI实战教育培训',
-    description: '金博士AI，专注零基础AI技能实战教学',
+    title: '阿木木知晓AI CRM —— 会管客户、会教销售、还会自己进化的 AI 销售老师',
+    description: '阿木木知晓AI CRM，七大模块覆盖销售全流程，支持飞书、龙虾、WorkBuddy 等主流智能体，按人订阅，15 天试用 ¥0。',
     images: ['/og-image.jpg'],
   },
   alternates: {
@@ -65,36 +79,25 @@ export default function RootLayout({
 }) {
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'EducationalOrganization',
-    name: '金博士AI',
+    '@type': 'Product',
+    name: '阿木木知晓AI CRM',
+    description:
+      '支持飞书、龙虾、WorkBuddy 等主流智能体的 AI 销售老师。七大模块覆盖销售全流程：线索获取、商机管理、跟进作战、话术SOP复盘、定时任务、自动汇报、老板驾驶舱。会管客户、会教销售、还会自己进化，按人订阅，15 天试用 ¥0。',
+    brand: {
+      '@type': 'Brand',
+      name: '阿木木知晓AI CRM',
+    },
+    slogan: 'AI 销售老师，越用越会卖',
     url: 'https://jinboshiai.com',
     logo: 'https://jinboshiai.com/logo.png',
-    description: '专注零基础AI技能实战教学，深耕AI办公、AI视觉设计、AI音视频创作、AI编程、AI工作流五大核心赛道。提供北京顺义AI培训、AI编程培训、企业AI培训、企业AI咨询、AI应用培训等全流程服务。',
-    foundingDate: '2024',
-    areaServed: {
-      '@type': 'City',
-      name: '北京顺义'
+    applicationCategory: 'BusinessApplication',
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'CNY',
+      lowPrice: '98',
+      highPrice: '828',
+      offerCount: '3',
     },
-    serviceType: [
-      'AI编程培训',
-      '企业AI内训',
-      '企业AI咨询',
-      'AI落地指导',
-      'AI应用培训',
-      'AI培训'
-    ],
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: 'AI培训课程',
-      itemListElement: [
-        { '@type': 'Offer', name: 'AI编程培训' },
-        { '@type': 'Offer', name: '企业AI培训' },
-        { '@type': 'Offer', name: 'AI应用培训' },
-      ]
-    },
-    sameAs: [
-      'https://space.feishu.cn/jinboshi',
-    ],
   }
 
   return (
@@ -107,7 +110,6 @@ export default function RootLayout({
       </head>
       <body className={zcoolFont.variable}>
         {children}
-        <Chatbot />
       </body>
     </html>
   )
