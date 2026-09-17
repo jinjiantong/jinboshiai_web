@@ -37,7 +37,7 @@ export default function ReportsPage() {
         {/* 页头 */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-astro-orange/10 text-astro-orange text-xs font-bold tracking-[0.2em] uppercase mb-4">
-            What You'll Get
+            What You Get
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-astro-ink mb-3 tracking-tight">
             阿木木生成的<span className="text-astro-orange">销售报告</span>

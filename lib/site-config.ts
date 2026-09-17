@@ -9,7 +9,7 @@ const DEFAULT_CONFIG = {
   videoUrl: '',
 }
 
-let cached = null
+let cached: any = null
 let cachedAt = 0
 const TTL = 30_000 // 30s 缓存，减少对云数据库的频繁读取
 
@@ -21,11 +21,9 @@ export async function getSiteConfig(force = false) {
     app = tcb.init({
       env: ENV_ID,
       region: REGION,
-      credentials: {
-        secretId: process.env.TENCENTCLOUD_SECRETID,
-        secretKey: process.env.TENCENTCLOUD_SECRETKEY,
-        token: process.env.TENCENTCLOUD_SESSIONTOKEN,
-      },
+      secretId: process.env.TENCENTCLOUD_SECRETID || undefined,
+      secretKey: process.env.TENCENTCLOUD_SECRETKEY || undefined,
+      sessionToken: process.env.TENCENTCLOUD_SESSIONTOKEN || undefined,
     })
     const db = app.database()
     const res = await db.collection('app_config').doc('site').get()
