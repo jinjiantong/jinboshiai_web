@@ -46,7 +46,7 @@ export default function CrmIndustries() {
             使用场景与<span className="text-astro-orange">适用行业</span>
           </h2>
           <p className="text-lg text-astro-inkSoft max-w-2xl mx-auto leading-relaxed">
-            从 B2B 到 DTC，从顾问式销售到续费维护——所有「靠人跟单」的生意，都适合阿木木。
+            首发聚焦 10—50 人的小型 B2B 顾问式销售团队；其他行业可按流程和字段适配情况评估。
           </p>
         </motion.div>
 

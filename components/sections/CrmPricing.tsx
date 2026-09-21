@@ -20,7 +20,7 @@ function buildPlans(p: { month: number; quarter: number; year: number }) {
       price: `¥${m}`,
       unit: '/ 人 / 月',
       monthly: `折合 ¥${m} / 人 / 月`,
-      features: ['全部 7 大模块', '客户 / 商机不限数量', '订阅期内免费升级 + 自动更新', '随时可停，不续费即到期'],
+      features: ['全部 7 大模块', '客户 / 商机不限数量', '订阅期内免费升级，可检查新版本', '随时可停，不续费即到期'],
       highlight: false,
     },
     {
@@ -29,7 +29,7 @@ function buildPlans(p: { month: number; quarter: number; year: number }) {
       price: `¥${Number(p.quarter)}`,
       unit: '/ 人 / 3 个月',
       monthly: `折合 ¥${qm} / 人 / 月` + (qSave > 0 ? ` · 比月付省 ¥${qSave}` : ''),
-      features: ['全部 7 大模块', '客户 / 商机不限数量', '订阅期内免费升级 + 自动更新', '随时可停，不续费即到期'],
+      features: ['全部 7 大模块', '客户 / 商机不限数量', '订阅期内免费升级，可检查新版本', '随时可停，不续费即到期'],
       highlight: false,
     },
     {
@@ -41,7 +41,7 @@ function buildPlans(p: { month: number; quarter: number; year: number }) {
       features: [
         '全部 7 大模块',
         '客户 / 商机不限数量',
-        '订阅期内免费升级 + 自动更新',
+        '订阅期内免费升级，可检查新版本',
         '远程安装 1 次（≥3 人）',
       ],
       highlight: true,
@@ -50,7 +50,7 @@ function buildPlans(p: { month: number; quarter: number; year: number }) {
 }
 
 const notes = [
-  { icon: ShieldCheck, text: '数据始终存放在你自己的飞书多维表格里，我们不存储你的业务数据' },
+  { icon: ShieldCheck, text: '业务数据保存在你的飞书多维表格；云端引擎按需处理评分字段，不落业务库' },
   { icon: Users, text: '价格按人计，团队增减席位随时调整' },
   { icon: Sparkles, text: '15 天试用 ¥0，含全部功能，自助安装（提供图文指引）；正式订阅不含人工服务，需要上手陪跑 / 深度定制可单独购买' },
   { icon: CalendarClock, text: '订阅到期不续费即停用，不自动扣费；订阅期内功能更新免费升级' },

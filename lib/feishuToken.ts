@@ -21,20 +21,7 @@ function getAppCredentials(): { app_id: string; app_secret: string } {
       app_secret: process.env.FEISHU_APP_SECRET,
     }
   }
-
-  try {
-    const settings = require('../setting.json')
-    if (settings.data?.app_id && settings.data?.app_secret) {
-      return {
-        app_id: settings.data.app_id,
-        app_secret: settings.data.app_secret,
-      }
-    }
-  } catch (e) {
-    console.warn('Failed to load setting.json:', e)
-  }
-
-  throw new Error('Feishu app credentials not found. Set FEISHU_APP_ID and FEISHU_APP_SECRET environment variables or configure setting.json')
+  throw new Error('Feishu app credentials not found. Set FEISHU_APP_ID and FEISHU_APP_SECRET in the deployment environment')
 }
 
 function loadTokenFromCache(): TokenCache | null {

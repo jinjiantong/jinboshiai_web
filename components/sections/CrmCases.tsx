@@ -10,7 +10,7 @@ const cases = [
     tag: '场景一 · 录入',
     title: '聊完客户，不用再填半小时表',
     desc: '通完电话说一段话，AI 自动整理客户、商机、跟进内容、待办和风险信号，字段全自动。',
-    stat: '每天省 1~2 小时录入',
+    stat: '减少重复录入',
     statIcon: Clock,
   },
   {
@@ -26,13 +26,13 @@ const cases = [
     tag: '场景三 · 话术',
     title: '客户说「太贵了」，不再只会降价',
     desc: '从公司 SOP 里检索出标准话术全文，结合客户行业、场景、产品亮点给出回应和谈判思路。',
-    stat: 'SOP 话术 0 秒响应',
+    stat: '快速调用 SOP 话术',
     statIcon: Sparkles,
   },
   {
     icon: Briefcase,
     tag: '场景四 · 方案',
-    title: '新商机，10 分钟备好全套方案',
+    title: '新商机，快速整理销售方案',
     desc: '录入商机即自动完成客户画像分析（先联网调研后入库）+ 跟进策略推荐 + 成交概率预测，一键生成销售计划书（含作战指令卡）与审核报告。',
     stat: '录入即出全套方案',
     statIcon: Sparkles,
@@ -57,7 +57,7 @@ export default function CrmCases() {
             他们把 CRM，<span className="text-astro-orange">用成了 AI 老师</span>
           </h2>
           <p className="text-lg text-astro-inkSoft max-w-2xl mx-auto leading-relaxed">
-            真实销售场景下的典型用法与收益——让销售开口，让数据变武器。
+            以下为模拟销售场景，用于说明典型操作方式；实际效果取决于数据完整度和团队执行。
           </p>
         </motion.div>
 
@@ -108,7 +108,7 @@ export default function CrmCases() {
           className="text-center mt-10 text-astro-ink font-medium flex items-center justify-center gap-2"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-astro-orange" />
-          这些不是功能演示，是每个销售每天都会遇到的真实场景。
+          示例使用模拟数据；正式使用时，系统会基于你的飞书数据与企业 SOP 给出建议。
         </motion.p>
       </div>
     </section>

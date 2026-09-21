@@ -7,7 +7,7 @@
 ### 基础配置
 
 - **App ID**: `cli_a96bb944bef89bcb`
-- **App Secret**: `IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp`
+- **App Secret**: `<FEISHU_APP_SECRET>`
 - **Bitable Token**: `LrzibrgRsaviAQsiywBcpZQ4nwc`
 
 ### 表 ID 映射

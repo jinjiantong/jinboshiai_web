@@ -492,15 +492,14 @@ export default function CrmProblem() {
                 <Clock className="w-7 h-7" strokeWidth={1.8} />
               </div>
               <div className="flex-1">
-                <div className="font-bold text-astro-ink text-lg mb-1">驱动方式：每日定时（凌晨 2 点）</div>
+                <div className="font-bold text-astro-ink text-lg mb-1">驱动方式：每日定时（12:00）</div>
                 <p className="text-sm text-astro-inkSoft leading-relaxed">
-                  每天自动跑两件事：<span className="text-astro-ink font-semibold">策略优化（引擎二）</span> + <span className="text-astro-ink font-semibold">成功因子增量打标（引擎一）</span>。
-                  无需人工干预，大脑自己运转。
+                  每天自动发现策略候选并增量标记赢／丢单因子；达到样本门槛后进入人工审核，批准后才会生效。
                 </p>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-astro-green/10 text-astro-green text-xs font-semibold whitespace-nowrap self-start sm:self-center">
                 <span className="w-1.5 h-1.5 rounded-full bg-astro-green animate-pulse" />
-                全自动 · 零人工
+                自动发现 · 审核生效
               </div>
             </div>
           </motion.div>
@@ -520,7 +519,7 @@ export default function CrmProblem() {
             </div>
             <div className="space-y-4 text-sm lg:text-base text-astro-inkSoft leading-relaxed">
               <p>
-                这是你系统的<span className="text-astro-ink font-semibold">「暗能力」</span>——客户感知到的是「越用越准、越用越懂我」，但看不见背后这套自进化机制。
+                这是你系统的<span className="text-astro-ink font-semibold">「暗能力」</span>——团队持续积累有依据的复盘后，建议会更贴近自己的历史打法。
               </p>
               <p>
                 这才是真正的<span className="text-astro-orange font-bold">护城河</span>：对手能抄「功能清单」，但抄不了「用你的真实成交数据、每天自己变聪明」这件事。因为这套大脑的价值，只在你和客户的数据积累里长出来，时间越长，越追不上。

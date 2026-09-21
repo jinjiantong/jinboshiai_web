@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const APP_ID = 'cli_a96bb944bef89bcb';
-export const APP_SECRET = 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp';
+export const APP_SECRET = process.env.FEISHU_APP_SECRET || '';
 export const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 
 export const TABLE_IDS = {
@@ -15,6 +15,7 @@ let accessToken: string | null = null;
 let tokenExpiry: number = 0;
 
 export async function getAccessToken(): Promise<string> {
+  if (!APP_SECRET) throw new Error('FEISHU_APP_SECRET is not configured');
   const now = Date.now();
   if (accessToken && now < tokenExpiry) {
     return accessToken;

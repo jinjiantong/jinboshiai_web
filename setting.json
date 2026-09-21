@@ -10,7 +10,6 @@
     "refreshInterval": 300000,
     "space_id": "7629331605785431218",
     "app_id": "cli_a96bb944bef89bcb",
-    "app_secret": "IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp",
     "useLocalCache": false,
     "cacheExpiry": 86400000
   },

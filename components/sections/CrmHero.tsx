@@ -9,7 +9,7 @@ const vsRows = [
   { neu: '一句话搞定所有需求', old: '反复手动填表单' },
   { neu: '开发渠道，自动获客', old: '被动录入已有客户' },
   { neu: '懂产品、懂标准销售流程、懂沟通话术、懂市场行情', old: '只存储客户基础资料' },
-  { neu: '自我学习进化，数据越多，赢单概率越高', old: '仅做数据归档，不会产生业务价值' },
+  { neu: '赢单与丢单经验经审核后，可在下一次销售中复用', old: '仅做数据归档，不会产生业务价值' },
 ]
 
 export default function CrmHero() {
@@ -36,14 +36,14 @@ export default function CrmHero() {
             </svg>
           </span>
           <span className="mt-3 block text-sm sm:text-base lg:text-lg font-semibold text-astro-inkSoft tracking-normal leading-snug">
-            我不是传统 CRM 系统，我是<span className="text-astro-orange">任何智能体里可安装的「AI 大脑技能」（SKILL）</span>
+            我不是传统 CRM 系统，我是<span className="text-astro-orange">可安装在支持 SKILL 的智能体中的「AI 销售大脑」</span>
           </span>
         </h1>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5 px-1">
           {/* 支持平台 — 强调 */}
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-astro-orange to-astro-orangeDark text-white text-xs sm:text-sm font-bold shadow-lg shadow-astro-orange/30">
             <Bot className="w-3.5 h-3.5" />
-            支持 飞书 · 龙虾 · WorkBuddy 等主流智能体
+            首发支持 飞书 / 妙搭智能体
           </span>
           {/* 数据归属 — 强调 */}
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white border-2 border-astro-green text-astro-green text-xs sm:text-sm font-bold shadow-md shadow-astro-green/20">
@@ -73,13 +73,12 @@ export default function CrmHero() {
               </div>
               {/* WorkBuddy 实拍（上）+ 销售专家团（下）—— 上下组合，撑满剩余高度 */}
               <div className="w-full flex-1 rounded-2xl bg-white/70 border border-astro-orange/20 p-2.5 flex flex-col gap-2">
-                {/* 已适配智能体：飞书 / 龙虾 / WorkBuddy */}
+                {/* 首发验收宿主：飞书 / 妙搭 */}
                 <div className="w-full flex-shrink-0 rounded-lg border border-astro-orange/25 shadow-sm bg-white py-2.5 px-3">
                   <div className="flex items-center justify-around gap-2">
                     {[
                       { logo: '/images/feishu-logo.png', name: '飞书' },
-                      { logo: '/images/openclaw-logo.svg', name: '龙虾' },
-                      { logo: '/images/workbuddy-logo.svg', name: 'WorkBuddy' },
+                      { logo: '/images/feishu-logo.png', name: '妙搭' },
                     ].map((p) => (
                       <div key={p.name} className="flex flex-col items-center gap-1 min-w-0 flex-1">
                         <img src={p.logo} alt={p.name} className="w-7 h-7 object-contain flex-shrink-0" />
@@ -89,7 +88,7 @@ export default function CrmHero() {
                   </div>
                   <div className="mt-2 flex items-center justify-center gap-1 text-[9px] leading-none font-bold text-astro-green">
                     <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                    已适配主流智能体
+                    首发宿主
                   </div>
                 </div>
                 {/* 专家团：撑满剩余高度 */}
@@ -182,7 +181,7 @@ export default function CrmHero() {
           </span>
           <span className="inline-flex items-center gap-1.5 text-astro-green font-semibold">
             <ShieldCheck className="w-3.5 h-3.5" />
-            你的数据，100% 属于你
+            业务数据由你掌控
           </span>
         </div>
       </div>

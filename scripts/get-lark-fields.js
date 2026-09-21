@@ -1,7 +1,8 @@
 const axios = require('axios');
 
 const APP_ID = 'cli_a96bb944bef89bcb';
-const APP_SECRET = 'IkQIF3w2JIUD9WFssvzwOdSPbnkiKaHp';
+const APP_SECRET = process.env.FEISHU_APP_SECRET;
+if (!APP_SECRET) throw new Error('FEISHU_APP_SECRET is not configured');
 const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const COURSES_TABLE_ID = 'tblDDKeft6iLlGAx';
 
