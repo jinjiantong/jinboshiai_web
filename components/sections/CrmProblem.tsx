@@ -1,10 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Play, Target, Briefcase, ListChecks, BookOpenCheck, CalendarDays, LayoutDashboard, Sparkles,
   Mic, Lightbulb, Activity, RefreshCcw, ListTodo, TriangleAlert, TrendingUp,
-  Brain, Cpu, ShieldCheck, History, Clock, Trophy, Lock, Check, X,
+  Brain, Cpu, ShieldCheck, History, Clock, Trophy, Lock, Check, X, Download, Copy, ExternalLink,
 } from 'lucide-react'
 import AmumuBot from '@/components/AmumuBot'
 
@@ -107,7 +108,12 @@ const aiSkills = [
 // 本地视频直链：改为 /videos/xxx.mp4（放 public/videos/）或任意公网 mp4/webm 链接；留空则显示「待接入」占位
 const VIDEO_URL = '/videos/demo.mp4'
 
+// 安装方法：技能安装包下载链接与复制语段
+const SKILL_URL = 'https://616d-amumu-d8gqz038oab87f530-1257940563.tcb.qcloud.la/releases/3.0.70/0287b0f78b0ca48e____AI_CRM_____3.0.70.zip'
+const copyText = `"${SKILL_URL}" 安装技能`
+
 export default function CrmProblem() {
+  const [copied, setCopied] = useState(false)
   return (
     <section id="problem" className="py-24 lg:py-32 bg-astro-bgAlt">
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
@@ -169,6 +175,89 @@ export default function CrmProblem() {
               </div>
             </div>
             )}
+          </div>
+        </motion.div>
+
+        {/* ============ 安装方法区 ============ */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-20"
+        >
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-astro-orange/10 text-astro-orange text-xs font-bold tracking-[0.2em] uppercase mb-5">
+              <Download className="w-3.5 h-3.5" />
+              安装方法
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-astro-ink tracking-tight">
+              免费安装使用<span className="text-astro-orange">阿木木AI外挂</span>
+            </h2>
+            <p className="text-lg text-astro-inkSoft mt-4">
+              把下面这段信息<strong className="text-astro-orange">复制</strong>给智能体，即可直接安装技能。
+            </p>
+          </div>
+
+          <div className="bg-white border border-astro-line rounded-[2rem] p-6 sm:p-8 shadow-softLg">
+            {/* 复制语段卡片 */}
+            <div className="rounded-2xl border border-astro-line bg-astro-bgAlt overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-4 border-b border-astro-line">
+                <div className="flex-1">
+                  <div className="text-xs text-astro-inkSoft font-medium mb-1">
+                    复制以下安装信息，粘贴发送给智能体
+                  </div>
+                  <div className="font-mono text-sm text-astro-ink break-all select-all">
+                    {copyText}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (navigator.clipboard) {
+                      navigator.clipboard.writeText(copyText)
+                        .then(() => setCopied(true))
+                        .catch(() => setCopied(false))
+                    }
+                    setTimeout(() => setCopied(false), 2000)
+                  }}
+                  className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-astro-orange text-white text-sm font-semibold hover:bg-astro-orange/90 transition-colors"
+                >
+                  <Copy className="w-4 h-4" />
+                  {copied ? '已复制 ✓' : '复制'}
+                </button>
+              </div>
+            </div>
+
+            {/* 首次使用流程图 */}
+            <div className="mt-6">
+              <div className="text-xs font-bold tracking-[0.2em] uppercase text-astro-inkSoft mb-3">
+                首次使用
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="flex gap-4 p-5 rounded-2xl border border-astro-line bg-white hover:shadow-card transition-shadow">
+                  <div className="w-9 h-9 rounded-full bg-astro-orange text-white font-bold flex items-center justify-center flex-shrink-0">1</div>
+                  <div>
+                    <a
+                      href="https://dcnuzbjxbj2c.feishu.cn/wiki/Pyb7w9TZTieZCqkNiV0cd2f7n6c"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-1.5 font-semibold text-astro-ink hover:text-astro-orange transition-colors"
+                    >
+                      查看技能配置说明文档
+                      <ExternalLink className="w-4 h-4 text-astro-orange" />
+                    </a>
+                    <div className="text-sm text-astro-inkSoft mt-1 leading-relaxed">点击打开教程，先阅读并确认技能配置说明，了解功能与参数后再初始化。</div>
+                  </div>
+                </div>
+                <div className="flex gap-4 p-5 rounded-2xl border border-astro-line bg-white hover:shadow-card transition-shadow">
+                  <div className="w-9 h-9 rounded-full bg-astro-orange text-white font-bold flex items-center justify-center flex-shrink-0">2</div>
+                  <div>
+                    <div className="font-semibold text-astro-ink">执行技能初始化流程</div>
+                    <div className="text-sm text-astro-inkSoft mt-1 leading-relaxed">按教程完成初始化，绑定飞书多维表格后即可开始使用。</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </motion.div>
 

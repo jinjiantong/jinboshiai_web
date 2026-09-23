@@ -32,8 +32,8 @@ export default function CrmTechArchitecture() {
           className="bg-white rounded-3xl border border-astro-line shadow-card p-4 sm:p-6 lg:p-8"
         >
           <img
-            src="/images/amumu-architecture.svg"
-            alt="阿木木AI 技能技术架构图：主动大脑 + 四层能力（记忆/识别/建议/提醒）+ 八个模块 + 策略循环"
+            src="/images/amumu-brain-architecture.png"
+            alt="AI大脑·纯技术架构图：主动智能触发 + 交互事件 + 身份编排 + 上下文工程 + 混合决策核心 + 结果控制 + 学习闭环 + 安全治理"
             className="w-full h-auto block"
             loading="lazy"
           />

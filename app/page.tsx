@@ -7,6 +7,7 @@ import CrmProblem from '@/components/sections/CrmProblem'
 import CrmCases from '@/components/sections/CrmCases'
 import CrmIndustries from '@/components/sections/CrmIndustries'
 import CrmPricing from '@/components/sections/CrmPricing'
+import CrmTestimonials from '@/components/sections/CrmTestimonials'
 import CrmModulesDetail from '@/components/sections/CrmModulesDetail'
 import CrmFaq from '@/components/sections/CrmFaq'
 import CrmTechArchitecture from '@/components/sections/CrmTechArchitecture'
@@ -22,6 +23,7 @@ export default function Home() {
         <CrmCases />
         <CrmIndustries />
         <CrmPricing />
+        <CrmTestimonials />
         <CrmModulesDetail />
         <CrmFaq />
         <CrmTechArchitecture />
