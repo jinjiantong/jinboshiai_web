@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import mysql from 'mysql2/promise'
 
+// 依赖 MySQL 实时数据，禁止构建期静态预渲染
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const pool = mysql.createPool({

@@ -10,6 +10,9 @@ import {
 } from '../utils/dataProcessor';
 import { getFeishuToken } from '@/lib/feishuToken';
 
+// 依赖飞书接口实时数据，禁止构建期静态预渲染
+export const dynamic = 'force-dynamic';
+
 const ATTENDANCE_TABLE_ID = TABLE_CONFIGS.attendance.tableId;
 
 export async function GET() {

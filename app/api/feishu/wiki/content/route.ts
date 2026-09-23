@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { getFeishuToken } from '@/lib/feishuToken';
 
+// 依赖请求参数与飞书接口，禁止构建期静态预渲染
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);

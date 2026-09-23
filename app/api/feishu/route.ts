@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const pathname = url.pathname;
 
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
 
     if (pathname.endsWith('/wiki/node')) {
       const response = await axios.get('https://open.feishu.cn/open-apis/wiki/v2/spaces/7629331605785431218/nodes', {

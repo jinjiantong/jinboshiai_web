@@ -9,6 +9,9 @@ import {
 } from '../utils/dataProcessor';
 import { getFeishuToken } from '@/lib/feishuToken';
 
+// 依赖飞书接口实时数据，禁止构建期静态预渲染
+export const dynamic = 'force-dynamic';
+
 const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const TEACHERS_TABLE_ID = 'tblxN3e1fyhOMTSt';
 
@@ -19,7 +22,7 @@ export async function GET() {
       return successResponse(cachedList, 'Teacher list (cached)');
     }
 
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     
     const response = await axios.get(
       `https://open.feishu.cn/open-apis/bitable/v1/apps/${BASE_TOKEN}/tables/${TEACHERS_TABLE_ID}/records`,
@@ -50,7 +53,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
     
     const fields = validateAndConvertFields(body.fields || body, 'teachers');

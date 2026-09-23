@@ -12,7 +12,10 @@ interface TokenCache {
 let cachedToken = ''
 let tokenExpiryTime = 0
 let isRefreshing = false
-let refreshQueue: Array<(token: string) => void> = []
+let refreshQueue: Array<{
+  resolve: (token: string) => void
+  reject: (error: unknown) => void
+}> = []
 
 function getAppCredentials(): { app_id: string; app_secret: string } {
   if (process.env.FEISHU_APP_ID && process.env.FEISHU_APP_SECRET) {
@@ -114,8 +117,8 @@ export async function getFeishuToken(): Promise<string> {
   }
 
   if (isRefreshing) {
-    return new Promise<string>((resolve) => {
-      refreshQueue.push((token) => resolve(token))
+    return new Promise<string>((resolve, reject) => {
+      refreshQueue.push({ resolve, reject })
     })
   }
 
@@ -125,12 +128,17 @@ export async function getFeishuToken(): Promise<string> {
     const token = await fetchAccessToken()
     cachedToken = token
     tokenExpiryTime = now + 6774000
-    refreshQueue.forEach((cb) => cb(token))
+    const waiters = refreshQueue
     refreshQueue = []
+    waiters.forEach(({ resolve }) => resolve(token))
     return token
   } catch (error) {
     cachedToken = ''
     tokenExpiryTime = 0
+    // 关键：刷新失败时必须让排队的调用一并失败，否则它们会永久挂起（构建期会导致静态生成超时）
+    const waiters = refreshQueue
+    refreshQueue = []
+    waiters.forEach(({ reject }) => reject(error))
     console.error('[FeishuToken] Error getting tenant_access_token:', error)
     throw error
   } finally {

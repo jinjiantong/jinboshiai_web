@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getFeishuToken } from '@/lib/feishuToken'
 
+// 依赖飞书接口实时数据，禁止构建期静态预渲染
+export const dynamic = 'force-dynamic'
+
 const CLASS_TABLE_ID = 'tblDDKeft6iLlGAx'
 const STUDENTS_TABLE_ID = 'tblhnKUAyBJbpoDo'
 const TEACHERS_TABLE_ID = 'tblxN3e1fyhOMTSt'

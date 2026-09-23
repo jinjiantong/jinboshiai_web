@@ -9,6 +9,9 @@ import {
 } from '../utils/dataProcessor';
 import { getFeishuToken } from '@/lib/feishuToken';
 
+// 依赖飞书接口实时数据，禁止构建期静态预渲染
+export const dynamic = 'force-dynamic';
+
 const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const CLASSES_TABLE_ID = TABLE_CONFIGS.courses.tableId;
 
@@ -80,7 +83,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
     const recordId = body.recordId || body.record_id;
     let fields = body.fields || {};

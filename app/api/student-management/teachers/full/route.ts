@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { getFeishuToken } from '@/lib/feishuToken';
 
+// 依赖飞书接口实时数据，禁止构建期静态预渲染
+export const dynamic = 'force-dynamic';
+
 const BASE_TOKEN = 'LrzibrgRsaviAQsiywBcpZQ4nwc';
 const TEACHERS_TABLE_ID = 'tblxN3e1fyhOMTSt';
 const CLASSES_TABLE_ID = 'tblDDKeft6iLlGAx';

@@ -7,7 +7,7 @@ const ATTENDANCE_CONFIG = TABLE_CONFIGS.attendance;
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
     const recordId = params.id;
     

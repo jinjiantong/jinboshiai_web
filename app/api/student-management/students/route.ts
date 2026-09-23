@@ -76,7 +76,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const token = await getAccessToken();
+    const token = await getFeishuToken();
     const body = await request.json();
     const { recordId, fields } = body;
     

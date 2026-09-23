@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 
+// 依赖外部服务实时状态，禁止构建期静态预渲染
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const qdrantHost = process.env.QDRANT_HOST || '82.156.230.158'
